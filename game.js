@@ -581,18 +581,18 @@ class Real3DClawcade {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1.18;
+        this.renderer.toneMappingExposure = 1.0;
 
         // Entorno de iluminación IBL de estudio para reflejos reales de cromo y acero en la garra y cadena
         this.initStudioEnvironment();
 
         // 4. Luces en tiempo real
-        // Luz ambiente calibrada
-        const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+        // Luz ambiente calibrada para mantener contraste y sombras en metales
+        const ambient = new THREE.AmbientLight(0xffffff, 0.48);
         this.scene.add(ambient);
 
         // Foco cenital principal con proyección de sombras nítidas de 2048px
-        this.spotLight = new THREE.SpotLight(0xfff5f8, 1.9);
+        this.spotLight = new THREE.SpotLight(0xfff5f8, 1.45);
         this.spotLight.position.set(0, 9, 2);
         this.spotLight.angle = Math.PI / 3;
         this.spotLight.penumbra = 0.35;
@@ -605,17 +605,17 @@ class Real3DClawcade {
         this.scene.add(this.spotLight);
 
         // Luz Neón Cian (Pilar Izquierdo)
-        const cyanLight = new THREE.PointLight(0x00e5ff, 1.3, 16);
+        const cyanLight = new THREE.PointLight(0x00e5ff, 1.2, 16);
         cyanLight.position.set(-6, 2, 2);
         this.scene.add(cyanLight);
 
         // Luz Neón Magenta (Pilar Derecho)
-        const pinkLight = new THREE.PointLight(0xff1493, 1.3, 16);
+        const pinkLight = new THREE.PointLight(0xff1493, 1.2, 16);
         pinkLight.position.set(6, 2, 2);
         this.scene.add(pinkLight);
 
-        // Foco frontal radiante para reflejo metálico cromado y plata pura de la garra
-        const clawFrontLight = new THREE.DirectionalLight(0xffffff, 1.6);
+        // Foco frontal suave para reflejos especulares metálicos (sin sobreexponer ni blanquear la garra)
+        const clawFrontLight = new THREE.DirectionalLight(0xffffff, 0.50);
         clawFrontLight.position.set(0, 6, 9);
         this.scene.add(clawFrontLight);
 
@@ -631,7 +631,7 @@ class Real3DClawcade {
 
     /**
      * Genera un mapa de entorno procedural HD para iluminación IBL de metal y cromo puro.
-     * Crea reflejos nítidos de softboxes de estudio, horizontes y neones sobre la garra y la cadena.
+     * Tiras de luz softbox delgadas y horizonte oscuro contrastado para resaltar el tono plata metálico real.
      */
     initStudioEnvironment() {
         try {
@@ -641,41 +641,41 @@ class Real3DClawcade {
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
 
-            // Degradado de estudio arcade (Horizonte metálico y techo de iluminación)
+            // Degradado de estudio arcade (Horizonte metálico y techo contrastado)
             const bgGrad = ctx.createLinearGradient(0, 0, 0, 256);
-            bgGrad.addColorStop(0.0, '#64748b');  // Techo brillante de estudio
-            bgGrad.addColorStop(0.46, '#334155'); // Gradiente hacia horizonte
-            bgGrad.addColorStop(0.50, '#1e293b'); // Línea de horizonte nítida
-            bgGrad.addColorStop(0.54, '#0f172a'); // Suelo inferior
+            bgGrad.addColorStop(0.0, '#334155');  // Techo gris estudio
+            bgGrad.addColorStop(0.44, '#1e293b'); // Transición a horizonte
+            bgGrad.addColorStop(0.50, '#0f172a'); // Línea de horizonte oscura
+            bgGrad.addColorStop(0.56, '#1e293b'); // Suelo estudio
             bgGrad.addColorStop(1.0, '#020617');
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, 512, 256);
 
-            // Softboxes cenitales de estudio (Destellos blancos de cromo puro)
+            // Tiras de luces lineales de estudio (Softbox strips finas para crear destellos nítidos, no manchas blancas gigantes)
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(160, 15, 192, 50);
-            ctx.fillRect(30, 25, 90, 35);
-            ctx.fillRect(390, 25, 90, 35);
+            ctx.fillRect(160, 22, 192, 16); // Tira de luz cenital superior fina
+            ctx.fillRect(40, 35, 75, 12);   // Foco izquierdo fino
+            ctx.fillRect(395, 35, 75, 12);  // Foco derecho fino
 
             // Reflejos neón laterales en el cromo
-            const cyanGrad = ctx.createLinearGradient(0, 70, 0, 160);
+            const cyanGrad = ctx.createLinearGradient(0, 60, 0, 150);
             cyanGrad.addColorStop(0, '#00e5ff');
-            cyanGrad.addColorStop(1, '#0284c7');
+            cyanGrad.addColorStop(1, '#0369a1');
             ctx.fillStyle = cyanGrad;
-            ctx.fillRect(8, 70, 28, 90);
+            ctx.fillRect(6, 65, 20, 80);
 
-            const pinkGrad = ctx.createLinearGradient(0, 70, 0, 160);
+            const pinkGrad = ctx.createLinearGradient(0, 60, 0, 150);
             pinkGrad.addColorStop(0, '#ff1493');
-            pinkGrad.addColorStop(1, '#9d174d');
+            pinkGrad.addColorStop(1, '#831843');
             ctx.fillStyle = pinkGrad;
-            ctx.fillRect(476, 70, 28, 90);
+            ctx.fillRect(486, 65, 20, 80);
 
-            // Línea de horizonte cromada de 360 grados
-            const horizonLine = ctx.createLinearGradient(0, 122, 0, 134);
-            horizonLine.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-            horizonLine.addColorStop(1, 'rgba(200, 230, 255, 0.0)');
+            // Línea de horizonte plateada fina
+            const horizonLine = ctx.createLinearGradient(0, 124, 0, 132);
+            horizonLine.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+            horizonLine.addColorStop(1, 'rgba(150, 180, 210, 0.0)');
             ctx.fillStyle = horizonLine;
-            ctx.fillRect(0, 122, 512, 12);
+            ctx.fillRect(0, 124, 512, 8);
 
             const texture = new THREE.CanvasTexture(canvas);
             texture.mapping = THREE.EquirectangularReflectionMapping;
@@ -841,26 +841,26 @@ class Real3DClawcade {
             roughness: 0.15
         });
 
-        // Materiales de Grado Industrial - 100% Metal Cromado y Acero Espejo Real (Con IBL de Estudio)
+        // Materiales de Grado Industrial - 100% Metal Plata Real y Acero Cromado (Tono metálico con contraste, CERO blanco)
         const silverChromeMat = new THREE.MeshStandardMaterial({
-            color: 0xf8fafc,          // Plata de alta pureza
-            metalness: 0.95,          // 95% metal puro
-            roughness: 0.10,          // Reflejo especular espejo ultra nítido
-            envMapIntensity: 1.6
+            color: 0x758595,          // Auténtico color plata / acero pulido (NO blanco)
+            metalness: 0.90,          // Conducción metálica física de plata/cromo
+            roughness: 0.16,          // Reflejo especular brillante y definido
+            envMapIntensity: 0.95
         });
 
         const silverSteelMat = new THREE.MeshStandardMaterial({
-            color: 0xe2e8f0,          // Acero pulido
-            metalness: 0.88,          // Metal de alta conductividad óptica
-            roughness: 0.18,          // Acero satinado brillante
-            envMapIntensity: 1.3
+            color: 0x546373,          // Acero estructural plateado más oscuro para profundidad
+            metalness: 0.85,
+            roughness: 0.26,
+            envMapIntensity: 0.85
         });
 
         const silverBoltMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,          // Pernos de cromo brillante
-            metalness: 0.98,
-            roughness: 0.08,
-            envMapIntensity: 1.8
+            color: 0x90a0b0,          // Pernos y herrajes de plata espejo
+            metalness: 0.94,
+            roughness: 0.10,
+            envMapIntensity: 1.10
         });
 
         // 1. Rieles Longitudinales (Eje Z en el techo)

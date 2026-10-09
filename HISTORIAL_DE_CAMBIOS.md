@@ -195,6 +195,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Sombras suaves en tiempo real duplicadas en resolución a `2048x2048` píxeles.
    - Aumento de altura de la vitrina de cristal a `500px` en modo estándar para mayor amplitud visual.
 
+---
+
+## 📦 ENTRADA: Versión 1.8.1 - Calibración Cromática de Plata Real Metálica (Eliminación de Sobreexposición Blanca)
+
+### Funcionalidades Implementadas:
+1. **Calibración de Tono Plata Metálico Auténtico:**
+   - Se ajustó la base de color de la garra de blanco (`0xf8fafc`) a un tono de plata pura / acero pulido con contraste profundo (`0x758595`).
+   - Se calibró la reflectividad física (`metalness: 0.90`, `roughness: 0.16`, `envMapIntensity: 0.95`), permitiendo que el cuerpo de la garra mantenga su color plateado metálico característico mientras proyecta destellos nítidos en las aristas y curvas.
+2. **Control de Iluminación y Exposición:**
+   - Se redujo el foco direccional frontal (`clawFrontLight` de 1.6 a 0.50) y el foco cenital (`1.45`), evitando que la luz frontal queme la superficie convirtiéndola en blanco plano.
+   - Se ajustó la exposición del mapeo tonal a `1.0`.
+   - Se refinó el mapa de entorno de estudio con tiras lineales de luz finas en lugar de bloques masivos, generando destellos de cromo finos y elegantes.
+
 
 
 
