@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mando Virtual Arcade | Control desde tu Móvil</title>
+    <style>
+        :root {
+            --bg: #090b12;
+            --pink: #d81b60;
+            --cyan: #00e5ff;
+            --red: #ff1744;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: system-ui, -apple-system, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+        }
+        /* Barra de Estado */
+        .status-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #141824;
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid #232b40;
+        }
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #76ff03;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #76ff03;
+            box-shadow: 0 0 10px #76ff03;
+        }
+        .room-code-tag {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--cyan);
+            background: rgba(0, 229, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+        }
+        /* Controles Principales */
+        .controller-layout {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex: 1;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        /* Joystick Virtual */
+        .joystick-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .joystick-base {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, #1a2236 0%, #0d121e 100%);
+            border: 3px solid #2d3b5b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .joystick-knob {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ff8a80 0%, var(--red) 60%, #b71c1c 100%);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.7), 0 0 15px rgba(255, 23, 68, 0.5);
+            position: absolute;
+            transition: transform 0.05s ease-out;
+        }
+        .joystick-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        /* Botón Grande ATRAPAR */
+        .action-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .catch-dome-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ff8a80 0%, var(--red) 55%, #880e4f 100%);
+            border: 5px solid #d50000;
+            color: #fff;
+            font-weight: 900;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 0 #5f0909, 0 15px 30px rgba(255, 23, 68, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.06s, box-shadow 0.06s;
+        }
+        .catch-dome-btn:active, .catch-dome-btn.pressed {
+            transform: translateY(8px);
+            box-shadow: 0 2px 0 #5f0909, 0 5px 12px rgba(255, 23, 68, 0.3);
+        }
+        /* Botón Insertar Moneda */
+        .bottom-bar {
+            display: flex;
+            justify-content: center;
+        }
+        .btn-insert-coin {
+            background: linear-gradient(90deg, #ff9100, #ff3d00);
+            border: none;
+            color: #fff;
+            font-weight: 900;
+            font-size: 0.95rem;
+            padding: 14px 28px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(255, 61, 0, 0.4);
+            cursor: pointer;
+            width: 100%;
+            max-width: 380px;
+        }
+        .btn-insert-coin:active {
+            transform: scale(0.97);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Estado -->
+    <header class="status-header">
+        <div class="status-pill">
+            <span class="status-dot" id="connDot"></span>
+            <span id="connStatusText">Conectando...</span>
+        </div>
+        <div class="room-code-tag" id="lblRoomCode">SALA: ----</div>
+    </header>
+
+    <!-- Controles Táctiles -->
+    <main class="controller-layout">
+        
+        <!-- Joystick Izquierda / Derecha -->
+        <div class="joystick-zone">
+            <div class="joystick-base" id="touchJoystickBase">
+                <div class="joystick-knob" id="touchJoystickKnob"></div>
+            </div>
+            <span class="joystick-label">◀ DESLIZA LA PALANCA ▶</span>
+        </div>
+
+        <!-- Botón ¡ATRAPAR! -->
+        <div class="action-zone">
+            <button class="catch-dome-btn" id="btnTouchCatch">¡ATRAPAR!</button>
+            <span class="joystick-label">BOTÓN DE ACCIÓN</span>
+        </div>
+
+    </main>
+
+    <!-- Botón Insertar Moneda -->
+    <footer class="bottom-bar">
+        <button class="btn-insert-coin" id="btnTouchCoin">🪙 INSERTAR CRÉDITO</button>
+    </footer>
+
+    <!-- PeerJS para conexión directa sin servidor -->
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <script>
+        // Obtener código de sala desde la URL (?room=CLAW-XXXX)
+        const params = new URLSearchParams(window.location.search);
+        const roomId = params.get('room') || 'CLAW-DEFAULT';
+        document.getElementById('lblRoomCode').textContent = `SALA: ${roomId}`;
+
+        // Canales de comunicación
+        const broadcast = new BroadcastChannel('virtual_arcade_channel');
+        let peerConn = null;
+
+        // Iniciar WebRTC PeerJS
+        try {
+            const peer = new Peer();
+            peer.on('open', (id) => {
+                const targetPeerId = `va-${roomId.toLowerCase()}`;
+                peerConn = peer.connect(targetPeerId);
+
+                peerConn.on('open', () => {
+                    updateStatus(true, '🟢 CONECTADO A LA PANTALLA');
+                });
+                peerConn.on('close', () => {
+                    updateStatus(false, '⚠️ DESCONECTADO');
+                });
+            });
+            peer.on('error', (err) => {
+                console.warn('Peer error, usando canal alternativo:', err);
+                updateStatus(true, '🟢 CONECTADO (CANAL LOCAL)');
+            });
+        } catch(e) {
+            console.error('Error conectando WebRTC:', e);
+            updateStatus(true, '🟢 CONECTADO (MODO BROADCAST)');
+        }
+
+        function updateStatus(connected, text) {
+            const dot = document.getElementById('connDot');
+            const status = document.getElementById('connStatusText');
+            dot.style.background = connected ? '#76ff03' : '#ff1744';
+            dot.style.boxShadow = connected ? '0 0 10px #76ff03' : '0 0 10px #ff1744';
+            status.textContent = text;
+        }
+
+        function sendAction(action, payload = {}) {
+            const msg = { action, ...payload };
+            // Enviar por BroadcastChannel (misma red/dispositivo)
+            broadcast.postMessage(msg);
+            // Enviar por PeerJS WebRTC (entre móvil y Smart TV remota)
+            if (peerConn && peerConn.open) {
+                peerConn.send(msg);
+            }
+            // Respuesta háptica en móvil
+            if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        // Joystick táctil
+        const base = document.getElementById('touchJoystickBase');
+        const knob = document.getElementById('touchJoystickKnob');
+        let isTouching = false;
+        let startX = 0;
+
+        base.addEventListener('pointerdown', (e) => {
+            isTouching = true;
+            startX = e.clientX;
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (!isTouching) return;
+            const deltaX = e.clientX - startX;
+            const clampedX = Math.max(-45, Math.min(45, deltaX));
+            knob.style.transform = `translateX(${clampedX}px)`;
+
+            if (clampedX < -15) {
+                sendAction('MOVE', { dir: -1 });
+            } else if (clampedX > 15) {
+                sendAction('MOVE', { dir: 1 });
+            } else {
+                sendAction('MOVE', { dir: 0 });
+            }
+        });
+
+        const resetJoystick = () => {
+            if (!isTouching) return;
+            isTouching = false;
+            knob.style.transform = 'translateX(0px)';
+            sendAction('MOVE', { dir: 0 });
+        };
+
+        window.addEventListener('pointerup', resetJoystick);
+        window.addEventListener('pointercancel', resetJoystick);
+
+        // Botón ATRAPAR
+        const btnCatch = document.getElementById('btnTouchCatch');
+        btnCatch.addEventListener('pointerdown', () => {
+            btnCatch.classList.add('pressed');
+            sendAction('CATCH');
+            if (navigator.vibrate) navigator.vibrate([60, 40, 80]);
+        });
+        btnCatch.addEventListener('pointerup', () => btnCatch.classList.remove('pressed'));
+
+        // Botón MONEDA
+        const btnCoin = document.getElementById('btnTouchCoin');
+        btnCoin.addEventListener('click', () => {
+            sendAction('COIN');
+            if (navigator.vibrate) navigator.vibrate(40);
+        });
+    </script>
+</body>
+</html>

@@ -753,3 +753,107 @@ body.tv-kiosk-mode .arcade-cabinet {
     color: #64748b;
     font-size: 0.85rem;
 }
+
+/* Badges de Estado de Controladores */
+.controllers-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.controller-badge {
+    background: #0d111b;
+    border: 1px solid #232b3e;
+    color: #94a3b8;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+}
+
+/* Modal de Conexión Móvil QR */
+.qr-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.qr-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.qr-modal-box {
+    background: #101524;
+    border: 2px solid var(--neon-cyan);
+    border-radius: 24px;
+    padding: 28px 24px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(0, 229, 255, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+}
+
+.qr-modal-title {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #fff;
+}
+
+.qr-modal-desc {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.4;
+}
+
+.qr-code-holder {
+    background: #0b0e17;
+    padding: 12px;
+    border-radius: 16px;
+    display: inline-block;
+}
+
+.qr-room-code-tag {
+    font-family: monospace;
+    font-size: 1.1rem;
+    color: var(--neon-cyan);
+    background: rgba(0, 229, 255, 0.1);
+    border: 1px dashed var(--neon-cyan);
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.btn-qr-close {
+    background: #20293d;
+    border: none;
+    color: #fff;
+    font-weight: 800;
+    padding: 10px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+

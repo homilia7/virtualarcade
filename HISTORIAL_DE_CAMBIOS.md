@@ -33,3 +33,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 3. **Despliegue y CI/CD:**
    - Despliegue en Cloudflare Pages (`virtualarcade.pages.dev`).
    - Sincronización continua con repositorio en GitHub (`homilia7/virtualarcade`).
+
+---
+
+## 📦 ENTRADA: Versión 1.1.0 - Módulos de Entrada: Joystick Físico, Bluetooth BLE y Control Remoto Celular
+
+### Funcionalidades Implementadas:
+1. **Módulo de Joystick Físico (Gamepad API):**
+   - Detección automática en tiempo real de mandos USB Arcade (Zero Delay USB Encoder), mandos de Xbox, PlayStation y Nintendo Switch.
+   - Mapeo nativo de palanca analógica izquierda / D-Pad para movimiento horizontal de la garra.
+   - Mapeo de botones de acción (A / X / Gatillo) para "¡ATRAPAR!" y botones Select/Start para inserción de fichas.
+   - Notificaciones HUD y badges de estado en pantalla.
+
+2. **Módulo de Web Bluetooth API (BLE):**
+   - Vinculación directa desde el navegador con mandos inalámbricos Bluetooth y microcontroladores (ESP32/Arduino).
+
+3. **Módulo de Control Remoto Móvil sin Apps (QR + WebRTC / Broadcast):**
+   - Pantalla interactiva en `controller.html` con palanca analógica táctil, botón grande de acción con vibración háptica y botón de créditos.
+   - Generación de código QR y sala dinámica (`CLAW-XXXX`) para que los clientes en ferias o eventos controlen la pantalla de TV desde su teléfono sin tocarla.
+

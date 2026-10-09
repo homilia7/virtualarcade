@@ -42,7 +42,16 @@
             <div class="arcade-toolbar">
                 <button id="btnThemePlushies" class="toolbar-btn active">🧸 Peluches & Juguetes</button>
                 <button id="btnThemeGourmet" class="toolbar-btn">🍔 Gourmet & Restaurante</button>
+                <button id="btnConnectBluetooth" class="toolbar-btn" title="Buscar mandos Bluetooth o periféricos BLE">📡 Vincular Bluetooth</button>
+                <button id="btnConnectMobile" class="toolbar-btn" style="background: linear-gradient(90deg, #00e5ff, #76ff03); color: #000; font-weight: 900;" title="Escanea el código QR con tu celular">📱 Jugar desde Celular (QR)</button>
                 <button id="btnToggleKiosk" class="toolbar-btn" title="Ideal para pantallas de TV montadas en la pared">📺 Modo TV Vertical (Kiosco)</button>
+            </div>
+
+            <!-- Indicadores de Estado de Mandos Conectados -->
+            <div class="controllers-status-bar">
+                <span class="controller-badge" id="gamepadBadge">🎮 Joystick USB/Gamepad: AUTO-DETECT</span>
+                <span class="controller-badge" id="bluetoothBadge">📡 Bluetooth: LISTO PARA VINCULAR</span>
+                <span class="controller-badge" id="mobileBadge">📱 Control Móvil: SALA ACTIVA</span>
             </div>
 
             <!-- EL MUEBLE ARCADE (VIRTUAL CLAWCADE) -->
@@ -231,8 +240,23 @@
         <p>© 2026 Virtual Arcade. Plataforma de Gamificación Gastronómica y Eventos. Desplegado en Cloudflare Pages.</p>
     </footer>
 
+    <!-- Modal de Conexión Móvil QR -->
+    <div id="mobileQRModal" class="qr-modal-overlay" role="dialog" aria-modal="true">
+        <div class="qr-modal-box">
+            <h3 class="qr-modal-title">📱 Conecta tu Celular como Joystick</h3>
+            <p class="qr-modal-desc">Escanea este código con la cámara de tu teléfono para controlar la máquina en tiempo real sin cables ni aplicaciones:</p>
+            <div class="qr-code-holder" id="qrCodeContainer">
+                <!-- Se dibuja dinámicamente -->
+            </div>
+            <div class="qr-room-code-tag" id="roomCodeDisplay">CLAW-....</div>
+            <p style="font-size: 0.72rem; color: #64748b; word-break: break-all;" id="mobileControllerUrl"></p>
+            <button class="btn-qr-close" id="btnCloseQRModal">Cerrar</button>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="audio.js"></script>
     <script src="game.js"></script>
+    <script src="controllers.js"></script>
 </body>
 </html>
