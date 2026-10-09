@@ -17,6 +17,275 @@ const PLUSHIE_COLORS = [
     { name: 'Zorrito Coral', color: 0xffab91, earColor: 0xff7043, emoji: '🦊' }
 ];
 
+// ========================================================
+// GENERADORES 3D PROCEDURALES DE COMIDA GOURMET REALISTA
+// ========================================================
+
+/** 1. 🍔 Hamburguesa Doble Gourmet con Semillas de Sésamo y Queso Fundido */
+function createBurgerMesh() {
+    const burger = new THREE.Group();
+
+    // Materiales PBR
+    const bunMat = new THREE.MeshStandardMaterial({ color: 0xc87b32, roughness: 0.65, metalness: 0.05 });
+    const pattyMat = new THREE.MeshStandardMaterial({ color: 0x3d1d0e, roughness: 0.9, metalness: 0.1 });
+    const cheeseMat = new THREE.MeshStandardMaterial({ color: 0xffa000, roughness: 0.35, metalness: 0.05 });
+    const tomatoMat = new THREE.MeshStandardMaterial({ color: 0xd32f2f, roughness: 0.25, metalness: 0.1 });
+    const lettuceMat = new THREE.MeshStandardMaterial({ color: 0x43a047, roughness: 0.6 });
+    const sesameMat = new THREE.MeshStandardMaterial({ color: 0xfffae0, roughness: 0.5 });
+
+    // Pan inferior
+    const bunBottom = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 0.18, 24), bunMat);
+    bunBottom.position.y = -0.35;
+    bunBottom.castShadow = true;
+    burger.add(bunBottom);
+
+    // Carne a la parrilla
+    const patty = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.22, 24), pattyMat);
+    patty.position.y = -0.16;
+    patty.castShadow = true;
+    burger.add(patty);
+
+    // Queso derretido (esquinas sobresalen)
+    const cheese = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.05, 0.85), cheeseMat);
+    cheese.position.y = -0.03;
+    cheese.rotation.y = Math.PI / 4;
+    cheese.castShadow = true;
+    burger.add(cheese);
+
+    // Rodajas de tomate
+    const t1 = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.08, 16), tomatoMat);
+    t1.position.set(-0.2, 0.04, -0.1);
+    burger.add(t1);
+    const t2 = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.08, 16), tomatoMat);
+    t2.position.set(0.18, 0.04, 0.15);
+    burger.add(t2);
+
+    // Hojas de lechuga crujiente
+    for (let i = 0; i < 5; i++) {
+        const leafAngle = (i * Math.PI * 2) / 5;
+        const leaf = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.04, 0.4), lettuceMat);
+        leaf.position.set(Math.cos(leafAngle) * 0.48, 0.08, Math.sin(leafAngle) * 0.48);
+        leaf.rotation.y = leafAngle;
+        leaf.rotation.x = 0.15;
+        burger.add(leaf);
+    }
+
+    // Pan superior abombado
+    const bunTop = new THREE.Mesh(new THREE.SphereGeometry(0.56, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.52), bunMat);
+    bunTop.scale.set(1.0, 0.58, 1.0);
+    bunTop.position.y = 0.1;
+    bunTop.castShadow = true;
+    burger.add(bunTop);
+
+    // Semillas de sésamo individuales en el pan
+    const sesameGeo = new THREE.SphereGeometry(0.024, 6, 6);
+    sesameGeo.scale(1.4, 0.5, 0.9);
+    const seedCoords = [
+        [0, 0.4, 0], [0.18, 0.38, 0.12], [-0.15, 0.37, 0.15],
+        [0.25, 0.34, -0.1], [-0.22, 0.35, -0.12], [0.05, 0.36, -0.25],
+        [-0.05, 0.37, 0.26], [0.32, 0.28, 0.18], [-0.3, 0.29, 0.1]
+    ];
+    seedCoords.forEach(pos => {
+        const seed = new THREE.Mesh(sesameGeo, sesameMat);
+        seed.position.set(pos[0], pos[1], pos[2]);
+        seed.rotation.set(Math.random(), Math.random(), Math.random());
+        burger.add(seed);
+    });
+
+    burger.scale.set(1.1, 1.1, 1.1);
+    return burger;
+}
+
+/** 2. 🍟 Papas Fritas Crujientes en Caja Roja de Fast Food */
+function createFriesMesh() {
+    const fries = new THREE.Group();
+    const boxMat = new THREE.MeshStandardMaterial({ color: 0xd32f2f, roughness: 0.4, metalness: 0.05 });
+    const stripeMat = new THREE.MeshStandardMaterial({ color: 0xffd54f, roughness: 0.3 });
+
+    // Caja roja frontal
+    const box = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.85, 0.45), boxMat);
+    box.position.y = -0.15;
+    box.castShadow = true;
+    fries.add(box);
+
+    // Franja decorativa dorada
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.2, 0.47), stripeMat);
+    stripe.position.y = -0.18;
+    fries.add(stripe);
+
+    // Bastones de papas fritas en abanico
+    const fryMats = [
+        new THREE.MeshStandardMaterial({ color: 0xfbc02d, roughness: 0.6 }),
+        new THREE.MeshStandardMaterial({ color: 0xffd54f, roughness: 0.6 }),
+        new THREE.MeshStandardMaterial({ color: 0xf57f17, roughness: 0.65 })
+    ];
+
+    for (let i = 0; i < 16; i++) {
+        const fLength = 0.65 + Math.random() * 0.35;
+        const fry = new THREE.Mesh(new THREE.BoxGeometry(0.08, fLength, 0.08), fryMats[i % fryMats.length]);
+        const offX = (Math.random() - 0.5) * 0.55;
+        const offZ = (Math.random() - 0.5) * 0.28;
+        fry.position.set(offX, 0.2 + fLength / 2 - 0.2, offZ);
+        fry.rotation.set((Math.random() - 0.5) * 0.25, Math.random() * 0.5, (offX / 0.55) * 0.35);
+        fry.castShadow = true;
+        fries.add(fry);
+    }
+
+    fries.scale.set(1.15, 1.15, 1.15);
+    return fries;
+}
+
+/** 3. 🌮 Taco al Pastor Mexicano con Tortilla Doblada, Piña y Cilantro */
+function createTacoMesh() {
+    const taco = new THREE.Group();
+    const shellMat = new THREE.MeshStandardMaterial({ color: 0xf3bd76, roughness: 0.7, metalness: 0.05 });
+    const meatMat = new THREE.MeshStandardMaterial({ color: 0x6d2312, roughness: 0.85 });
+
+    // Tortilla de maíz doblada en U (dos caras inclinadas y base curva)
+    const wall1 = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.75, 1.1), shellMat);
+    wall1.position.set(-0.25, 0.05, 0);
+    wall1.rotation.z = -0.32;
+    wall1.castShadow = true;
+    taco.add(wall1);
+
+    const wall2 = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.75, 1.1), shellMat);
+    wall2.position.set(0.25, 0.05, 0);
+    wall2.rotation.z = 0.32;
+    wall2.castShadow = true;
+    taco.add(wall2);
+
+    const bottom = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 1.1, 16, 1, false, 0, Math.PI), shellMat);
+    bottom.rotation.x = Math.PI / 2;
+    bottom.rotation.z = Math.PI;
+    bottom.position.y = -0.22;
+    taco.add(bottom);
+
+    // Relleno de carne al pastor marinada
+    const meat = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.22, 1.0, 12), meatMat);
+    meat.rotation.x = Math.PI / 2;
+    meat.position.y = -0.05;
+    meat.castShadow = true;
+    taco.add(meat);
+
+    // Piña asada en cubitos
+    const pineappleMat = new THREE.MeshStandardMaterial({ color: 0xffd600, roughness: 0.3 });
+    for (let i = 0; i < 4; i++) {
+        const p = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.1, 0.14), pineappleMat);
+        p.position.set((Math.random() - 0.5) * 0.18, 0.22, -0.35 + i * 0.22);
+        p.rotation.set(Math.random(), Math.random(), Math.random());
+        taco.add(p);
+    }
+
+    // Cilantro picado fresco
+    const cilantroMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.6 });
+    for (let i = 0; i < 12; i++) {
+        const c = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.06), cilantroMat);
+        c.position.set((Math.random() - 0.5) * 0.22, 0.24, (Math.random() - 0.5) * 0.85);
+        taco.add(c);
+    }
+
+    // Hebras de queso fundido
+    const cheeseMat = new THREE.MeshStandardMaterial({ color: 0xffca28, roughness: 0.4 });
+    for (let i = 0; i < 3; i++) {
+        const ch = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.4), cheeseMat);
+        ch.position.set((Math.random() - 0.5) * 0.15, 0.2, (Math.random() - 0.5) * 0.5);
+        ch.rotation.y = (Math.random() - 0.5) * 0.6;
+        taco.add(ch);
+    }
+
+    taco.scale.set(1.1, 1.1, 1.1);
+    return taco;
+}
+
+/** 4. 🥟 Empanada Criolla Dorada con Repulgue Trenzado Artesanal */
+function createEmpanadaMesh() {
+    const empanada = new THREE.Group();
+    const crustMat = new THREE.MeshStandardMaterial({ color: 0xdf994a, roughness: 0.45, metalness: 0.05 });
+    const braidMat = new THREE.MeshStandardMaterial({ color: 0xbf782c, roughness: 0.5 });
+
+    // Masa inflada en media luna
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.68, 20, 16, 0, Math.PI, 0, Math.PI), crustMat);
+    body.scale.set(1.0, 0.42, 0.55);
+    body.rotation.x = -Math.PI / 2;
+    body.position.y = -0.05;
+    body.castShadow = true;
+    empanada.add(body);
+
+    // Repulgue trenzado tradicional a lo largo del arco exterior
+    const braidCount = 13;
+    const radius = 0.68;
+    for (let i = 0; i <= braidCount; i++) {
+        const t = (i / braidCount) * Math.PI;
+        const bx = Math.cos(t) * radius;
+        const bz = Math.sin(t) * (radius * 0.55);
+        const fold = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.045, 8, 12), braidMat);
+        fold.position.set(bx, 0.02, bz);
+        fold.rotation.x = Math.PI / 2;
+        fold.rotation.z = -t + Math.PI / 4;
+        fold.castShadow = true;
+        empanada.add(fold);
+    }
+
+    // Barniz de huevo horneado (brillo satinado)
+    const gloss = new THREE.Mesh(
+        new THREE.SphereGeometry(0.45, 12, 10, 0, Math.PI, 0, Math.PI),
+        new THREE.MeshStandardMaterial({ color: 0xffd180, roughness: 0.25, transparent: true, opacity: 0.35 })
+    );
+    gloss.scale.set(1.0, 0.44, 0.52);
+    gloss.rotation.x = -Math.PI / 2;
+    gloss.position.y = -0.04;
+    empanada.add(gloss);
+
+    empanada.scale.set(1.2, 1.2, 1.2);
+    return empanada;
+}
+
+/** 5. 🍩 Dona Gourmet Glaseada de Fresa con Chispas de Colores */
+function createDessertMesh() {
+    const dessert = new THREE.Group();
+    const doughMat = new THREE.MeshStandardMaterial({ color: 0xdeb887, roughness: 0.75, metalness: 0.02 });
+    const glazeMat = new THREE.MeshStandardMaterial({ color: 0xff4081, roughness: 0.15, metalness: 0.1 });
+
+    // Masa esponjosa dorada
+    const dough = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.24, 20, 32), doughMat);
+    dough.rotation.x = Math.PI / 2;
+    dough.castShadow = true;
+    dessert.add(dough);
+
+    // Glaseado espejo de fresa
+    const glaze = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.255, 16, 32, Math.PI * 2), glazeMat);
+    glaze.rotation.x = Math.PI / 2;
+    glaze.position.y = 0.05;
+    glaze.scale.set(1.0, 1.0, 0.95);
+    dessert.add(glaze);
+
+    // Chispitas multicolores (Sprinkles)
+    const sprinkleColors = [0xffffff, 0x00e5ff, 0xffee58, 0x76ff03, 0x7c4dff, 0xff9100];
+    for (let i = 0; i < 24; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const rad = 0.38 + Math.random() * 0.28;
+        const s = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.022, 0.022, 0.08, 8),
+            new THREE.MeshStandardMaterial({ color: sprinkleColors[i % sprinkleColors.length], roughness: 0.3 })
+        );
+        s.position.set(Math.cos(angle) * rad, 0.28, Math.sin(angle) * rad);
+        s.rotation.set(Math.PI / 2, 0, Math.random() * Math.PI);
+        dessert.add(s);
+    }
+
+    dessert.scale.set(1.15, 1.15, 1.15);
+    return dessert;
+}
+
+// Catálogo de Premios Gourmet Realistas
+const FOOD_PRIZES = [
+    { type: 'burger', name: 'Hamburguesa Doble Gourmet', emoji: '🍔', create: createBurgerMesh },
+    { type: 'fries', name: 'Papas Fritas Crujientes', emoji: '🍟', create: createFriesMesh },
+    { type: 'taco', name: 'Taco al Pastor Supremo', emoji: '🌮', create: createTacoMesh },
+    { type: 'empanada', name: 'Empanada Criolla Dorada', emoji: '🥟', create: createEmpanadaMesh },
+    { type: 'dessert', name: 'Dona Glaseada de Fresa', emoji: '🍩', create: createDessertMesh }
+];
+
 class Real3DClawcade {
     constructor() {
         this.container = document.querySelector('.glass-chamber');
@@ -25,13 +294,13 @@ class Real3DClawcade {
         // Estado del juego
         this.state = 'WAITING_COIN';
         this.credits = 1;
-        this.currentTheme = 'plushies';
+        this.currentTheme = 'gourmet'; // Comida gourmet por defecto
 
         // Coordenadas de la Garra en el espacio 3D
-        // Límites del gabinete: X [-2.2, 5.0], Z [-3.5, 3.5], Y [4.2 arriba, -2.8 abajo]
-        this.clawPos = { x: 1.5, y: 4.0, z: 0.0 };
-        this.restingY = 4.0;
-        this.chutePos = { x: -4.2, y: 4.0, z: 1.8 }; // Posición de la rampa a la izquierda
+        // Límites del gabinete: X [-2.2, 5.0], Z [-3.5, 3.5], Y [3.3 arriba, -2.4 abajo]
+        this.clawPos = { x: 1.5, y: 3.3, z: 0.0 };
+        this.restingY = 3.3;
+        this.chutePos = { x: -4.2, y: 3.3, z: 1.8 }; // Posición de la rampa a la izquierda
         this.clawAngle = 0.82; // Arranca abierta como en las máquinas reales
         this.targetClawAngle = 0.82;
 
@@ -258,12 +527,25 @@ class Real3DClawcade {
         railRight.position.set(5.5, 4.8, 0);
         this.scene.add(railRight);
 
-        // 2. Viga Transversal (Eje X que se desplaza en Z)
+        // 2. Viga Transversal (Eje X que se desplaza en Z en el techo a Y = 4.8)
         this.crossbeam = new THREE.Group();
         const beamGeo = new THREE.CylinderGeometry(0.1, 0.1, 11.2, 16);
         const beamMesh = new THREE.Mesh(beamGeo, chromeMirrorMat);
         beamMesh.rotation.z = Math.PI / 2;
         this.crossbeam.add(beamMesh);
+
+        // Bloques y rodamientos guía en los extremos que corren sobre los rieles
+        const guideGeo = new THREE.BoxGeometry(0.35, 0.25, 0.45);
+        const guideLeft = new THREE.Mesh(guideGeo, darkSteelMat);
+        guideLeft.position.set(-5.5, 0, 0);
+        this.crossbeam.add(guideLeft);
+
+        const guideRight = new THREE.Mesh(guideGeo, darkSteelMat);
+        guideRight.position.set(5.5, 0, 0);
+        this.crossbeam.add(guideRight);
+
+        // Anclaje permanente de la viga en el riel superior del techo
+        this.crossbeam.position.set(0, 4.8, this.clawPos.z);
         this.scene.add(this.crossbeam);
 
         // 3. Carro de Transporte (Trolley con polea y motor)
@@ -426,11 +708,12 @@ class Real3DClawcade {
     }
 
     /**
-     * Genera la montaña volumétrica de 60+ peluches 3D apilados físicamente
-     * con sombras y profundidad real.
+     * Genera la montaña volumétrica 3D de premios apilados físicamente
+     * con sombras y profundidad real. Soporta 'gourmet' (hamburguesa, papas, tacos, empanadas, postres)
+     * y 'plushies'.
      */
     spawnPlushieMountain3D() {
-        // Limpiar peluches previos
+        // Limpiar premios previos
         this.plushies.forEach(p => this.scene.remove(p.mesh));
         this.plushies = [];
 
@@ -439,51 +722,79 @@ class Real3DClawcade {
         const startZ = -3.8;
         const endZ = 3.8;
 
-        // Distribución en 3 niveles de altura (Capas volumétricas)
+        const isGourmet = (this.currentTheme === 'gourmet');
+
+        // Distribución en capas volumétricas
         for (let x = startX; x <= endX; x += 0.85) {
             for (let z = startZ; z <= endZ; z += 0.85) {
-                const proto = PLUSHIE_COLORS[Math.floor(Math.random() * PLUSHIE_COLORS.length)];
-                const radius = 0.52 + Math.random() * 0.12;
+                const radius = isGourmet ? 0.58 : (0.52 + Math.random() * 0.12);
 
                 // Forma de colina: más alto hacia el centro y fondo
                 const distCenter = Math.sqrt(Math.pow(x - 1.5, 2) + Math.pow(z, 2));
                 const heightOffset = Math.max(0, 1.8 - distCenter * 0.35);
                 const posY = -4.5 + radius + heightOffset + (Math.random() * 0.3);
 
-                const plushieGeo = new THREE.SphereGeometry(radius, 24, 24);
-                const plushieMat = new THREE.MeshStandardMaterial({
-                    color: proto.color,
-                    roughness: 0.55,
-                    metalness: 0.05
-                });
+                let mesh;
+                let prizeName = '';
+                let prizeEmoji = '🎁';
 
-                const mesh = new THREE.Mesh(plushieGeo, plushieMat);
-                mesh.position.set(
-                    x + (Math.random() * 0.25 - 0.12),
-                    posY,
-                    z + (Math.random() * 0.25 - 0.12)
-                );
-                mesh.castShadow = true;
-                mesh.receiveShadow = true;
+                if (isGourmet) {
+                    const food = FOOD_PRIZES[Math.floor(Math.random() * FOOD_PRIZES.length)];
+                    mesh = food.create();
+                    prizeName = food.name;
+                    prizeEmoji = food.emoji;
 
-                // Orejitas 3D
-                const earGeo = new THREE.SphereGeometry(radius * 0.35, 12, 12);
-                const earMat = new THREE.MeshStandardMaterial({ color: proto.earColor, roughness: 0.6 });
-                const ear1 = new THREE.Mesh(earGeo, earMat);
-                ear1.position.set(-radius * 0.7, radius * 0.7, 0);
-                mesh.add(ear1);
+                    mesh.position.set(
+                        x + (Math.random() * 0.22 - 0.11),
+                        posY,
+                        z + (Math.random() * 0.22 - 0.11)
+                    );
+                    mesh.rotation.y = Math.random() * Math.PI * 2;
+                    if (food.type === 'taco' || food.type === 'empanada') {
+                        mesh.rotation.x = (Math.random() - 0.5) * 0.25;
+                        mesh.rotation.z = (Math.random() - 0.5) * 0.25;
+                    }
+                } else {
+                    const proto = PLUSHIE_COLORS[Math.floor(Math.random() * PLUSHIE_COLORS.length)];
+                    prizeName = proto.name;
+                    prizeEmoji = proto.emoji || '🧸';
 
-                const ear2 = new THREE.Mesh(earGeo, earMat);
-                ear2.position.set(radius * 0.7, radius * 0.7, 0);
-                mesh.add(ear2);
+                    const plushieGeo = new THREE.SphereGeometry(radius, 24, 24);
+                    const plushieMat = new THREE.MeshStandardMaterial({
+                        color: proto.color,
+                        roughness: 0.55,
+                        metalness: 0.05
+                    });
+
+                    mesh = new THREE.Mesh(plushieGeo, plushieMat);
+                    mesh.position.set(
+                        x + (Math.random() * 0.25 - 0.12),
+                        posY,
+                        z + (Math.random() * 0.25 - 0.12)
+                    );
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+
+                    // Orejitas 3D
+                    const earGeo = new THREE.SphereGeometry(radius * 0.35, 12, 12);
+                    const earMat = new THREE.MeshStandardMaterial({ color: proto.earColor, roughness: 0.6 });
+                    const ear1 = new THREE.Mesh(earGeo, earMat);
+                    ear1.position.set(-radius * 0.7, radius * 0.7, 0);
+                    mesh.add(ear1);
+
+                    const ear2 = new THREE.Mesh(earGeo, earMat);
+                    ear2.position.set(radius * 0.7, radius * 0.7, 0);
+                    mesh.add(ear2);
+                }
 
                 this.scene.add(mesh);
                 this.plushies.push({
                     mesh,
-                    name: proto.name,
+                    name: prizeName,
+                    emoji: prizeEmoji,
                     radius,
                     initialY: posY,
-                    isTop: posY > -3.2 // Peluches de la cima que la garra puede agarrar
+                    isTop: posY > -3.2 // Premios de la cima que la garra puede agarrar
                 });
             }
         }
@@ -589,7 +900,7 @@ class Real3DClawcade {
             });
         }
 
-        // Modo TV Kiosco
+        // Modo TV Kiosco Clásico
         const btnToggleKiosk = document.getElementById('btnToggleKiosk');
         if (btnToggleKiosk) {
             btnToggleKiosk.addEventListener('click', () => {
@@ -603,6 +914,46 @@ class Real3DClawcade {
                 }, 100);
             });
         }
+
+        // ⛶ Pantalla Completa NATIVA EXCLUSIVA de la Máquina (Solo el mueble Arcade)
+        const toggleMachineFullscreen = () => {
+            const cabinet = document.querySelector('.arcade-cabinet') || document.querySelector('.arcade-viewport');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (cabinet.requestFullscreen) {
+                    cabinet.requestFullscreen().catch(err => console.log('Fullscreen error:', err));
+                } else if (cabinet.webkitRequestFullscreen) {
+                    cabinet.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(err => console.log('Exit fullscreen error:', err));
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        };
+
+        const btnMachineFull = document.getElementById('btnMachineFullscreen');
+        if (btnMachineFull) btnMachineFull.addEventListener('click', toggleMachineFullscreen);
+
+        const btnCabinetFull = document.getElementById('btnCabinetFullscreen');
+        if (btnCabinetFull) btnCabinetFull.addEventListener('click', toggleMachineFullscreen);
+
+        // Reajuste de resolución al entrar o salir de pantalla completa
+        const handleFullscreenChange = () => {
+            const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+            document.body.classList.toggle('machine-fullscreen-active', isFull);
+            setTimeout(() => {
+                const w = this.container.clientWidth;
+                const h = this.container.clientHeight;
+                this.camera.aspect = w / h;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(w, h);
+            }, 120);
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     }
 
     tiltJoystickVisual(x, z) {
@@ -780,17 +1131,20 @@ class Real3DClawcade {
         // ----------------------------------------------------
         // ACTUALIZAR MODELOS 3D EN LA ESCENA
         // ----------------------------------------------------
-        // Mover viga transversal en Z
+        // Mover viga transversal en Z (siempre anclada en el riel superior del techo Y = 4.8)
+        this.crossbeam.position.y = 4.8;
         this.crossbeam.position.z = this.clawPos.z;
         // Mover carro en X
         this.trolley.position.x = this.clawPos.x;
         // Mover cabeza de garra
         this.clawHead.position.set(this.clawPos.x, this.clawPos.y, this.clawPos.z);
 
-        // Longitud del cable en 3D
-        const cableLength = Math.max(0.1, 4.8 - this.clawPos.y);
+        // Longitud del cable en 3D (desde polea en Y=4.6 hasta anilla superior de la garra en Y=clawPos.y + 0.95)
+        const topAttachY = -0.2;
+        const clawAttachWorldY = this.clawPos.y + 0.95;
+        const cableLength = Math.max(0.1, (4.8 + topAttachY) - clawAttachWorldY);
         this.cableMesh.scale.y = cableLength;
-        this.cableMesh.position.y = -cableLength / 2;
+        this.cableMesh.position.y = topAttachY - (cableLength / 2);
 
         // Foco de luz siguiendo la garra sutilmente
         this.spotLight.target = this.clawHead;
@@ -825,8 +1179,28 @@ class Real3DClawcade {
         }
     }
 
+    showWinBanner(prize) {
+        let banner = document.getElementById('winBannerToast');
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.id = 'winBannerToast';
+            banner.className = 'win-banner-toast';
+            this.container.appendChild(banner);
+        }
+        banner.innerHTML = `
+            <span class="prize-emoji">${prize.emoji || '🎁'}</span>
+            <div class="prize-title">¡Premio Obtenido!</div>
+            <div class="prize-name">${prize.name || 'Premio Sorpresa'}</div>
+        `;
+        banner.classList.add('show');
+        setTimeout(() => banner.classList.remove('show'), 2800);
+    }
+
     onWinPrize3D(prize) {
         if (window.soundFX) window.soundFX.playWin();
+
+        // Mostrar notificación de premio en pantalla
+        this.showWinBanner(prize);
 
         // Caída física hacia el interior de la rampa
         const mesh = prize.mesh;

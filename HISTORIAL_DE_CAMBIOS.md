@@ -88,5 +88,30 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Cierre progresivo mecánico al tocar los peluches con descenso simultáneo del pistón central hacia abajo.
    - Física de inercia y balanceo pendular armónico (*Sway Physics*) en los ejes X y Z cuando el carro se desplaza y frena.
 
+---
+
+## 📦 ENTRADA: Versión 1.4.0 - Barra Transversal Superior, Premios 3D Gourmet y Pantalla Completa Exclusiva de Máquina
+
+### Funcionalidades Implementadas:
+1. **Corrección de la Barra Transversal (`crossbeam`) y Rieles de Techo:**
+   - La viga transversal fue reubicada y anclada permanentemente en el plano superior del techo a `Y = 4.8` sobre los rieles longitudinales.
+   - Se agregaron bloques y rodamientos guía laterales en `X = -5.5` y `X = 5.5` para simular la estructura de grúa pórtico industrial.
+   - Cinemática del cable de acero trenzado calibrada con precisión milimétrica desde la polea inferior del carro (`Y = 4.6`) hasta la anilla de suspensión superior de la garra (`Y = clawPos.y + 0.95`).
+   - Reposo natural de la garra calibrado a `restingY = 3.3` para dejar holgura de cable visible y visibilidad despejada de la vitrina.
+
+2. **Modelos 3D Procedurales de Comida Gourmet Realista:**
+   - 🍔 **Hamburguesa Doble:** Pan superior con domo tostado, 9 semillas de sésamo individuales en 3D, queso cheddar fundido con esquinas caídas, rodajas de tomate jugoso, lechuga verde rizada y hamburguesa asada a la parrilla.
+   - 🍟 **Papas Fritas:** Caja roja icónica fast-food con franja dorada y 16 bastones crujientes en abanico con tonos dorados naturales e inclinaciones realistas.
+   - 🌮 **Tacos al Pastor:** Tortilla de maíz tostado curvada en 'U', carne sazonada al pastor, trozos de piña asada, cilantro picado fresco y hebras de queso.
+   - 🥟 **Empanadas Criollas:** Masa dorada horneada en media luna, 13 pliegues de repulgue trenzado artesanal y barniz satinado de huevo horneado.
+   - 🍩 **Postres / Donas Gourmet:** Masa esponjosa dorada, cobertura espejo de glaseado de fresa de alta reflectividad y 24 chispas de colores tridimensionales.
+   - Montaña de premios 3D poblada automáticamente con estos 5 alimentos por defecto (tema `gourmet`).
+
+3. **Botón de Pantalla Completa Exclusivo de la Máquina Arcade:**
+   - Botón nativo de pantalla completa integrado en la marquesina superior del mueble (`.bezel-fullscreen-btn`) y en la barra de herramientas (`btnMachineFullscreen`).
+   - Al activarse, solicita Fullscreen API exclusivamente para el elemento de la máquina (`.arcade-cabinet` / `.arcade-viewport`), ocultando todo el sitio web restante y centrando el mueble arcade en proporción 9:16 vertical con fondo negro absoluto, ideal para monitores, Smart TVs y tótems comerciales.
+   - Banner y toast celebratorio animado con el emoji y nombre del premio (`#winBannerToast`) al depositar la comida en la rampa de premios.
+
+
 
 

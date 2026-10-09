@@ -40,11 +40,12 @@
 
             <!-- Barra de Opciones del Arcade -->
             <div class="arcade-toolbar">
-                <button id="btnThemePlushies" class="toolbar-btn active">🧸 Peluches & Juguetes</button>
-                <button id="btnThemeGourmet" class="toolbar-btn">🍔 Gourmet & Restaurante</button>
+                <button id="btnThemeGourmet" class="toolbar-btn active">🍔 Comida Gourmet (Burgers, Papas, Tacos, Empanadas, Postres)</button>
+                <button id="btnThemePlushies" class="toolbar-btn">🧸 Peluches & Juguetes</button>
+                <button id="btnMachineFullscreen" class="toolbar-btn" style="background: linear-gradient(90deg, #ff007f, #7928ca); color: #fff; font-weight: 800;" title="Ver exclusivamente la máquina en pantalla completa para TV, monitores o tótems">⛶ Pantalla Completa (Solo Máquina)</button>
                 <button id="btnConnectBluetooth" class="toolbar-btn" title="Buscar mandos Bluetooth o periféricos BLE">📡 Vincular Bluetooth</button>
                 <button id="btnConnectMobile" class="toolbar-btn" style="background: linear-gradient(90deg, #00e5ff, #76ff03); color: #000; font-weight: 900;" title="Escanea el código QR con tu celular">📱 Jugar desde Celular (QR)</button>
-                <button id="btnToggleKiosk" class="toolbar-btn" title="Ideal para pantallas de TV montadas en la pared">📺 Modo TV Vertical (Kiosco)</button>
+                <button id="btnToggleKiosk" class="toolbar-btn" title="Ideal para pantallas de TV montadas en la pared">📺 Modo Kiosco Vertical</button>
             </div>
 
             <!-- Indicadores de Estado de Mandos Conectados -->
@@ -61,6 +62,9 @@
                     <!-- Marquesina Superior -->
                     <div class="cabinet-top-bezel">
                         <span class="cabinet-title-badge">PREMIUM CLAW SYSTEM</span>
+                        <button id="btnCabinetFullscreen" class="bezel-fullscreen-btn" title="Pantalla Completa (Solo la Máquina)" aria-label="Pantalla Completa">
+                            ⛶ PANTALLA COMPLETA
+                        </button>
                         <span style="font-size: 0.75rem; color: #81d4fa; font-weight: 800;">60 FPS 3D PHYSICS</span>
                     </div>
 

@@ -857,3 +857,131 @@ body.tv-kiosk-mode .arcade-cabinet {
     margin-top: 8px;
 }
 
+/* ========================================================
+   BOTÓN EN MARQUESINA Y PANTALLA COMPLETA SOLO DE LA MÁQUINA
+   ======================================================== */
+.bezel-fullscreen-btn {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(0, 229, 255, 0.6);
+    color: #00e5ff;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.bezel-fullscreen-btn:hover {
+    background: #00e5ff;
+    color: #000;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.8);
+    transform: scale(1.05);
+}
+
+/* Estado de Pantalla Completa NATIVO para la máquina exclusivamente */
+.arcade-cabinet:fullscreen {
+    width: min(100vw, 56.25vh) !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    margin: 0 auto !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: linear-gradient(180deg, #c2185b 0%, var(--cabinet-pink) 25%, #ad1457 100%) !important;
+    box-shadow: 0 0 60px rgba(0, 229, 255, 0.3) !important;
+}
+
+.arcade-cabinet:fullscreen .glass-chamber {
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+}
+
+.arcade-cabinet:fullscreen::backdrop {
+    background: #000;
+}
+
+.arcade-viewport:fullscreen {
+    background: #000 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.arcade-viewport:fullscreen .arcade-cabinet {
+    height: 100vh !important;
+    width: min(100vw, 56.25vh) !important;
+    border-radius: 0 !important;
+    border: none !important;
+}
+
+.arcade-viewport:fullscreen .glass-chamber {
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+}
+
+/* Toast celebratorio cuando el jugador atrapa un premio */
+.win-banner-toast {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    background: rgba(18, 5, 16, 0.94);
+    border: 2px solid #00e5ff;
+    border-radius: 20px;
+    padding: 18px 28px;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 0 35px rgba(0, 229, 255, 0.8), 0 10px 40px rgba(0, 0, 0, 0.95);
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.win-banner-toast.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.win-banner-toast .prize-emoji {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 6px;
+    animation: bouncePrize 0.6s infinite alternate ease-in-out;
+}
+
+@keyframes bouncePrize {
+    from { transform: translateY(0) scale(1); }
+    to { transform: translateY(-10px) scale(1.1); }
+}
+
+.win-banner-toast .prize-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #ff80ab;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.win-banner-toast .prize-name {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #00e5ff;
+    text-shadow: 0 0 12px rgba(0, 229, 255, 0.7);
+    margin-top: 2px;
+}
+
