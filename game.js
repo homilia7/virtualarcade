@@ -871,6 +871,118 @@ class Real3DClawcade {
         acrylicRail.rotation.x = Math.PI / 2;
         acrylicRail.position.set(-3.1, -0.95, 1.2);
         this.scene.add(acrylicRail);
+
+        // ----------------------------------------------------
+        // ENTORNO DEL MUEBLE REAL: TECHO, POSTES ESQUINEROS Y CRISTALERÍA 3D
+        // ----------------------------------------------------
+        // 7. Techo interior cerrado (Caja física real iluminada desde el techo)
+        const ceilingGeo = new THREE.PlaneGeometry(13, 10);
+        const ceilingMat = new THREE.MeshStandardMaterial({
+            color: 0x180515,
+            roughness: 0.45,
+            metalness: 0.15
+        });
+        const ceiling = new THREE.Mesh(ceilingGeo, ceilingMat);
+        ceiling.rotation.x = Math.PI / 2;
+        ceiling.position.y = 5.0;
+        this.scene.add(ceiling);
+
+        // Paneles softbox empotrados en el techo interior
+        const lightPanelGeo = new THREE.PlaneGeometry(3.6, 2.0);
+        const lightPanelMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const lightPanel1 = new THREE.Mesh(lightPanelGeo, lightPanelMat);
+        lightPanel1.rotation.x = Math.PI / 2;
+        lightPanel1.position.set(-2.5, 4.98, 0);
+        this.scene.add(lightPanel1);
+
+        const lightPanel2 = new THREE.Mesh(lightPanelGeo, lightPanelMat);
+        lightPanel2.rotation.x = Math.PI / 2;
+        lightPanel2.position.set(2.5, 4.98, 0);
+        this.scene.add(lightPanel2);
+
+        // 8. Cuatro Postes Esquineros de Acero Cromado / Aluminio de Grado Industrial
+        const postGeo = new THREE.BoxGeometry(0.32, 9.8, 0.32);
+        const cornerPostMat = new THREE.MeshStandardMaterial({
+            color: 0x8a9ba8,
+            metalness: 0.92,
+            roughness: 0.08,
+            envMap: this.chromeCubeMap || this.scene.environment,
+            envMapIntensity: 2.0
+        });
+
+        // Poste Frontal Izquierdo
+        const postFL = new THREE.Mesh(postGeo, cornerPostMat);
+        postFL.position.set(-6.32, 0.1, 4.8);
+        this.scene.add(postFL);
+
+        // Poste Frontal Derecho
+        const postFR = new THREE.Mesh(postGeo, cornerPostMat);
+        postFR.position.set(6.32, 0.1, 4.8);
+        this.scene.add(postFR);
+
+        // Poste Trasero Izquierdo
+        const postBL = new THREE.Mesh(postGeo, cornerPostMat);
+        postBL.position.set(-6.32, 0.1, -4.8);
+        this.scene.add(postBL);
+
+        // Poste Trasero Derecho
+        const postBR = new THREE.Mesh(postGeo, cornerPostMat);
+        postBR.position.set(6.32, 0.1, -4.8);
+        this.scene.add(postBR);
+
+        // 9. Dintel Superior Frontal y Alféizar Inferior de Cristal
+        const headerGeo = new THREE.BoxGeometry(12.9, 0.35, 0.35);
+        const headerMesh = new THREE.Mesh(headerGeo, cornerPostMat);
+        headerMesh.position.set(0, 4.85, 4.8);
+        this.scene.add(headerMesh);
+
+        const sillGeo = new THREE.BoxGeometry(12.9, 0.28, 0.35);
+        const sillMesh = new THREE.Mesh(sillGeo, cornerPostMat);
+        sillMesh.position.set(0, -4.7, 4.8);
+        this.scene.add(sillMesh);
+
+        // Tira de luz LED frontal superior (Ilumina la vitrina desde arriba hacia el frente)
+        const ledBarGeo = new THREE.BoxGeometry(12.4, 0.06, 0.08);
+        const ledBarMat = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            emissive: 0xffffff,
+            emissiveIntensity: 1.2
+        });
+        const ledBar = new THREE.Mesh(ledBarGeo, ledBarMat);
+        ledBar.position.set(0, 4.70, 4.75);
+        this.scene.add(ledBar);
+
+        // 10. Paneles de Vidrio Físicos en 3D (Cristal templado con reflejos especulares de entorno)
+        const physicalGlassMat = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.08,
+            roughness: 0.03,
+            transmission: 0.95,
+            reflectivity: 0.85,
+            envMap: this.chromeCubeMap || this.scene.environment,
+            envMapIntensity: 1.1,
+            depthWrite: false
+        });
+
+        // Cristal Frontal Principal
+        const frontGlassGeo = new THREE.PlaneGeometry(12.3, 9.3);
+        const frontGlass = new THREE.Mesh(frontGlassGeo, physicalGlassMat);
+        frontGlass.position.set(0, 0.1, 4.78);
+        this.scene.add(frontGlass);
+
+        // Cristal Lateral Izquierdo
+        const sideGlassGeo = new THREE.PlaneGeometry(9.4, 9.3);
+        const leftGlass = new THREE.Mesh(sideGlassGeo, physicalGlassMat);
+        leftGlass.rotation.y = Math.PI / 2;
+        leftGlass.position.set(-6.30, 0.1, 0);
+        this.scene.add(leftGlass);
+
+        // Cristal Lateral Derecho
+        const rightGlass = new THREE.Mesh(sideGlassGeo, physicalGlassMat);
+        rightGlass.rotation.y = -Math.PI / 2;
+        rightGlass.position.set(6.30, 0.1, 0);
+        this.scene.add(rightGlass);
     }
 
     buildCraneAndClaw3D() {

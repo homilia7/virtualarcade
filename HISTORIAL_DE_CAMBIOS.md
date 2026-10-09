@@ -226,3 +226,26 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 3. **Calibración Lumínica Espectroscópica:**
    - Reducción del foco frontal a `0.28` con temperatura de color fría (`0xdbeafe`) y luz ambiente a `0.38`, eliminando cualquier velo o sobreexposición blanca difusa y garantizando que los reflejos especulares del cromo sean los protagonistas visuales absolutos.
+
+---
+
+## 📦 ENTRADA: Versión 1.9.0 - Diseño de Máquina Arcade Real con Vitrina de Cristal Templado 3D, Herrajes Cromados y Chasis Físico Completo
+
+### Funcionalidades Implementadas:
+1. **Vitrina de Cristal Templado Realista Multicapa (`.glass-reflection-layer`):**
+   - Sistema de reflejos ópticos con doble franja diagonal de luz difusa ambiental que simula los tubos fluorescentes de una sala de juegos física reflejándose sobre la superficie del cristal.
+   - Bisel perimetral verde-azulado y sombreado interior característico de la refracción del cristal templado de seguridad de 6 mm.
+   - Cuatro herrajes / soportes esquineros de fijación de acero cromado pulido en las 4 esquinas de la vitrina con pernos allen oscurecidos empotrados.
+   - Sello oficial grabado al ácido en la esquina inferior derecha: `"TEMPERED SAFETY GLASS • 6MM"`.
+
+2. **Estructura Arquitectónica y Cristalería 3D en Three.js (`buildCabinet3D`):**
+   - Paneles físicos 3D de cristal templado frontal y laterales con material físico `MeshPhysicalMaterial` (`roughness: 0.03`, `transmission: 0.95`, `reflectivity: 0.85`, `envMap: chromeCubeMap`), interactuando en tiempo real con las luces y el movimiento parallax de la cámara.
+   - Cuatro postes estructurales esquineros de acero pulido que enmarcan las esquinas verticales de la cabina.
+   - Techo interior cerrado con dos paneles softbox empotrados que iluminan cenitalmente el recinto y la montaña de premios.
+   - Dintel superior y alféizar inferior metálicos de soporte, más tira de iluminación LED frontal que baña el interior hacia el frente.
+
+3. **Chasis y Consola de Control de Máquina Arcade Física:**
+   - Columnas cilíndricas de neón 3D con difusores de acrílico translúcido y núcleo de gas xenón blanco brillante, con tapas cromadas superior e inferior.
+   - Consola de mandos en ángulo con perspectiva 3D, placa de control azul metálica y palanca física con bola roja ultra-brillante con doble destello especular y arandela guardapolvo concéntrica.
+   - Botón domo de acción rojo grande ("¡ATRAPAR!") iluminado y botón de asistencia.
+   - Panel inferior con compuerta de premios basculante de acero inoxidable cepillado y monedero/billetero con ranura de inserción iluminada y botón de expulsión rojo `"PUSH"`.

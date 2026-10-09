@@ -68,10 +68,27 @@
                         <span style="font-size: 0.75rem; color: #81d4fa; font-weight: 800;">60 FPS 3D PHYSICS</span>
                     </div>
 
-                    <!-- Vitrina de Cristal 3D (Vista despejada sin obstáculos) -->
+                    <!-- Vitrina de Cristal 3D Realista -->
                     <div class="glass-chamber">
-                        <!-- Reflejo del Cristal -->
-                        <div class="glass-reflection"></div>
+                        <!-- Capa de Reflejo, Refracción y Herrajes de Cristal Templado -->
+                        <div class="glass-reflection-layer">
+                            <div class="glass-streak-main"></div>
+                            <div class="glass-streak-secondary"></div>
+                            <div class="glass-specular-corner"></div>
+                            <div class="glass-edge-bevel"></div>
+                            
+                            <!-- 4 Herrajes Cromados de Fijación de Cristal (Clips de Sujeción) -->
+                            <div class="glass-bracket bracket-tl"><span class="bracket-bolt"></span></div>
+                            <div class="glass-bracket bracket-tr"><span class="bracket-bolt"></span></div>
+                            <div class="glass-bracket bracket-bl"><span class="bracket-bolt"></span></div>
+                            <div class="glass-bracket bracket-br"><span class="bracket-bolt"></span></div>
+
+                            <!-- Sello Oficial de Cristal Templado Arcade -->
+                            <div class="glass-tempered-seal">
+                                <span class="seal-icon">🛡️</span>
+                                <span class="seal-text">TEMPERED SAFETY GLASS • 6MM</span>
+                            </div>
+                        </div>
 
                         <!-- Canvas de Física, Montaña de Peluches y Garra -->
                         <canvas id="gameCanvas"></canvas>
@@ -110,12 +127,17 @@
                     <!-- PARTE INFERIOR: COMPUERTA DE PREMIOS Y MONEDERO -->
                     <div class="cabinet-lower-deck">
                         <div class="prize-dispenser-door" id="prizeDispenserDoor" title="Bandeja de entrega de premios">
-                            <span class="prize-door-icon">🎁</span>
-                            <span class="prize-door-text">RECOGER PREMIO</span>
+                            <div class="prize-door-flap">
+                                <span class="prize-door-icon">🎁</span>
+                                <span class="prize-door-text">RECOGER PREMIO</span>
+                            </div>
                         </div>
-                        <div class="bill-coin-acceptor" id="billCoinSlot" title="Toca para insertar crédito">
-                            <span class="coin-slot-dollar">$</span>
-                            <span class="coin-slot-text">INSERTAR FICHA</span>
+                        <div class="bill-coin-acceptor" id="billCoinSlot" title="Toca para insertar ficha o crédito">
+                            <div class="coin-entry-bezel">
+                                <span class="coin-slot-dollar">$</span>
+                                <span class="coin-slot-text">INSERT COIN</span>
+                            </div>
+                            <div class="coin-reject-btn" title="Botón de retorno de ficha">PUSH</div>
                         </div>
                         <div class="credits-counter-box" id="creditsCount">1 CRED</div>
                     </div>

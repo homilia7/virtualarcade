@@ -242,130 +242,200 @@ body.tv-kiosk-mode .arcade-cabinet {
     border-right: none;
 }
 
-/* El Mueble Físico Rosa Magenta */
+/* ========================================================
+   CHASIS DE LA MÁQUINA ARCADE REAL (IDÉNTICO A LA FOTO CON VIDRIO Y TODO)
+   ======================================================== */
 .arcade-cabinet {
     background: linear-gradient(180deg, #c2185b 0%, var(--cabinet-pink) 25%, #ad1457 100%);
-    border: 5px solid #880e4f;
-    border-radius: 24px;
+    border: 6px solid #880e4f;
+    outline: 2px solid #ff4081;
+    border-radius: 26px;
     box-shadow: 
-        0 25px 70px rgba(0, 0, 0, 0.9),
-        0 0 50px rgba(233, 30, 99, 0.3),
-        inset 0 3px 6px rgba(255, 255, 255, 0.3);
+        0 30px 80px rgba(0, 0, 0, 0.95),
+        0 0 60px rgba(233, 30, 99, 0.4),
+        inset 0 3px 8px rgba(255, 255, 255, 0.4);
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
-/* Columnas de Luz LED Neón Cian a los Lados (Como en la foto) */
+/* Columnas de Luz LED Neón 3D Cilíndricas (Tubos de Neón de Vidrio con Núcleo Brillante) */
 .arcade-cabinet::before,
 .arcade-cabinet::after {
     content: '';
     position: absolute;
-    top: 15px;
+    top: 14px;
     bottom: 90px;
-    width: 12px;
-    border-radius: 6px;
-    background: linear-gradient(180deg, #00e5ff 0%, #00b0ff 50%, #00e5ff 100%);
+    width: 16px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(0, 180, 255, 0.85) 0%, #ffffff 45%, #ffffff 55%, rgba(0, 229, 255, 0.85) 100%);
     box-shadow: 
-        0 0 15px var(--neon-cyan),
-        0 0 30px var(--neon-cyan);
-    z-index: 10;
+        0 0 16px var(--neon-cyan),
+        0 0 35px var(--neon-cyan),
+        inset 0 0 6px #fff;
+    border-top: 4px solid #f8fafc;
+    border-bottom: 4px solid #f8fafc;
+    z-index: 18;
     pointer-events: none;
 }
 
 .arcade-cabinet::before { left: 8px; }
 .arcade-cabinet::after { right: 8px; }
 
-/* Marquesina Superior */
+/* Marquesina Superior con Relieve y Caja de Luz */
 .cabinet-top-bezel {
-    background: linear-gradient(180deg, #ad1457 0%, #880e4f 100%);
+    background: linear-gradient(180deg, #ad1457 0%, #880e4f 75%, #560027 100%);
     padding: 12px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 4px solid #6a0036;
+    border-bottom: 4px solid #4a0025;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 3px 8px rgba(0, 0, 0, 0.6);
     position: relative;
-    z-index: 12;
+    z-index: 22;
 }
 
 .cabinet-title-badge {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     padding: 4px 14px;
     border-radius: 20px;
     font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
     color: #ff80ab;
+    text-shadow: 0 0 10px rgba(255, 64, 129, 0.6);
     text-transform: uppercase;
 }
 
-/* Vitrina de Cristal 3D */
+/* Vitrina de Cristal 3D con Profundidad y Perspectiva */
 .glass-chamber {
     position: relative;
     width: 100%;
     height: 500px;
-    background: radial-gradient(circle at 50% 25%, #2a1124 0%, #120510 70%, #0a0208 100%);
+    background: radial-gradient(circle at 50% 20%, #2a1124 0%, #140512 65%, #080207 100%);
     overflow: hidden;
     margin: 0 auto;
+    border-top: 3px solid #38001a;
+    border-bottom: 3px solid #005b8c;
 }
 
-/* Logo 3D Flotante "VIRTUAL CLAWCADE" (Idéntico a la foto) */
-.virtual-clawcade-logo {
+/* ========================================================
+   SISTEMA DE VIDRIO Y REFLEJOS REALISTAS DE CRISTAL TEMPLADO
+   ======================================================== */
+.glass-reflection-layer {
     position: absolute;
-    top: 24%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 8;
+    inset: 0;
     pointer-events: none;
-    text-align: center;
-    width: 90%;
+    z-index: 15;
+    /* Bisel perimetral verde-azulado y sombra interior de cristal templado de 6mm */
+    box-shadow: 
+        inset 0 0 0 2px rgba(180, 245, 235, 0.28),
+        inset 0 4px 12px rgba(255, 255, 255, 0.38),
+        inset 0 -4px 14px rgba(0, 0, 0, 0.75);
 }
 
-.logo-line-virtual {
-    font-family: var(--font-bubble);
-    font-size: 2.2rem;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: #d7f7ff;
-    text-transform: uppercase;
-    text-shadow: 
-        0 2px 0 #0088cc,
-        0 4px 0 #005580,
-        0 6px 12px rgba(0, 0, 0, 0.8),
-        0 0 25px rgba(0, 229, 255, 0.7);
-    -webkit-text-stroke: 1.5px #fff;
-    line-height: 1;
+/* Franja Principal de Luz Diagonal (Reflejo de Sala / Tubos Fluorescentes) */
+.glass-streak-main {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        122deg,
+        transparent 16%,
+        rgba(255, 255, 255, 0.09) 27%,
+        rgba(255, 255, 255, 0.16) 32%,
+        rgba(255, 255, 255, 0.04) 38%,
+        transparent 48%
+    );
 }
 
-.logo-line-clawcade {
-    font-family: var(--font-bubble);
-    font-size: 2.5rem;
-    font-weight: 900;
-    letter-spacing: 1px;
-    color: #ffffff;
-    text-transform: uppercase;
-    text-shadow: 
-        0 2px 0 #d81b60,
-        0 4px 0 #880e4f,
-        0 7px 15px rgba(0, 0, 0, 0.9),
-        0 0 30px rgba(255, 64, 129, 0.8);
-    -webkit-text-stroke: 1.5px #ff80ab;
-    line-height: 1.1;
-    margin-top: -2px;
+/* Franja Secundaria de Luz Paralela */
+.glass-streak-secondary {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        122deg,
+        transparent 38%,
+        rgba(255, 255, 255, 0.05) 44%,
+        rgba(255, 255, 255, 0.10) 47%,
+        rgba(255, 255, 255, 0.02) 52%,
+        transparent 58%
+    );
 }
 
-/* Reflejos de Cristal */
-.glass-reflection {
+/* Destello Especular Suave en Esquina Superior Izquierda */
+.glass-specular-corner {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 30%, transparent 40%, transparent 100%);
+    width: 50%;
+    height: 45%;
+    background: radial-gradient(
+        circle at 10% 12%,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0.06) 35%,
+        transparent 65%
+    );
+}
+
+/* Líneas de Refracción de Borde del Cristal */
+.glass-edge-bevel {
+    position: absolute;
+    inset: 0;
+    border-left: 2px solid rgba(160, 240, 230, 0.22);
+    border-right: 2px solid rgba(160, 240, 230, 0.22);
+}
+
+/* Herrajes Cromados de Fijación de Cristal en las 4 Esquinas (Clips de Sujeción Reales) */
+.glass-bracket {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 45%, #64748b 100%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7), inset 0 1px 2px #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 16;
+}
+
+.bracket-bolt {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 1px solid #475569;
+    box-shadow: inset 0 1px 2px #000;
+}
+
+.bracket-tl { top: 8px; left: 16px; border-radius: 4px 0 6px 0; }
+.bracket-tr { top: 8px; right: 16px; border-radius: 0 4px 0 6px; }
+.bracket-bl { bottom: 8px; left: 16px; border-radius: 0 6px 0 4px; }
+.bracket-br { bottom: 8px; right: 16px; border-radius: 6px 0 4px 0; }
+
+/* Sello Oficial de Cristal Templado Grabado en la Esquina */
+.glass-tempered-seal {
+    position: absolute;
+    bottom: 12px;
+    right: 44px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.52rem;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    color: rgba(255, 255, 255, 0.42);
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
     pointer-events: none;
-    z-index: 15;
+    user-select: none;
+}
+
+.seal-icon {
+    font-size: 0.65rem;
+    opacity: 0.6;
 }
 
 /* Canvas del Juego (Garra, Montaña de Peluches y Acrílico) */
@@ -430,18 +500,31 @@ body.tv-kiosk-mode .arcade-cabinet {
     position: relative;
 }
 
-/* Palanca con Bola Roja 3D */
+/* Palanca con Bola Roja 3D Ultra-Brillante */
 .joystick-shaft-ball {
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ff8a80 0%, var(--joystick-red) 55%, #b71c1c 100%);
+    background: radial-gradient(circle at 35% 28%, #ff8a80 0%, var(--joystick-red) 55%, #8e0000 100%);
     box-shadow: 
-        0 6px 12px rgba(0, 0, 0, 0.6),
-        inset 0 2px 4px rgba(255, 255, 255, 0.5),
-        0 0 15px rgba(255, 23, 68, 0.4);
+        0 8px 16px rgba(0, 0, 0, 0.7),
+        inset 0 3px 6px rgba(255, 255, 255, 0.6),
+        0 0 20px rgba(255, 23, 68, 0.5);
     transition: transform 0.08s ease-out;
     position: relative;
+}
+
+/* Brillo especular secundario de arcade */
+.joystick-shaft-ball::after {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 10px;
+    width: 14px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    transform: rotate(-30deg);
 }
 
 /* Varilla metálica detrás de la bola */
@@ -503,22 +586,23 @@ body.tv-kiosk-mode .arcade-cabinet {
 
 /* Botón 2: Domo Rojo Grande ¡ATRAPAR! */
 .dome-btn-catch {
-    width: 72px;
-    height: 72px;
-    background: radial-gradient(circle at 35% 30%, #ff8a80 0%, #ff1744 60%, #b71c1c 100%);
+    width: 74px;
+    height: 74px;
+    background: radial-gradient(circle at 35% 28%, #ff8a80 0%, #ff1744 60%, #b71c1c 100%);
     border: 4px solid #d50000;
     box-shadow: 
-        0 7px 0 #5f0909,
-        0 12px 20px rgba(255, 23, 68, 0.5),
-        inset 0 3px 6px rgba(255, 255, 255, 0.6);
+        0 8px 0 #5f0909,
+        0 14px 22px rgba(255, 23, 68, 0.6),
+        inset 0 4px 8px rgba(255, 255, 255, 0.7);
     color: #fff;
     font-weight: 900;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
+    font-size: 0.78rem;
+    letter-spacing: 0.8px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .dome-btn:active, .dome-btn.pressed {
@@ -541,36 +625,46 @@ body.tv-kiosk-mode .arcade-cabinet {
 
 /* PANEL INFERIOR CON COMPUERTA DE PREMIOS Y MONEDERO (COMO EN LA FOTO) */
 .cabinet-lower-deck {
-    background: #880e4f;
-    padding: 10px 16px;
+    background: linear-gradient(180deg, #780943 0%, #5c002f 100%);
+    padding: 12px 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    border-top: 3px solid #6a0036;
+    gap: 12px;
+    border-top: 3px solid #38001b;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .prize-dispenser-door {
-    background: linear-gradient(180deg, #1a1a24 0%, #0d0d12 100%);
+    background: linear-gradient(180deg, #11141c 0%, #07090d 100%);
     border: 2px solid #00e5ff;
     border-radius: 8px;
-    padding: 6px 12px;
+    padding: 6px 14px;
+    box-shadow: 0 0 14px rgba(0, 229, 255, 0.4), inset 0 2px 5px rgba(0, 0, 0, 0.9);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.prize-door-flap {
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 0 10px rgba(0, 229, 255, 0.35), inset 0 2px 4px rgba(0, 0, 0, 0.8);
-    transition: all 0.3s ease;
+    background: linear-gradient(180deg, #334155 0%, #1e293b 50%, #0f172a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 4px 8px;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25);
 }
 
 .prize-dispenser-door.glow-win {
     border-color: #ffd700;
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.9), inset 0 0 15px rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 28px rgba(255, 215, 0, 0.95), inset 0 0 18px rgba(255, 215, 0, 0.65);
     animation: pulsePrizeDoor 0.6s infinite alternate;
 }
 
 @keyframes pulsePrizeDoor {
     from { transform: scale(1); }
-    to { transform: scale(1.06); }
+    to { transform: scale(1.05); }
 }
 
 .prize-door-icon {
@@ -580,31 +674,39 @@ body.tv-kiosk-mode .arcade-cabinet {
 .prize-door-text {
     font-size: 0.65rem;
     font-weight: 900;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
     color: #80d8ff;
+    text-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
     text-transform: uppercase;
 }
 
 .bill-coin-acceptor {
-    background: #212121;
-    border: 2px solid #424242;
-    border-radius: 6px;
-    padding: 6px 12px;
+    background: linear-gradient(180deg, #1f242d 0%, #12151b 100%);
+    border: 2px solid #3b4252;
+    border-radius: 8px;
+    padding: 6px 10px;
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
-    transition: border-color 0.2s;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .bill-coin-acceptor:hover {
     border-color: #76ff03;
+    box-shadow: 0 0 12px rgba(118, 255, 3, 0.4), inset 0 2px 5px rgba(0, 0, 0, 0.9);
+}
+
+.coin-entry-bezel {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .coin-slot-dollar {
-    background: #76ff03;
-    color: #000;
+    background: linear-gradient(180deg, #a7ffeb 0%, #00e676 100%);
+    color: #003314;
     font-weight: 900;
     font-size: 0.95rem;
     width: 24px;
@@ -613,26 +715,41 @@ body.tv-kiosk-mode .arcade-cabinet {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 10px rgba(118, 255, 3, 0.6);
+    box-shadow: 0 0 12px rgba(0, 230, 118, 0.7);
 }
 
 .coin-slot-text {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 800;
-    color: #eee;
+    color: #f1f5f9;
     letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.coin-reject-btn {
+    background: linear-gradient(180deg, #ff5252 0%, #b71c1c 100%);
+    border: 1px solid #ff8a80;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 0.55rem;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    padding: 3px 5px;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .credits-counter-box {
     background: #000;
-    border: 2px solid #333;
+    border: 2px solid #334155;
     border-radius: 6px;
-    padding: 4px 12px;
+    padding: 5px 12px;
     color: #76ff03;
     font-family: 'Courier New', monospace;
     font-weight: 900;
     font-size: 0.9rem;
-    text-shadow: 0 0 8px #76ff03;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px #76ff03;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9);
 }
 
 /* ========================================================
