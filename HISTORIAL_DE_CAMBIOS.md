@@ -134,6 +134,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 3. **Vitrina de Cristal 100% Despejada:**
    - Se removió el texto central superpuesto en el cristal ("VIRTUAL CLAW CADE") que obstruía la visión hacia los premios y la garra, ofreciendo una visualización limpia y nítida de nivel exposición comercial.
 
+---
+
+## 📦 ENTRADA: Versión 1.6.0 - Garra 100% Color Plata Real y Eliminación de Elementos Flotantes
+
+### Funcionalidades Implementadas:
+1. **Garra Metálica 100% Color Plata Cromada Realista:**
+   - Se eliminaron todos los componentes plásticos o de colores no metálicos (cúpula rosa neón, acero mate oscuro, pernos dorados y punteras negras sueltas).
+   - Acabado homogéneo de plata pulida espejo (`silverChromeMat`: metalness 0.98, roughness 0.08) y acero inoxidable color plata (`silverSteelMat`).
+   - Cúpula superior, casquillo cónico, carcasa cilíndrica del motor, anillo estriado, buje central y brazos articulados modelados íntegramente en plata cromada de alta fidelidad, con reflejos y brillos metálicos auténticos como en las máquinas recreativas reales.
+
+2. **Eliminación Total de Elementos Flotantes bajo la Garra:**
+   - **En la garra:** Se eliminaron las bielas y varillas diagonales desconectadas (`linkageRod`) y el vástago/collar colgante que flotaban en el aire debajo de la cabeza de la garra, logrando una silueta mecánica limpia y sólida de 3 brazos articulados continuos.
+   - **En la piscina de premios:** Se reestructuró la distribución de los productos 3D en 2 capas continuas asentadas sólidamente sobre el suelo (`Y = -4.32` y `-3.55`). Se eliminó la dispersión en altura que dejaba comida suspendida en el aire en el centro, garantizando un espacio vertical completamente despejado entre los alimentos y la garra.
+
+
 
 
 

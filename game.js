@@ -550,28 +550,33 @@ class Real3DClawcade {
             roughness: 0.15
         });
 
-        const pinkGlowMat = new THREE.MeshStandardMaterial({
-            color: 0xff4081,
-            emissive: 0xc2185b,
-            emissiveIntensity: 0.5,
-            roughness: 0.2,
-            metalness: 0.2
+        // Materiales de Grado Industrial - 100% Plata y Acero Cromado Realista
+        const silverChromeMat = new THREE.MeshStandardMaterial({
+            color: 0xf5f7fa,      // Plata pulida de alta pureza
+            metalness: 0.98,
+            roughness: 0.08
         });
 
-        const rubberGripMat = new THREE.MeshStandardMaterial({
-            color: 0x1a1a1a,
-            roughness: 0.92,
-            metalness: 0.05
+        const silverSteelMat = new THREE.MeshStandardMaterial({
+            color: 0xd8e0e8,      // Acero inoxidable cepillado color plata
+            metalness: 0.92,
+            roughness: 0.22
+        });
+
+        const silverBoltMat = new THREE.MeshStandardMaterial({
+            color: 0xffffff,      // Pernos cromados brillantes
+            metalness: 0.99,
+            roughness: 0.05
         });
 
         // 1. Rieles Longitudinales (Eje Z en el techo)
         const railGeo = new THREE.CylinderGeometry(0.08, 0.08, 9.8, 16);
-        const railLeft = new THREE.Mesh(railGeo, chromeMirrorMat);
+        const railLeft = new THREE.Mesh(railGeo, silverChromeMat);
         railLeft.rotation.x = Math.PI / 2;
         railLeft.position.set(-5.5, 4.8, 0);
         this.scene.add(railLeft);
 
-        const railRight = new THREE.Mesh(railGeo, chromeMirrorMat);
+        const railRight = new THREE.Mesh(railGeo, silverChromeMat);
         railRight.rotation.x = Math.PI / 2;
         railRight.position.set(5.5, 4.8, 0);
         this.scene.add(railRight);
@@ -579,17 +584,17 @@ class Real3DClawcade {
         // 2. Viga Transversal (Eje X que se desplaza en Z en el techo a Y = 4.8)
         this.crossbeam = new THREE.Group();
         const beamGeo = new THREE.CylinderGeometry(0.1, 0.1, 11.2, 16);
-        const beamMesh = new THREE.Mesh(beamGeo, chromeMirrorMat);
+        const beamMesh = new THREE.Mesh(beamGeo, silverChromeMat);
         beamMesh.rotation.z = Math.PI / 2;
         this.crossbeam.add(beamMesh);
 
         // Bloques y rodamientos guía en los extremos que corren sobre los rieles
         const guideGeo = new THREE.BoxGeometry(0.35, 0.25, 0.45);
-        const guideLeft = new THREE.Mesh(guideGeo, darkSteelMat);
+        const guideLeft = new THREE.Mesh(guideGeo, silverSteelMat);
         guideLeft.position.set(-5.5, 0, 0);
         this.crossbeam.add(guideLeft);
 
-        const guideRight = new THREE.Mesh(guideGeo, darkSteelMat);
+        const guideRight = new THREE.Mesh(guideGeo, silverSteelMat);
         guideRight.position.set(5.5, 0, 0);
         this.crossbeam.add(guideRight);
 
@@ -597,15 +602,15 @@ class Real3DClawcade {
         this.crossbeam.position.set(0, 4.8, this.clawPos.z);
         this.scene.add(this.crossbeam);
 
-        // 3. Carro de Transporte (Trolley con polea y motor)
+        // 3. Carro de Transporte (Trolley con polea y motor en plata/acero)
         this.trolley = new THREE.Group();
         const trolleyBoxGeo = new THREE.BoxGeometry(1.2, 0.35, 1.0);
-        const trolleyMesh = new THREE.Mesh(trolleyBoxGeo, darkSteelMat);
+        const trolleyMesh = new THREE.Mesh(trolleyBoxGeo, silverSteelMat);
         this.trolley.add(trolleyMesh);
 
         // Polea cromada en el carro
         const pulleyGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.12, 24);
-        const pulleyMesh = new THREE.Mesh(pulleyGeo, chromeMirrorMat);
+        const pulleyMesh = new THREE.Mesh(pulleyGeo, silverChromeMat);
         pulleyMesh.rotation.z = Math.PI / 2;
         pulleyMesh.position.set(0, -0.2, 0);
         this.trolley.add(pulleyMesh);
@@ -613,75 +618,74 @@ class Real3DClawcade {
 
         // 4. Cable de Acero Trenzado Extensible (Y)
         const cableGeo = new THREE.CylinderGeometry(0.025, 0.025, 1, 12);
-        this.cableMesh = new THREE.Mesh(cableGeo, chromeMirrorMat);
+        this.cableMesh = new THREE.Mesh(cableGeo, silverChromeMat);
         this.cableMesh.position.y = -0.5;
         this.trolley.add(this.cableMesh);
 
-        // 5. CABEZA DE LA GARRA METÁLICA REALISTA
+        // 5. CABEZA DE LA GARRA METÁLICA DE PLATA REALISTA (CERO ROSA, CERO ELEMENTOS FLOTANTES)
         this.clawHead = new THREE.Group();
         this.clawHead.position.set(this.clawPos.x, this.clawPos.y, this.clawPos.z);
         this.scene.add(this.clawHead);
 
         // Anilla giratoria superior de suspensión
-        const swivelGeo = new THREE.TorusGeometry(0.18, 0.045, 12, 24);
-        const swivelMesh = new THREE.Mesh(swivelGeo, chromeMirrorMat);
+        const swivelGeo = new THREE.TorusGeometry(0.18, 0.045, 16, 24);
+        const swivelMesh = new THREE.Mesh(swivelGeo, silverChromeMat);
         swivelMesh.position.set(0, 0.95, 0);
         this.clawHead.add(swivelMesh);
 
-        // Cúpula Hemisférica Rosa Neón Superior con anillo cromado
+        // Casquillo de sujeción cónico superior
+        const topCapGeo = new THREE.CylinderGeometry(0.25, 0.62, 0.35, 32);
+        const topCap = new THREE.Mesh(topCapGeo, silverChromeMat);
+        topCap.position.y = 0.65;
+        this.clawHead.add(topCap);
+
+        // Cúpula / Domo Superior en Plata Pulida Brillante (Realista como en máquina real)
         const domeGeo = new THREE.SphereGeometry(0.65, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        const dome = new THREE.Mesh(domeGeo, pinkGlowMat);
+        const dome = new THREE.Mesh(domeGeo, silverChromeMat);
         dome.position.y = 0.25;
         this.clawHead.add(dome);
 
-        // Corona / Bisel metálico del domo
-        const domeBezelGeo = new THREE.TorusGeometry(0.66, 0.05, 12, 32);
-        const domeBezel = new THREE.Mesh(domeBezelGeo, chromeMirrorMat);
+        // Bisel / Corona de plata del domo
+        const domeBezelGeo = new THREE.TorusGeometry(0.66, 0.05, 16, 32);
+        const domeBezel = new THREE.Mesh(domeBezelGeo, silverChromeMat);
         domeBezel.rotation.x = Math.PI / 2;
         domeBezel.position.y = 0.25;
         this.clawHead.add(domeBezel);
 
-        // Carcasa Principal Cilindro de Acero Oscuro (Gearbox)
+        // Carcasa Principal Cilíndrica (Motor/Gearbox) en Acero Plateado
         const casingGeo = new THREE.CylinderGeometry(0.62, 0.68, 0.65, 32);
-        const casing = new THREE.Mesh(casingGeo, darkSteelMat);
+        const casing = new THREE.Mesh(casingGeo, silverSteelMat);
         casing.position.y = -0.1;
         this.clawHead.add(casing);
 
         // Anillo inferior cromado con reborde
         const baseRingGeo = new THREE.CylinderGeometry(0.72, 0.72, 0.12, 32);
-        const baseRing = new THREE.Mesh(baseRingGeo, chromeMirrorMat);
+        const baseRing = new THREE.Mesh(baseRingGeo, silverChromeMat);
         baseRing.position.y = -0.42;
         this.clawHead.add(baseRing);
 
-        // Vástago Central Móvil (Pistón Neumático de Accionamiento)
-        this.pistonShaft = new THREE.Group();
-        const rodGeo = new THREE.CylinderGeometry(0.1, 0.1, 1.4, 16);
-        const rod = new THREE.Mesh(rodGeo, chromeMirrorMat);
-        this.pistonShaft.add(rod);
+        // Núcleo central inferior cerrado (Buje limpio en plata, sin varillas colgantes)
+        const centerHubGeo = new THREE.CylinderGeometry(0.3, 0.15, 0.25, 24);
+        const centerHub = new THREE.Mesh(centerHubGeo, silverChromeMat);
+        centerHub.position.y = -0.55;
+        this.clawHead.add(centerHub);
 
-        // Collar inferior del pistón (Conector de bielas de tijera)
-        const collarGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.18, 24);
-        const collar = new THREE.Mesh(collarGeo, darkSteelMat);
-        collar.position.y = -0.65;
-        this.pistonShaft.add(collar);
-        this.clawHead.add(this.pistonShaft);
-
-        // 6. Tres Tenazas Mecánicas Articuladas con Bielas de Tijera (120° entre sí)
+        // 6. Tres Tenazas Mecánicas Articuladas de Plata Pulida (120° entre sí)
         this.prongs = [];
         for (let i = 0; i < 3; i++) {
             const angle = (i * Math.PI * 2) / 3;
             const prongGroup = new THREE.Group();
             prongGroup.rotation.y = angle;
 
-            // Horquilla de Montaje Superior en el cuerpo
-            const bracketGeo = new THREE.BoxGeometry(0.15, 0.2, 0.25);
-            const bracket = new THREE.Mesh(bracketGeo, darkSteelMat);
+            // Horquilla de Montaje Superior en el cuerpo (Plata)
+            const bracketGeo = new THREE.BoxGeometry(0.16, 0.22, 0.25);
+            const bracket = new THREE.Mesh(bracketGeo, silverSteelMat);
             bracket.position.set(0.68, -0.42, 0);
             prongGroup.add(bracket);
 
-            // Perno dorado hexagonal del eje superior
-            const pinGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.3, 12);
-            const pin = new THREE.Mesh(pinGeo, brassBoltMat);
+            // Perno de articulación superior en plata
+            const pinGeo = new THREE.CylinderGeometry(0.065, 0.065, 0.32, 16);
+            const pin = new THREE.Mesh(pinGeo, silverBoltMat);
             pin.rotation.x = Math.PI / 2;
             pin.position.set(0.68, -0.42, 0);
             prongGroup.add(pin);
@@ -690,59 +694,46 @@ class Real3DClawcade {
             const upperPivot = new THREE.Group();
             upperPivot.position.set(0.68, -0.42, 0);
 
-            // Brazo de Doble Placa de Acero Cromado
-            const armPlateGeo = new THREE.BoxGeometry(0.12, 1.35, 0.16);
-            const armPlate = new THREE.Mesh(armPlateGeo, chromeMirrorMat);
+            // Brazo Superior Curvado de Acero Cromado Plata
+            const armPlateGeo = new THREE.BoxGeometry(0.12, 1.4, 0.18);
+            const armPlate = new THREE.Mesh(armPlateGeo, silverChromeMat);
             armPlate.position.set(0.35, -0.62, 0);
             armPlate.rotation.z = -0.52;
             armPlate.castShadow = true;
             upperPivot.add(armPlate);
 
-            // Biela de Articulación (Linkage rod conectada a la tijera)
-            const linkGeo = new THREE.CylinderGeometry(0.045, 0.045, 0.85, 12);
-            const linkageRod = new THREE.Mesh(linkGeo, chromeMirrorMat);
-            linkageRod.position.set(0.15, -0.4, 0);
-            linkageRod.rotation.z = 0.65;
-            upperPivot.add(linkageRod);
-
             // PIVOTE DE LA PINZA CURVA INFERIOR (Codo articulado)
             const lowerTalon = new THREE.Group();
             lowerTalon.position.set(0.72, -1.25, 0);
 
-            // Perno de articulación del codo
-            const elbowPin = new THREE.Mesh(pinGeo, brassBoltMat);
+            // Perno de articulación del codo en plata
+            const elbowPin = new THREE.Mesh(pinGeo, silverBoltMat);
             elbowPin.rotation.x = Math.PI / 2;
             lowerTalon.add(elbowPin);
 
-            // Hoja de la Garra Curva (Segmento 1)
-            const talonSeg1Geo = new THREE.CylinderGeometry(0.09, 0.065, 0.8, 16);
-            const talonSeg1 = new THREE.Mesh(talonSeg1Geo, chromeMirrorMat);
-            talonSeg1.position.set(0.2, -0.35, 0);
+            // Hoja de la Garra Curva - Segmento 1 (Plata pulida)
+            const talonSeg1Geo = new THREE.CylinderGeometry(0.085, 0.06, 0.85, 16);
+            const talonSeg1 = new THREE.Mesh(talonSeg1Geo, silverChromeMat);
+            talonSeg1.position.set(0.2, -0.38, 0);
             talonSeg1.rotation.z = 0.55;
             talonSeg1.castShadow = true;
             lowerTalon.add(talonSeg1);
 
-            // Hoja de la Garra Curva (Segmento 2 hacia adentro)
-            const talonSeg2Geo = new THREE.CylinderGeometry(0.065, 0.04, 0.7, 16);
-            const talonSeg2 = new THREE.Mesh(talonSeg2Geo, chromeMirrorMat);
-            talonSeg2.position.set(-0.05, -0.85, 0);
+            // Hoja de la Garra Curva - Segmento 2 (Plata pulida hacia adentro)
+            const talonSeg2Geo = new THREE.CylinderGeometry(0.06, 0.035, 0.75, 16);
+            const talonSeg2 = new THREE.Mesh(talonSeg2Geo, silverChromeMat);
+            talonSeg2.position.set(-0.05, -0.88, 0);
             talonSeg2.rotation.z = 1.25;
             talonSeg2.castShadow = true;
             lowerTalon.add(talonSeg2);
 
-            // Puntera Cónica Afilada
-            const tipConeGeo = new THREE.ConeGeometry(0.05, 0.28, 16);
-            const tipCone = new THREE.Mesh(tipConeGeo, chromeMirrorMat);
-            tipCone.position.set(-0.35, -1.02, 0);
+            // Puntera afilada integrada en plata cromada continua (Sin partes sueltas)
+            const tipConeGeo = new THREE.ConeGeometry(0.045, 0.3, 16);
+            const tipCone = new THREE.Mesh(tipConeGeo, silverChromeMat);
+            tipCone.position.set(-0.32, -1.05, 0);
             tipCone.rotation.z = 1.95;
+            tipCone.castShadow = true;
             lowerTalon.add(tipCone);
-
-            // Puntera de Goma Negra Antideslizante (Grip Pad)
-            const gripGeo = new THREE.BoxGeometry(0.09, 0.22, 0.12);
-            const grip = new THREE.Mesh(gripGeo, rubberGripMat);
-            grip.position.set(-0.25, -0.95, 0);
-            grip.rotation.z = 1.25;
-            lowerTalon.add(grip);
 
             upperPivot.add(lowerTalon);
             prongGroup.add(upperPivot);
@@ -750,38 +741,32 @@ class Real3DClawcade {
 
             this.prongs.push({
                 upperPivot,
-                lowerTalon,
-                linkage: linkageRod
+                lowerTalon
             });
         }
     }
 
     /**
-     * Genera la montaña volumétrica 3D de premios apilados físicamente
-     * con sombras y profundidad real. Soporta 'gourmet' (hamburguesa, papas, tacos, empanadas, postres)
-     * y 'plushies'.
+     * Genera la piscina de premios 3D asentada sólidamente en el suelo
+     * (Cero elementos flotando en el aire).
      */
     spawnPlushieMountain3D() {
         // Limpiar premios previos
         this.plushies.forEach(p => this.scene.remove(p.mesh));
         this.plushies = [];
 
-        const startX = -2.4;
+        const startX = -2.2;
         const endX = 5.2;
         const startZ = -3.8;
         const endZ = 3.8;
 
         const isGourmet = (this.currentTheme === 'gourmet');
 
-        // Distribución en capas volumétricas
-        for (let x = startX; x <= endX; x += 0.85) {
-            for (let z = startZ; z <= endZ; z += 0.85) {
+        // CAPA 1: Base asentada directamente sobre el suelo del gabinete (Y = -4.8)
+        for (let x = startX; x <= endX; x += 0.88) {
+            for (let z = startZ; z <= endZ; z += 0.88) {
                 const radius = isGourmet ? 0.58 : (0.52 + Math.random() * 0.12);
-
-                // Forma de colina: más alto hacia el centro y fondo
-                const distCenter = Math.sqrt(Math.pow(x - 1.5, 2) + Math.pow(z, 2));
-                const heightOffset = Math.max(0, 1.8 - distCenter * 0.35);
-                const posY = -4.5 + radius + heightOffset + (Math.random() * 0.3);
+                const posY = -4.32 + (Math.random() * 0.1); // Apoyado firme sobre el suelo
 
                 let mesh;
                 let prizeName = '';
@@ -792,35 +777,21 @@ class Real3DClawcade {
                     mesh = food.create();
                     prizeName = food.name;
                     prizeEmoji = food.emoji;
-
-                    mesh.position.set(
-                        x + (Math.random() * 0.22 - 0.11),
-                        posY,
-                        z + (Math.random() * 0.22 - 0.11)
-                    );
+                    mesh.position.set(x + (Math.random() * 0.2 - 0.1), posY, z + (Math.random() * 0.2 - 0.1));
                     mesh.rotation.y = Math.random() * Math.PI * 2;
-                    if (food.type === 'taco' || food.type === 'empanada') {
-                        mesh.rotation.x = (Math.random() - 0.5) * 0.25;
-                        mesh.rotation.z = (Math.random() - 0.5) * 0.25;
-                    }
                 } else {
                     const proto = PLUSHIE_COLORS[Math.floor(Math.random() * PLUSHIE_COLORS.length)];
                     prizeName = proto.name;
                     prizeEmoji = proto.emoji || '🧸';
 
-                    const plushieGeo = new THREE.SphereGeometry(radius, 24, 24);
+                    const plushieGeo = new THREE.SphereGeometry(radius, 20, 20);
                     const plushieMat = new THREE.MeshStandardMaterial({
                         color: proto.color,
                         roughness: 0.55,
                         metalness: 0.05
                     });
-
                     mesh = new THREE.Mesh(plushieGeo, plushieMat);
-                    mesh.position.set(
-                        x + (Math.random() * 0.25 - 0.12),
-                        posY,
-                        z + (Math.random() * 0.25 - 0.12)
-                    );
+                    mesh.position.set(x, posY, z);
                     mesh.castShadow = true;
                     mesh.receiveShadow = true;
 
@@ -830,7 +801,6 @@ class Real3DClawcade {
                     const ear1 = new THREE.Mesh(earGeo, earMat);
                     ear1.position.set(-radius * 0.7, radius * 0.7, 0);
                     mesh.add(ear1);
-
                     const ear2 = new THREE.Mesh(earGeo, earMat);
                     ear2.position.set(radius * 0.7, radius * 0.7, 0);
                     mesh.add(ear2);
@@ -843,8 +813,56 @@ class Real3DClawcade {
                     emoji: prizeEmoji,
                     radius,
                     initialY: posY,
-                    isTop: posY > -3.2 // Premios de la cima que la garra puede agarrar
+                    isTop: false
                 });
+            }
+        }
+
+        // CAPA 2: Premios apilados sobre la base (completamente apoyados, altura máxima -3.5, cero flotación)
+        for (let x = startX + 0.44; x <= endX - 0.44; x += 0.88) {
+            for (let z = startZ + 0.44; z <= endZ - 0.44; z += 0.88) {
+                if (Math.random() < 0.65) {
+                    const radius = isGourmet ? 0.58 : 0.52;
+                    const posY = -3.55 + (Math.random() * 0.12); // Descansando sobre los premios de la base
+
+                    let mesh;
+                    let prizeName = '';
+                    let prizeEmoji = '🎁';
+
+                    if (isGourmet) {
+                        const food = FOOD_PRIZES[Math.floor(Math.random() * FOOD_PRIZES.length)];
+                        mesh = food.create();
+                        prizeName = food.name;
+                        prizeEmoji = food.emoji;
+                        mesh.position.set(x + (Math.random() * 0.2 - 0.1), posY, z + (Math.random() * 0.2 - 0.1));
+                        mesh.rotation.y = Math.random() * Math.PI * 2;
+                    } else {
+                        const proto = PLUSHIE_COLORS[Math.floor(Math.random() * PLUSHIE_COLORS.length)];
+                        prizeName = proto.name;
+                        prizeEmoji = proto.emoji || '🧸';
+
+                        const plushieGeo = new THREE.SphereGeometry(radius, 20, 20);
+                        const plushieMat = new THREE.MeshStandardMaterial({
+                            color: proto.color,
+                            roughness: 0.55,
+                            metalness: 0.05
+                        });
+                        mesh = new THREE.Mesh(plushieGeo, plushieMat);
+                        mesh.position.set(x, posY, z);
+                        mesh.castShadow = true;
+                        mesh.receiveShadow = true;
+                    }
+
+                    this.scene.add(mesh);
+                    this.plushies.push({
+                        mesh,
+                        name: prizeName,
+                        emoji: prizeEmoji,
+                        radius,
+                        initialY: posY,
+                        isTop: true // Premios de la cima que la garra puede agarrar
+                    });
+                }
             }
         }
     }
@@ -1143,15 +1161,10 @@ class Real3DClawcade {
             }
         }
 
-        // 1. Cinemática de apertura/cierre de tenazas y pistón central (Mecanismo real de tijera)
+        // 1. Cinemática de apertura/cierre de tenazas de plata (Mecanismo real de garras de arcade)
         this.clawAngle += (this.targetClawAngle - this.clawAngle) * 0.18;
 
-        // El vástago del pistón central baja al abrir (empuja bielas hacia afuera) y sube al cerrar
-        if (this.pistonShaft) {
-            this.pistonShaft.position.y = -0.15 - (this.clawAngle * 0.45);
-        }
-
-        // Animar las 3 tenazas articuladas
+        // Animar las 3 tenazas articuladas de plata
         this.prongs.forEach(prong => {
             // Rotación del brazo superior (abre hacia afuera en abanico, cierra hacia el centro)
             const openOffset = (this.clawAngle * 0.85) - 0.38;
@@ -1159,11 +1172,6 @@ class Real3DClawcade {
 
             // Articulación de la pinza inferior curvada (se expande hacia afuera al abrir, se curva hacia adentro al cerrar)
             prong.lowerTalon.rotation.z = 0.75 - (this.clawAngle * 0.85);
-
-            // Orientación de la biela de empuje
-            if (prong.linkage) {
-                prong.linkage.rotation.z = (this.clawAngle * 0.35) - 0.15;
-            }
         });
 
         // 2. Física de inercia y balanceo pendular del cable (Sway)
