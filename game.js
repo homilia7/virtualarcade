@@ -21,112 +21,209 @@ const PLUSHIE_COLORS = [
 // GENERADORES 3D PROCEDURALES DE COMIDA GOURMET REALISTA
 // ========================================================
 
-/** 1. 🍔 Hamburguesa Doble Gourmet con Semillas de Sésamo y Queso Fundido */
+/** 1. 🍔 Hamburguesa Doble Gourmet con Semillas de Sésamo, Queso Fundido y Pepinillos */
 function createBurgerMesh() {
     const burger = new THREE.Group();
 
-    // Materiales PBR
-    const bunMat = new THREE.MeshStandardMaterial({ color: 0xc87b32, roughness: 0.65, metalness: 0.05 });
-    const pattyMat = new THREE.MeshStandardMaterial({ color: 0x3d1d0e, roughness: 0.9, metalness: 0.1 });
-    const cheeseMat = new THREE.MeshStandardMaterial({ color: 0xffa000, roughness: 0.35, metalness: 0.05 });
-    const tomatoMat = new THREE.MeshStandardMaterial({ color: 0xd32f2f, roughness: 0.25, metalness: 0.1 });
-    const lettuceMat = new THREE.MeshStandardMaterial({ color: 0x43a047, roughness: 0.6 });
-    const sesameMat = new THREE.MeshStandardMaterial({ color: 0xfffae0, roughness: 0.5 });
+    // Materiales PBR de alta definición
+    const bunTopMat = new THREE.MeshStandardMaterial({
+        color: 0xc87b28,
+        roughness: 0.35,
+        metalness: 0.02
+    });
+    const bunBottomMat = new THREE.MeshStandardMaterial({
+        color: 0xb36720,
+        roughness: 0.55,
+        metalness: 0.02
+    });
+    const pattyMat = new THREE.MeshStandardMaterial({
+        color: 0x2b1509,
+        roughness: 0.88,
+        metalness: 0.05
+    });
+    const cheeseMat = new THREE.MeshStandardMaterial({
+        color: 0xffa000,
+        roughness: 0.22,
+        metalness: 0.05
+    });
+    const tomatoMat = new THREE.MeshStandardMaterial({
+        color: 0xd32f2f,
+        roughness: 0.18,
+        metalness: 0.08
+    });
+    const pickleMat = new THREE.MeshStandardMaterial({
+        color: 0x33691e,
+        roughness: 0.32,
+        metalness: 0.05
+    });
+    const lettuceMat = new THREE.MeshStandardMaterial({
+        color: 0x43a047,
+        roughness: 0.55
+    });
+    const sesameMat = new THREE.MeshStandardMaterial({
+        color: 0xfffaea,
+        roughness: 0.45
+    });
 
-    // Pan inferior
-    const bunBottom = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 0.18, 24), bunMat);
-    bunBottom.position.y = -0.35;
+    // 1. Pan inferior tostado
+    const bunBottom = new THREE.Mesh(new THREE.CylinderGeometry(0.64, 0.60, 0.22, 32), bunBottomMat);
+    bunBottom.position.y = -0.38;
     bunBottom.castShadow = true;
     burger.add(bunBottom);
 
-    // Carne a la parrilla
-    const patty = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.22, 24), pattyMat);
-    patty.position.y = -0.16;
-    patty.castShadow = true;
-    burger.add(patty);
-
-    // Queso derretido (esquinas sobresalen)
-    const cheese = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.05, 0.85), cheeseMat);
-    cheese.position.y = -0.03;
-    cheese.rotation.y = Math.PI / 4;
-    cheese.castShadow = true;
-    burger.add(cheese);
-
-    // Rodajas de tomate
-    const t1 = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.08, 16), tomatoMat);
-    t1.position.set(-0.2, 0.04, -0.1);
-    burger.add(t1);
-    const t2 = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.08, 16), tomatoMat);
-    t2.position.set(0.18, 0.04, 0.15);
-    burger.add(t2);
-
-    // Hojas de lechuga crujiente
-    for (let i = 0; i < 5; i++) {
-        const leafAngle = (i * Math.PI * 2) / 5;
-        const leaf = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.04, 0.4), lettuceMat);
-        leaf.position.set(Math.cos(leafAngle) * 0.48, 0.08, Math.sin(leafAngle) * 0.48);
-        leaf.rotation.y = leafAngle;
-        leaf.rotation.x = 0.15;
+    // 2. Hojas de lechuga rizada batavia ondulante (Capa de base)
+    for (let i = 0; i < 7; i++) {
+        const leafAngle = (i * Math.PI * 2) / 7;
+        const leaf = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.04, 0.45), lettuceMat);
+        leaf.position.set(Math.cos(leafAngle) * 0.52, -0.25, Math.sin(leafAngle) * 0.52);
+        leaf.rotation.set(0.18 * Math.sin(leafAngle), leafAngle, 0.22);
+        leaf.castShadow = true;
         burger.add(leaf);
     }
 
-    // Pan superior abombado
-    const bunTop = new THREE.Mesh(new THREE.SphereGeometry(0.56, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.52), bunMat);
-    bunTop.scale.set(1.0, 0.58, 1.0);
-    bunTop.position.y = 0.1;
+    // 3. Carne Angus gruesa a la parrilla con borde tostado
+    const patty = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.68, 0.28, 32), pattyMat);
+    patty.position.y = -0.12;
+    patty.castShadow = true;
+    burger.add(patty);
+
+    // 4. Queso Cheddar Americano fundido con esquinas caídas sobre la carne
+    const cheeseCenter = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.045, 0.96), cheeseMat);
+    cheeseCenter.position.y = 0.03;
+    cheeseCenter.rotation.y = Math.PI / 4;
+    cheeseCenter.castShadow = true;
+    burger.add(cheeseCenter);
+
+    // Esquinas caídas del queso derretido
+    for (let c = 0; c < 4; c++) {
+        const cAngle = (c * Math.PI / 2) + Math.PI / 4;
+        const drip = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.16, 0.04), cheeseMat);
+        drip.position.set(Math.cos(cAngle) * 0.62, -0.04, Math.sin(cAngle) * 0.62);
+        drip.rotation.y = -cAngle + Math.PI / 2;
+        drip.rotation.x = 0.4;
+        burger.add(drip);
+    }
+
+    // 5. Rodajas de pepinillo agridulce
+    for (let p = 0; p < 3; p++) {
+        const pAngle = (p * Math.PI * 2) / 3;
+        const pickle = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.06, 16), pickleMat);
+        pickle.position.set(Math.cos(pAngle) * 0.28, 0.07, Math.sin(pAngle) * 0.28);
+        pickle.rotation.y = pAngle;
+        burger.add(pickle);
+    }
+
+    // 6. Rodajas de tomate jugoso maduro
+    const t1 = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.09, 24), tomatoMat);
+    t1.position.set(-0.18, 0.14, -0.1);
+    t1.rotation.z = -0.05;
+    burger.add(t1);
+
+    const t2 = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.09, 24), tomatoMat);
+    t2.position.set(0.18, 0.15, 0.12);
+    t2.rotation.z = 0.05;
+    burger.add(t2);
+
+    // 7. Pan Brioche superior esponjoso y abombado
+    const bunTop = new THREE.Mesh(
+        new THREE.SphereGeometry(0.66, 32, 24, 0, Math.PI * 2, 0, Math.PI * 0.52),
+        bunTopMat
+    );
+    bunTop.scale.set(1.0, 0.62, 1.0);
+    bunTop.position.y = 0.20;
     bunTop.castShadow = true;
     burger.add(bunTop);
 
-    // Semillas de sésamo individuales en el pan
-    const sesameGeo = new THREE.SphereGeometry(0.024, 6, 6);
+    // 8. Semillas de sésamo individuales en el pan
+    const sesameGeo = new THREE.SphereGeometry(0.026, 8, 8);
     sesameGeo.scale(1.4, 0.5, 0.9);
-    const seedCoords = [
-        [0, 0.4, 0], [0.18, 0.38, 0.12], [-0.15, 0.37, 0.15],
-        [0.25, 0.34, -0.1], [-0.22, 0.35, -0.12], [0.05, 0.36, -0.25],
-        [-0.05, 0.37, 0.26], [0.32, 0.28, 0.18], [-0.3, 0.29, 0.1]
+    const seedPositions = [
+        [0, 0.56, 0], [0.22, 0.53, 0.12], [-0.20, 0.52, 0.18],
+        [0.32, 0.46, -0.15], [-0.30, 0.48, -0.12], [0.08, 0.51, -0.32],
+        [-0.08, 0.52, 0.34], [0.42, 0.38, 0.22], [-0.38, 0.40, 0.18],
+        [0.18, 0.48, 0.32], [-0.18, 0.47, -0.28], [0.38, 0.42, -0.18]
     ];
-    seedCoords.forEach(pos => {
+    seedPositions.forEach(pos => {
         const seed = new THREE.Mesh(sesameGeo, sesameMat);
         seed.position.set(pos[0], pos[1], pos[2]);
-        seed.rotation.set(Math.random(), Math.random(), Math.random());
+        seed.rotation.set(Math.random() * 0.4, Math.random() * Math.PI, Math.random() * 0.4);
         burger.add(seed);
     });
 
-    burger.scale.set(1.1, 1.1, 1.1);
+    burger.scale.set(1.15, 1.15, 1.15);
     return burger;
 }
 
-/** 2. 🍟 Papas Fritas Crujientes en Caja Roja de Fast Food */
+/** 2. 🍟 Papas Fritas Crujientes en Caja Cónica Realista con Emblema Dorado */
 function createFriesMesh() {
     const fries = new THREE.Group();
-    const boxMat = new THREE.MeshStandardMaterial({ color: 0xd32f2f, roughness: 0.4, metalness: 0.05 });
-    const stripeMat = new THREE.MeshStandardMaterial({ color: 0xffd54f, roughness: 0.3 });
 
-    // Caja roja frontal
-    const box = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.85, 0.45), boxMat);
-    box.position.y = -0.15;
-    box.castShadow = true;
-    fries.add(box);
+    const boxRedMat = new THREE.MeshStandardMaterial({
+        color: 0xd50000,
+        roughness: 0.28,
+        metalness: 0.05
+    });
+    const emblemMat = new THREE.MeshStandardMaterial({
+        color: 0xffd54f,
+        roughness: 0.25,
+        metalness: 0.35
+    });
 
-    // Franja decorativa dorada
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.2, 0.47), stripeMat);
-    stripe.position.y = -0.18;
-    fries.add(stripe);
+    // Base inferior de la caja
+    const boxBase = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.5, 0.42), boxRedMat);
+    boxBase.position.y = -0.35;
+    boxBase.castShadow = true;
+    fries.add(boxBase);
 
-    // Bastones de papas fritas en abanico
+    // Respaldo alto de la caja
+    const boxBack = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.55, 0.06), boxRedMat);
+    boxBack.position.set(0, 0.08, -0.20);
+    boxBack.rotation.x = -0.1;
+    fries.add(boxBack);
+
+    // Frontal rebajado (scoop) para exhibir las papas
+    const boxFront = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.35, 0.06), boxRedMat);
+    boxFront.position.set(0, -0.05, 0.20);
+    boxFront.rotation.x = 0.1;
+    fries.add(boxFront);
+
+    // Paredes laterales inclinadas
+    const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.48, 0.44), boxRedMat);
+    wallLeft.position.set(-0.38, -0.02, 0);
+    wallLeft.rotation.z = 0.12;
+    fries.add(wallLeft);
+
+    const wallRight = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.48, 0.44), boxRedMat);
+    wallRight.position.set(0.38, -0.02, 0);
+    wallRight.rotation.z = -0.12;
+    fries.add(wallRight);
+
+    // Emblema arcade dorado en el frontal
+    const emblem = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.04, 16), emblemMat);
+    emblem.rotation.x = Math.PI / 2;
+    emblem.position.set(0, -0.08, 0.23);
+    fries.add(emblem);
+
+    // Papas Fritas doradas y crujientes con variación de tostado
     const fryMats = [
-        new THREE.MeshStandardMaterial({ color: 0xfbc02d, roughness: 0.6 }),
-        new THREE.MeshStandardMaterial({ color: 0xffd54f, roughness: 0.6 }),
-        new THREE.MeshStandardMaterial({ color: 0xf57f17, roughness: 0.65 })
+        new THREE.MeshStandardMaterial({ color: 0xfbc02d, roughness: 0.52 }),
+        new THREE.MeshStandardMaterial({ color: 0xffd54f, roughness: 0.50 }),
+        new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.58 }),
+        new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.54 })
     ];
 
-    for (let i = 0; i < 16; i++) {
-        const fLength = 0.65 + Math.random() * 0.35;
-        const fry = new THREE.Mesh(new THREE.BoxGeometry(0.08, fLength, 0.08), fryMats[i % fryMats.length]);
-        const offX = (Math.random() - 0.5) * 0.55;
+    for (let i = 0; i < 22; i++) {
+        const len = 0.70 + Math.random() * 0.45;
+        const fryGeo = new THREE.BoxGeometry(0.08, len, 0.08);
+        const fry = new THREE.Mesh(fryGeo, fryMats[i % fryMats.length]);
+        const offX = (Math.random() - 0.5) * 0.58;
         const offZ = (Math.random() - 0.5) * 0.28;
-        fry.position.set(offX, 0.2 + fLength / 2 - 0.2, offZ);
-        fry.rotation.set((Math.random() - 0.5) * 0.25, Math.random() * 0.5, (offX / 0.55) * 0.35);
+        fry.position.set(offX, 0.12 + len / 2 - 0.25, offZ);
+        fry.rotation.set(
+            (Math.random() - 0.5) * 0.35,
+            (Math.random() - 0.5) * 0.8,
+            (offX / 0.58) * 0.42 + (Math.random() - 0.5) * 0.15
+        );
         fry.castShadow = true;
         fries.add(fry);
     }
@@ -135,142 +232,261 @@ function createFriesMesh() {
     return fries;
 }
 
-/** 3. 🌮 Taco al Pastor Mexicano con Tortilla Doblada, Piña y Cilantro */
+/** 3. 🌮 Taco al Pastor Supremo con Tortilla Curva, Piña Asada, Limón y Cilantro */
 function createTacoMesh() {
     const taco = new THREE.Group();
-    const shellMat = new THREE.MeshStandardMaterial({ color: 0xf3bd76, roughness: 0.7, metalness: 0.05 });
-    const meatMat = new THREE.MeshStandardMaterial({ color: 0x6d2312, roughness: 0.85 });
 
-    // Tortilla de maíz doblada en U (dos caras inclinadas y base curva)
-    const wall1 = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.75, 1.1), shellMat);
-    wall1.position.set(-0.25, 0.05, 0);
-    wall1.rotation.z = -0.32;
+    const tortillaMat = new THREE.MeshStandardMaterial({
+        color: 0xf3ba6d,
+        roughness: 0.68,
+        metalness: 0.02
+    });
+    const meatMat = new THREE.MeshStandardMaterial({
+        color: 0x8a230c,
+        roughness: 0.85,
+        metalness: 0.05
+    });
+    const pineappleMat = new THREE.MeshStandardMaterial({
+        color: 0xffd600,
+        roughness: 0.25,
+        metalness: 0.05
+    });
+    const onionMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.30
+    });
+    const cilantroMat = new THREE.MeshStandardMaterial({
+        color: 0x2e7d32,
+        roughness: 0.60
+    });
+    const limeRindMat = new THREE.MeshStandardMaterial({
+        color: 0x2e7d32,
+        roughness: 0.45
+    });
+    const limePulpMat = new THREE.MeshStandardMaterial({
+        color: 0x76ff03,
+        roughness: 0.25,
+        metalness: 0.1
+    });
+
+    // Tortilla de maíz doblada en U con base curva
+    const shellBottom = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.32, 0.32, 1.15, 20, 1, false, 0, Math.PI),
+        tortillaMat
+    );
+    shellBottom.rotation.x = Math.PI / 2;
+    shellBottom.rotation.z = Math.PI;
+    shellBottom.position.y = -0.20;
+    shellBottom.castShadow = true;
+    taco.add(shellBottom);
+
+    const wall1 = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.72, 1.15), tortillaMat);
+    wall1.position.set(-0.28, 0.08, 0);
+    wall1.rotation.z = -0.28;
     wall1.castShadow = true;
     taco.add(wall1);
 
-    const wall2 = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.75, 1.1), shellMat);
-    wall2.position.set(0.25, 0.05, 0);
-    wall2.rotation.z = 0.32;
+    const wall2 = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.72, 1.15), tortillaMat);
+    wall2.position.set(0.28, 0.08, 0);
+    wall2.rotation.z = 0.28;
     wall2.castShadow = true;
     taco.add(wall2);
 
-    const bottom = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 1.1, 16, 1, false, 0, Math.PI), shellMat);
-    bottom.rotation.x = Math.PI / 2;
-    bottom.rotation.z = Math.PI;
-    bottom.position.y = -0.22;
-    taco.add(bottom);
+    // Puntos de tostado artesanal en el comal
+    const spotMat = new THREE.MeshStandardMaterial({ color: 0x8d5b24, roughness: 0.8 });
+    for (let s = 0; s < 6; s++) {
+        const spot = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), spotMat);
+        spot.scale.set(1.4, 0.2, 1.0);
+        const side = (s % 2 === 0) ? -0.32 : 0.32;
+        spot.position.set(side, (Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.9);
+        taco.add(spot);
+    }
 
-    // Relleno de carne al pastor marinada
-    const meat = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.22, 1.0, 12), meatMat);
+    // Carne al pastor marinada
+    const meat = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.24, 1.05, 16), meatMat);
     meat.rotation.x = Math.PI / 2;
-    meat.position.y = -0.05;
+    meat.position.y = -0.02;
     meat.castShadow = true;
     taco.add(meat);
 
-    // Piña asada en cubitos
-    const pineappleMat = new THREE.MeshStandardMaterial({ color: 0xffd600, roughness: 0.3 });
-    for (let i = 0; i < 4; i++) {
-        const p = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.1, 0.14), pineappleMat);
-        p.position.set((Math.random() - 0.5) * 0.18, 0.22, -0.35 + i * 0.22);
-        p.rotation.set(Math.random(), Math.random(), Math.random());
-        taco.add(p);
+    for (let m = 0; m < 8; m++) {
+        const chunk = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.09, 0.16), meatMat);
+        chunk.position.set((Math.random() - 0.5) * 0.24, 0.12, (Math.random() - 0.5) * 0.9);
+        chunk.rotation.set(Math.random(), Math.random(), Math.random());
+        taco.add(chunk);
     }
 
-    // Cilantro picado fresco
-    const cilantroMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.6 });
-    for (let i = 0; i < 12; i++) {
-        const c = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.06), cilantroMat);
-        c.position.set((Math.random() - 0.5) * 0.22, 0.24, (Math.random() - 0.5) * 0.85);
-        taco.add(c);
+    // Cubos de piña asada
+    for (let p = 0; p < 5; p++) {
+        const pine = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.11, 0.14), pineappleMat);
+        pine.position.set((Math.random() - 0.5) * 0.20, 0.22, -0.4 + p * 0.2);
+        pine.rotation.set(Math.random() * 0.5, Math.random() * 0.5, Math.random() * 0.5);
+        taco.add(pine);
     }
 
-    // Hebras de queso fundido
-    const cheeseMat = new THREE.MeshStandardMaterial({ color: 0xffca28, roughness: 0.4 });
-    for (let i = 0; i < 3; i++) {
-        const ch = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.4), cheeseMat);
-        ch.position.set((Math.random() - 0.5) * 0.15, 0.2, (Math.random() - 0.5) * 0.5);
-        ch.rotation.y = (Math.random() - 0.5) * 0.6;
-        taco.add(ch);
+    // Cebolla blanca fresca picada
+    for (let o = 0; o < 14; o++) {
+        const on = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.05), onionMat);
+        on.position.set((Math.random() - 0.5) * 0.26, 0.24, (Math.random() - 0.5) * 0.9);
+        taco.add(on);
     }
 
-    taco.scale.set(1.1, 1.1, 1.1);
+    // Cilantro fresco
+    for (let c = 0; c < 18; c++) {
+        const cil = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.05), cilantroMat);
+        cil.position.set((Math.random() - 0.5) * 0.28, 0.25, (Math.random() - 0.5) * 0.95);
+        cil.rotation.y = Math.random() * Math.PI;
+        taco.add(cil);
+    }
+
+    // Gajo de limón verde al lado
+    const lime = new THREE.Group();
+    const limeRind = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.20, 0.20, 0.12, 16, 1, false, 0, Math.PI * 0.6),
+        limeRindMat
+    );
+    limeRind.rotation.x = Math.PI / 2;
+    lime.add(limeRind);
+    const limePulp = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.17, 0.17, 0.13, 16, 1, false, 0, Math.PI * 0.58),
+        limePulpMat
+    );
+    limePulp.rotation.x = Math.PI / 2;
+    lime.add(limePulp);
+    lime.position.set(0.42, -0.18, 0.35);
+    lime.rotation.set(0.4, 0.6, 0.2);
+    taco.add(lime);
+
+    taco.scale.set(1.15, 1.15, 1.15);
     return taco;
 }
 
 /** 4. 🥟 Empanada Criolla Dorada con Repulgue Trenzado Artesanal */
 function createEmpanadaMesh() {
     const empanada = new THREE.Group();
-    const crustMat = new THREE.MeshStandardMaterial({ color: 0xdf994a, roughness: 0.45, metalness: 0.05 });
-    const braidMat = new THREE.MeshStandardMaterial({ color: 0xbf782c, roughness: 0.5 });
+
+    const doughMat = new THREE.MeshStandardMaterial({
+        color: 0xe09744,
+        roughness: 0.38,
+        metalness: 0.04
+    });
+    const braidMat = new THREE.MeshStandardMaterial({
+        color: 0xb56d20,
+        roughness: 0.44,
+        metalness: 0.05
+    });
 
     // Masa inflada en media luna
-    const body = new THREE.Mesh(new THREE.SphereGeometry(0.68, 20, 16, 0, Math.PI, 0, Math.PI), crustMat);
-    body.scale.set(1.0, 0.42, 0.55);
+    const body = new THREE.Mesh(
+        new THREE.SphereGeometry(0.72, 28, 20, 0, Math.PI, 0, Math.PI),
+        doughMat
+    );
+    body.scale.set(1.0, 0.44, 0.60);
     body.rotation.x = -Math.PI / 2;
-    body.position.y = -0.05;
+    body.position.y = -0.04;
     body.castShadow = true;
     empanada.add(body);
 
-    // Repulgue trenzado tradicional a lo largo del arco exterior
-    const braidCount = 13;
-    const radius = 0.68;
+    // Repulgue trenzado artesanal de 16 pliegues entrelazados
+    const braidCount = 16;
+    const radius = 0.72;
     for (let i = 0; i <= braidCount; i++) {
         const t = (i / braidCount) * Math.PI;
         const bx = Math.cos(t) * radius;
-        const bz = Math.sin(t) * (radius * 0.55);
-        const fold = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.045, 8, 12), braidMat);
-        fold.position.set(bx, 0.02, bz);
+        const bz = Math.sin(t) * (radius * 0.60);
+        const fold = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.042, 10, 16), braidMat);
+        fold.position.set(bx, 0.03, bz);
         fold.rotation.x = Math.PI / 2;
         fold.rotation.z = -t + Math.PI / 4;
         fold.castShadow = true;
         empanada.add(fold);
     }
 
-    // Barniz de huevo horneado (brillo satinado)
+    // Barniz de huevo horneado satinado
     const gloss = new THREE.Mesh(
-        new THREE.SphereGeometry(0.45, 12, 10, 0, Math.PI, 0, Math.PI),
-        new THREE.MeshStandardMaterial({ color: 0xffd180, roughness: 0.25, transparent: true, opacity: 0.35 })
+        new THREE.SphereGeometry(0.50, 16, 12, 0, Math.PI, 0, Math.PI),
+        new THREE.MeshStandardMaterial({ color: 0xffd580, roughness: 0.20, transparent: true, opacity: 0.38 })
     );
-    gloss.scale.set(1.0, 0.44, 0.52);
+    gloss.scale.set(1.0, 0.46, 0.58);
     gloss.rotation.x = -Math.PI / 2;
-    gloss.position.y = -0.04;
+    gloss.position.y = -0.03;
     empanada.add(gloss);
 
     empanada.scale.set(1.2, 1.2, 1.2);
     return empanada;
 }
 
-/** 5. 🍩 Dona Gourmet Glaseada de Fresa con Chispas de Colores */
+/** 5. 🍩 Dona Gourmet Glaseada de Fresa con Chispas y Gotas de Glaseado */
 function createDessertMesh() {
     const dessert = new THREE.Group();
-    const doughMat = new THREE.MeshStandardMaterial({ color: 0xdeb887, roughness: 0.75, metalness: 0.02 });
-    const glazeMat = new THREE.MeshStandardMaterial({ color: 0xff4081, roughness: 0.15, metalness: 0.1 });
 
-    // Masa esponjosa dorada
-    const dough = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.24, 20, 32), doughMat);
+    const doughMat = new THREE.MeshStandardMaterial({
+        color: 0xdeb887,
+        roughness: 0.60,
+        metalness: 0.02
+    });
+    const glazeMat = new THREE.MeshStandardMaterial({
+        color: 0xff1493,
+        roughness: 0.10,
+        metalness: 0.08
+    });
+    const drizzleMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.18
+    });
+
+    // 1. Masa de dona frita esponjosa dorada
+    const dough = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.26, 28, 48), doughMat);
     dough.rotation.x = Math.PI / 2;
     dough.castShadow = true;
     dessert.add(dough);
 
-    // Glaseado espejo de fresa
-    const glaze = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.255, 16, 32, Math.PI * 2), glazeMat);
+    // Cinta de fritura ecuatorial dorada suave
+    const fryRing = new THREE.Mesh(
+        new THREE.TorusGeometry(0.56, 0.264, 12, 48),
+        new THREE.MeshStandardMaterial({ color: 0xf5deb3, roughness: 0.75, transparent: true, opacity: 0.6 })
+    );
+    fryRing.rotation.x = Math.PI / 2;
+    fryRing.scale.set(1.0, 1.0, 0.25);
+    dessert.add(fryRing);
+
+    // 2. Glaseado espejo grueso de fresa
+    const glaze = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.272, 20, 48), glazeMat);
     glaze.rotation.x = Math.PI / 2;
-    glaze.position.y = 0.05;
+    glaze.position.y = 0.06;
     glaze.scale.set(1.0, 1.0, 0.95);
     dessert.add(glaze);
 
-    // Chispitas multicolores (Sprinkles)
+    // Gotas de glaseado escurriendo orgánicamente
+    for (let d = 0; d < 8; d++) {
+        const dAngle = (d * Math.PI * 2) / 8 + Math.random() * 0.3;
+        const drip = new THREE.Mesh(new THREE.SphereGeometry(0.065, 12, 12), glazeMat);
+        drip.scale.set(1.0, 1.5, 0.8);
+        drip.position.set(Math.cos(dAngle) * 0.76, 0.01, Math.sin(dAngle) * 0.76);
+        dessert.add(drip);
+    }
+
+    // 3. Chispitas multicolores 3D (Sprinkles)
     const sprinkleColors = [0xffffff, 0x00e5ff, 0xffee58, 0x76ff03, 0x7c4dff, 0xff9100];
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 32; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const rad = 0.38 + Math.random() * 0.28;
+        const rad = 0.40 + Math.random() * 0.30;
         const s = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.022, 0.022, 0.08, 8),
-            new THREE.MeshStandardMaterial({ color: sprinkleColors[i % sprinkleColors.length], roughness: 0.3 })
+            new THREE.CylinderGeometry(0.024, 0.024, 0.09, 8),
+            new THREE.MeshStandardMaterial({ color: sprinkleColors[i % sprinkleColors.length], roughness: 0.25 })
         );
-        s.position.set(Math.cos(angle) * rad, 0.28, Math.sin(angle) * rad);
+        s.position.set(Math.cos(angle) * rad, 0.30, Math.sin(angle) * rad);
         s.rotation.set(Math.PI / 2, 0, Math.random() * Math.PI);
         dessert.add(s);
+    }
+
+    // 4. Espirales de chocolate blanco
+    for (let z = 0; z < 5; z++) {
+        const dz = new THREE.Mesh(new THREE.TorusGeometry(0.38 + z * 0.07, 0.012, 8, 24, Math.PI * 0.8), drizzleMat);
+        dz.rotation.x = Math.PI / 2;
+        dz.rotation.z = z * 0.6;
+        dz.position.y = 0.32;
+        dessert.add(dz);
     }
 
     dessert.scale.set(1.15, 1.15, 1.15);
@@ -352,7 +568,7 @@ class Real3DClawcade {
         this.camera.position.set(0, 0.8, 12.2);
         this.camera.lookAt(0, -0.4, 0);
 
-        // 3. Renderizador WebGL con sombras suaves
+        // 3. Renderizador WebGL de Alta Fidelidad y Resolución Fotográfica
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
             antialias: true,
@@ -360,39 +576,46 @@ class Real3DClawcade {
             powerPreference: 'high-performance'
         });
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.18;
+
+        // Entorno de iluminación IBL de estudio para reflejos reales de cromo y acero en la garra y cadena
+        this.initStudioEnvironment();
 
         // 4. Luces en tiempo real
-        // Luz ambiente cálida
-        const ambient = new THREE.AmbientLight(0xffffff, 0.75);
+        // Luz ambiente calibrada
+        const ambient = new THREE.AmbientLight(0xffffff, 0.65);
         this.scene.add(ambient);
 
-        // Foco cenital principal con proyección de sombras
-        this.spotLight = new THREE.SpotLight(0xfff5f8, 1.8);
+        // Foco cenital principal con proyección de sombras nítidas de 2048px
+        this.spotLight = new THREE.SpotLight(0xfff5f8, 1.9);
         this.spotLight.position.set(0, 9, 2);
         this.spotLight.angle = Math.PI / 3;
-        this.spotLight.penumbra = 0.4;
+        this.spotLight.penumbra = 0.35;
         this.spotLight.castShadow = true;
-        this.spotLight.shadow.mapSize.width = 1024;
-        this.spotLight.shadow.mapSize.height = 1024;
+        this.spotLight.shadow.mapSize.width = 2048;
+        this.spotLight.shadow.mapSize.height = 2048;
         this.spotLight.shadow.camera.near = 1;
         this.spotLight.shadow.camera.far = 15;
+        this.spotLight.shadow.bias = -0.0004;
         this.scene.add(this.spotLight);
 
         // Luz Neón Cian (Pilar Izquierdo)
-        const cyanLight = new THREE.PointLight(0x00e5ff, 1.2, 16);
+        const cyanLight = new THREE.PointLight(0x00e5ff, 1.3, 16);
         cyanLight.position.set(-6, 2, 2);
         this.scene.add(cyanLight);
 
         // Luz Neón Magenta (Pilar Derecho)
-        const pinkLight = new THREE.PointLight(0xff1493, 1.2, 16);
+        const pinkLight = new THREE.PointLight(0xff1493, 1.3, 16);
         pinkLight.position.set(6, 2, 2);
         this.scene.add(pinkLight);
 
         // Foco frontal radiante para reflejo metálico cromado y plata pura de la garra
-        const clawFrontLight = new THREE.DirectionalLight(0xffffff, 1.8);
+        const clawFrontLight = new THREE.DirectionalLight(0xffffff, 1.6);
         clawFrontLight.position.set(0, 6, 9);
         this.scene.add(clawFrontLight);
 
@@ -404,6 +627,69 @@ class Real3DClawcade {
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(w, h);
         });
+    }
+
+    /**
+     * Genera un mapa de entorno procedural HD para iluminación IBL de metal y cromo puro.
+     * Crea reflejos nítidos de softboxes de estudio, horizontes y neones sobre la garra y la cadena.
+     */
+    initStudioEnvironment() {
+        try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            // Degradado de estudio arcade (Horizonte metálico y techo de iluminación)
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, 256);
+            bgGrad.addColorStop(0.0, '#64748b');  // Techo brillante de estudio
+            bgGrad.addColorStop(0.46, '#334155'); // Gradiente hacia horizonte
+            bgGrad.addColorStop(0.50, '#1e293b'); // Línea de horizonte nítida
+            bgGrad.addColorStop(0.54, '#0f172a'); // Suelo inferior
+            bgGrad.addColorStop(1.0, '#020617');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, 512, 256);
+
+            // Softboxes cenitales de estudio (Destellos blancos de cromo puro)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(160, 15, 192, 50);
+            ctx.fillRect(30, 25, 90, 35);
+            ctx.fillRect(390, 25, 90, 35);
+
+            // Reflejos neón laterales en el cromo
+            const cyanGrad = ctx.createLinearGradient(0, 70, 0, 160);
+            cyanGrad.addColorStop(0, '#00e5ff');
+            cyanGrad.addColorStop(1, '#0284c7');
+            ctx.fillStyle = cyanGrad;
+            ctx.fillRect(8, 70, 28, 90);
+
+            const pinkGrad = ctx.createLinearGradient(0, 70, 0, 160);
+            pinkGrad.addColorStop(0, '#ff1493');
+            pinkGrad.addColorStop(1, '#9d174d');
+            ctx.fillStyle = pinkGrad;
+            ctx.fillRect(476, 70, 28, 90);
+
+            // Línea de horizonte cromada de 360 grados
+            const horizonLine = ctx.createLinearGradient(0, 122, 0, 134);
+            horizonLine.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+            horizonLine.addColorStop(1, 'rgba(200, 230, 255, 0.0)');
+            ctx.fillStyle = horizonLine;
+            ctx.fillRect(0, 122, 512, 12);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+
+            const pmremGen = new THREE.PMREMGenerator(this.renderer);
+            pmremGen.compileEquirectangularShader();
+            const envMap = pmremGen.fromEquirectangular(texture).texture;
+            pmremGen.dispose();
+            texture.dispose();
+
+            this.scene.environment = envMap;
+        } catch (e) {
+            console.warn('Environment map warning:', e);
+        }
     }
 
     buildCabinet3D() {
@@ -555,29 +841,26 @@ class Real3DClawcade {
             roughness: 0.15
         });
 
-        // Materiales de Plata Cromada Realista Ultra-Brillante (Reflectividad real sin sombras oscuras)
+        // Materiales de Grado Industrial - 100% Metal Cromado y Acero Espejo Real (Con IBL de Estudio)
         const silverChromeMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,          // Plata pura brillante
-            metalness: 0.45,          // Permite brillo difuso radiante
-            roughness: 0.14,          // Destello especular metálico nítido
-            emissive: 0x303844,       // Tinte plateado sutil para evitar sombras negras
-            emissiveIntensity: 0.28
+            color: 0xf8fafc,          // Plata de alta pureza
+            metalness: 0.95,          // 95% metal puro
+            roughness: 0.10,          // Reflejo especular espejo ultra nítido
+            envMapIntensity: 1.6
         });
 
         const silverSteelMat = new THREE.MeshStandardMaterial({
-            color: 0xe8eef5,          // Acero plateado pulido
-            metalness: 0.40,
-            roughness: 0.22,
-            emissive: 0x242a34,
-            emissiveIntensity: 0.22
+            color: 0xe2e8f0,          // Acero pulido
+            metalness: 0.88,          // Metal de alta conductividad óptica
+            roughness: 0.18,          // Acero satinado brillante
+            envMapIntensity: 1.3
         });
 
         const silverBoltMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,          // Pernos y herrajes de plata espejo
-            metalness: 0.55,
+            color: 0xffffff,          // Pernos de cromo brillante
+            metalness: 0.98,
             roughness: 0.08,
-            emissive: 0x38404c,
-            emissiveIntensity: 0.30
+            envMapIntensity: 1.8
         });
 
         // 1. Rieles Longitudinales (Eje Z en el techo)
@@ -627,11 +910,16 @@ class Real3DClawcade {
         this.trolley.add(pulleyMesh);
         this.crossbeam.add(this.trolley);
 
-        // 4. Cable de Acero Trenzado Extensible (Y)
-        const cableGeo = new THREE.CylinderGeometry(0.025, 0.025, 1, 12);
-        this.cableMesh = new THREE.Mesh(cableGeo, silverChromeMat);
-        this.cableMesh.position.y = -0.5;
-        this.trolley.add(this.cableMesh);
+        // 4. Cadena Metálica de Eslabones de Acero Cromado Realista
+        // Eslabones ovalados entrelazados (Torus) que se extienden y recogen físicamente
+        const linkGeo = new THREE.TorusGeometry(0.065, 0.018, 10, 18);
+        linkGeo.scale(1.0, 1.45, 1.0); // Eslabón ovalado alargado de cadena real
+
+        this.maxChainLinks = 44;
+        this.chainMesh = new THREE.InstancedMesh(linkGeo, silverChromeMat, this.maxChainLinks);
+        this.chainMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this.chainMesh.castShadow = true;
+        this.scene.add(this.chainMesh);
 
         // 5. CABEZA DE LA GARRA METÁLICA DE PLATA REALISTA (CERO ROSA, CERO ELEMENTOS FLOTANTES)
         this.clawHead = new THREE.Group();
@@ -1208,12 +1496,29 @@ class Real3DClawcade {
         // Mover cabeza de garra
         this.clawHead.position.set(this.clawPos.x, this.clawPos.y, this.clawPos.z);
 
-        // Longitud del cable en 3D (desde polea en Y=4.6 hasta anilla superior de la garra en Y=clawPos.y + 0.95)
-        const topAttachY = -0.2;
-        const clawAttachWorldY = this.clawPos.y + 0.95;
-        const cableLength = Math.max(0.1, (4.8 + topAttachY) - clawAttachWorldY);
-        this.cableMesh.scale.y = cableLength;
-        this.cableMesh.position.y = topAttachY - (cableLength / 2);
+        // Actualizar la Cadena de Eslabones Metálicos de Acero Cromado en 3D
+        const chainTopY = 4.6;
+        const chainBottomY = this.clawPos.y + 0.95;
+        const chainSpan = Math.max(0.12, chainTopY - chainBottomY);
+        const linkPitch = 0.135;
+        const activeLinks = Math.min(this.maxChainLinks, Math.max(2, Math.floor(chainSpan / linkPitch) + 1));
+        const stepY = chainSpan / activeLinks;
+
+        const chainDummy = new THREE.Object3D();
+        for (let i = 0; i < this.maxChainLinks; i++) {
+            if (i < activeLinks) {
+                chainDummy.position.set(this.clawPos.x, chainTopY - (i + 0.5) * stepY, this.clawPos.z);
+                // Eslabones entrelazados alternando 0 y 90 grados en Y
+                chainDummy.rotation.set(0, i % 2 === 0 ? 0 : Math.PI / 2, 0);
+                chainDummy.scale.set(1, 1, 1);
+            } else {
+                chainDummy.position.set(0, -999, 0);
+                chainDummy.scale.set(0, 0, 0);
+            }
+            chainDummy.updateMatrix();
+            this.chainMesh.setMatrixAt(i, chainDummy.matrix);
+        }
+        this.chainMesh.instanceMatrix.needsUpdate = true;
 
         // Foco de luz siguiendo la garra sutilmente
         this.spotLight.target = this.clawHead;

@@ -167,6 +167,34 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Altura de contacto de descenso ajustada a `clawPos.y <= -1.6` para que las puntas de plata alcancen la profundidad exacta de la comida sobre el suelo (`Y = -4.37`) sin atravesar el chasis.
    - Centro de sujeción vertical calibrado a `clawPos.y - 1.65` para que la hamburguesa, papas o tacos queden abrazados dentro de las tenazas de plata durante la elevación y traslado a la tolva.
 
+---
+
+## 📦 ENTRADA: Versión 1.8.0 - Acabado Metálico Real con IBL de Estudio, Cadena de Acero 3D y Modelos Gourmet Fotorrealistas en Alta Resolución
+
+### Funcionalidades Implementadas:
+1. **Acabado Metálico Realista con Iluminación IBL de Estudio (`scene.environment`):**
+   - Se implementó un generador procedural de entorno de estudio HD (`initStudioEnvironment`) utilizando `PMREMGenerator` y canvas equirectangular.
+   - Reflejos auténticos en tiempo real de softboxes de estudio, línea de horizonte cromada y resplandores neón laterales sobre las superficies metálicas.
+   - Materiales `silverChromeMat` (metalness: 0.95, roughness: 0.10) y `silverSteelMat` (metalness: 0.88) que ofrecen un brillo de espejo y acabado de acero pulido idéntico al de una máquina recreativa física real.
+
+2. **Cadena Metálica 3D de Eslabones Entrelazados Reales (`InstancedMesh`):**
+   - Se reemplazó el cilindro liso de cable por una **cadena tridimensional de 44 eslabones ovalados de acero cromado** (`THREE.TorusGeometry` escalado a eslabón oval).
+   - Los eslabones se entrelazan físicamente alternando 0° y 90° en el eje Y.
+   - La cadena se estira y recoge dinámicamente eslabón por eslabón a medida que la garra desciende y asciende, reflejando destellos cromados reales en cada anillo.
+
+3. **Modelos 3D de Comida Gourmet de Alta Resolución y Realismo:**
+   - **Hamburguesa Doble Gourmet:** Pan brioche abombado glaseado con 12 racimos de semillas de sésamo orientadas, carne Angus gruesa a la parrilla, cheddar derretido con 4 esquinas caídas sobre la carne, pepinillos agridulces, rodajas de tomate y 7 hojas de lechuga rizada batavia.
+   - **Papas Fritas Crujientes:** Caja cónica trapezoidal de fast-food con scoop frontal rebajado, emblema arcade dorado y 22 papas doradas con variación cromática de fritura y tostado.
+   - **Taco al Pastor Supremo:** Tortilla de maíz doblada con puntos de comal artesanal, cama abundante de carne al pastor marinada en achiote, cubos de piña asada, cebolla blanca, cilantro fresco y gajo de limón verde.
+   - **Empanada Criolla Dorada:** Masa hojaldrada inflada con vientre relleno, repulgue tradicional de 16 pliegues entrelazados y barniz de huevo horneado con satin gloss.
+   - **Dona Gourmet Glaseada:** Masa frita esponjosa con cinta de fritura ecuatorial dorada, glaseado espejo espeso de fresa con 8 gotas orgánicas escurriendo, 32 chispas multicolores y espirales de chocolate blanco.
+
+4. **Mejora Integral de Resolución y Calidad de Renderizado:**
+   - Soporte para pantallas Retina y monitores de alta densidad con `pixelRatio` hasta 2.5x.
+   - Mapeo tonal cinematográfico `ACESFilmicToneMapping` y codificación de color `sRGBEncoding` para evitar colores lavados o aspecto plástico.
+   - Sombras suaves en tiempo real duplicadas en resolución a `2048x2048` píxeles.
+   - Aumento de altura de la vitrina de cristal a `500px` en modo estándar para mayor amplitud visual.
+
 
 
 
