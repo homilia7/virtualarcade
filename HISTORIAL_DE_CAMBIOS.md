@@ -249,3 +249,26 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Consola de mandos en ángulo con perspectiva 3D, placa de control azul metálica y palanca física con bola roja ultra-brillante con doble destello especular y arandela guardapolvo concéntrica.
    - Botón domo de acción rojo grande ("¡ATRAPAR!") iluminado y botón de asistencia.
    - Panel inferior con compuerta de premios basculante de acero inoxidable cepillado y monedero/billetero con ranura de inserción iluminada y botón de expulsión rojo `"PUSH"`.
+
+---
+
+## 📦 ENTRADA: Versión 1.9.1 - Garra Mecánica Idéntica a Arcade Real (Solenoide, Cable Espiral y Tenazas Articuladas), Caída Libre por Gravedad y Saturación Rica de Productos
+
+### Funcionalidades Implementadas:
+1. **Caída Física Libre de Premios con Aceleración Gravitatoria ("el producto debe caer"):**
+   - Al posicionarse sobre el depósito/tolva (`this.chutePos`), las tenazas mecánicas de la garra inician su apertura cinemática (`targetClawAngle = 1.0`).
+   - Al superar el umbral de apertura (`clawAngle > 0.32`), el producto se desprende físicamente y pasa al estado `this.fallingPrize`.
+   - Simulación de caída libre a 60 FPS con aceleración de gravedad natural (`velY -= 0.016`, `posY += velY`) y rotación tridimensional libre durante ~0.5 segundos, cayendo en caída libre visible desde `Y = 1.65` hasta atravesar el brocal de neón cian (`Y = -1.55`) y sumergirse en el interior del depósito (`Y <= -4.8`).
+   - Al aterrizar en el fondo del depósito, se activa `onPrizeLandedInChute`: fanfarria de victoria (`soundFX.playWin`), toast banner de premio y brillo pulsante en la compuerta exterior dispensadora (`glow-win`), con reposo automático y rearme de la garra tras 1.4s.
+
+2. **Reconstrucción Geométrica y PBR de la Garra Auténtica de Arcade (según fotos reales del usuario):**
+   - **Carcasa de Solenoide Cilíndrica:** Cilindro mecanizado en acero plateado satinado con ranuras concéntricas torneadas de alta fidelidad y brida inferior de sujeción.
+   - **Cable Espiral Negro Dinámico (tipo teléfono / resorte helicoidal):** Conducto eléctrico espiral negro vulcanizado (`SpiralCableCurve` + `TubeGeometry`) que se estira y contrae físicamente en tiempo real con el descenso y ascenso de la garra.
+   - **Eje Central y Buje Actuador Deslizante:** Eje vertical cromado (plunger shaft) con buje central que se desplaza mecánicamente en Y abriendo y cerrando el mecanismo.
+   - **Articulación y Tenazas Continuas de Acero Inoxidable:** 3 conjuntos mecánicos radiales a 120° con horquillas de montaje, brazos tensores, pernos de articulación en el codo y tenazas continuas curvadas con terminación en cuchara suave (spoon tip).
+   - **Acabado Metálico Plata Auténtico:** Base tonal de acero/plata auténtica (`0x8a9dae` y `0xa8b8c8`, `metalness: 0.94-0.96`, `roughness: 0.04-0.08`, `envMap: this.chromeCubeMap`), eliminando bases blancas sobreexpuestas.
+
+3. **Eliminación del Lavado Blanco y Restauración de Saturación Rica en Productos ("los productos no se deben de verse tan claros"):**
+   - Se aisló el mapa de entorno cúbico de estudio (`chromeCubeMap`) exclusivamente a los materiales metálicos (garra, postes, rieles, pernos), eliminando la asignación global a `scene.environment`. Esto evita que el cielo blanco del cubemap lave de blanco los materiales dieléctricos (comida y peluches).
+   - Se ajustó el objetivo del foco cenital (`this.spotLight.target`) hacia el suelo del lecho de premios (`Y = -4.0`), iluminando la comida con sombras nítidas y evitando quemar la superficie de la garra.
+   - Exposición PBR calibrada a `0.95` con luz ambiente cálida a `0.28` y foco frontal suave a `0.18`.

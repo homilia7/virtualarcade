@@ -4,17 +4,17 @@
  * garra articulada y montaña volumétrica de peluches tridimensionales.
  */
 
-// Paleta de peluches para la montaña 3D
+// Paleta de peluches para la montaña 3D con colores vivos y ricos
 const PLUSHIE_COLORS = [
-    { name: 'Peluchetón Rosa', color: 0xff80ab, earColor: 0xff4081, emoji: '🐰' },
-    { name: 'Osito Menta', color: 0x69f0ae, earColor: 0x00e676, emoji: '🐻' },
-    { name: 'Gatito Dorado', color: 0xffd54f, earColor: 0xffb300, emoji: '🐱' },
-    { name: 'Conejito Pastel', color: 0xea80fc, earColor: 0xaa00ff, emoji: '🐰' },
-    { name: 'Pollito Solar', color: 0xffee58, earColor: 0xfdd835, emoji: '🐥' },
-    { name: 'Pulpo Turquesa', color: 0x40c4ff, earColor: 0x00b0ff, emoji: '🐙' },
-    { name: 'Panda Suave', color: 0xf5f5f5, earColor: 0x212121, emoji: '🐼' },
-    { name: 'Dino Pastel', color: 0xb9f6ca, earColor: 0x69f0ae, emoji: '🦖' },
-    { name: 'Zorrito Coral', color: 0xffab91, earColor: 0xff7043, emoji: '🦊' }
+    { name: 'Peluchetón Rosa', color: 0xd81b60, earColor: 0xad1457, emoji: '🐰' },
+    { name: 'Osito Menta', color: 0x00bfa5, earColor: 0x00897b, emoji: '🐻' },
+    { name: 'Gatito Dorado', color: 0xf57f17, earColor: 0xe65100, emoji: '🐱' },
+    { name: 'Conejito Violeta', color: 0x8e24aa, earColor: 0x6a1b9a, emoji: '🐰' },
+    { name: 'Pollito Solar', color: 0xfbc02d, earColor: 0xf57f17, emoji: '🐥' },
+    { name: 'Pulpo Turquesa', color: 0x0288d1, earColor: 0x01579b, emoji: '🐙' },
+    { name: 'Panda Suave', color: 0x263238, earColor: 0x102027, emoji: '🐼' },
+    { name: 'Dino Esmeralda', color: 0x2e7d32, earColor: 0x1b5e20, emoji: '🦖' },
+    { name: 'Zorrito Coral', color: 0xe64a19, earColor: 0xbf360c, emoji: '🦊' }
 ];
 
 // ========================================================
@@ -25,43 +25,43 @@ const PLUSHIE_COLORS = [
 function createBurgerMesh() {
     const burger = new THREE.Group();
 
-    // Materiales PBR de alta definición
+    // Materiales PBR de alta definición con tonos ricos y contrastados (cero colores desteñidos)
     const bunTopMat = new THREE.MeshStandardMaterial({
-        color: 0xc87b28,
-        roughness: 0.35,
+        color: 0x9e5210,          // Pan brioche dorado tostado profundo
+        roughness: 0.40,
         metalness: 0.02
     });
     const bunBottomMat = new THREE.MeshStandardMaterial({
-        color: 0xb36720,
+        color: 0x85420c,
         roughness: 0.55,
         metalness: 0.02
     });
     const pattyMat = new THREE.MeshStandardMaterial({
-        color: 0x2b1509,
-        roughness: 0.88,
+        color: 0x1a0a03,          // Carne Angus gruesa a la parrilla oscura con corteza
+        roughness: 0.90,
         metalness: 0.05
     });
     const cheeseMat = new THREE.MeshStandardMaterial({
-        color: 0xffa000,
-        roughness: 0.22,
+        color: 0xf57c00,          // Cheddar fundido naranja profundo
+        roughness: 0.25,
         metalness: 0.05
     });
     const tomatoMat = new THREE.MeshStandardMaterial({
-        color: 0xd32f2f,
-        roughness: 0.18,
+        color: 0xb71c1c,          // Tomate maduro rojo oscuro
+        roughness: 0.20,
         metalness: 0.08
     });
     const pickleMat = new THREE.MeshStandardMaterial({
-        color: 0x33691e,
-        roughness: 0.32,
+        color: 0x2e5e18,          // Pepinillo verde oscuro
+        roughness: 0.35,
         metalness: 0.05
     });
     const lettuceMat = new THREE.MeshStandardMaterial({
-        color: 0x43a047,
+        color: 0x2e7d32,          // Lechuga fresca verde viva
         roughness: 0.55
     });
     const sesameMat = new THREE.MeshStandardMaterial({
-        color: 0xfffaea,
+        color: 0xf5eedc,
         roughness: 0.45
     });
 
@@ -159,12 +159,12 @@ function createFriesMesh() {
     const fries = new THREE.Group();
 
     const boxRedMat = new THREE.MeshStandardMaterial({
-        color: 0xd50000,
-        roughness: 0.28,
+        color: 0xb71c1c,
+        roughness: 0.30,
         metalness: 0.05
     });
     const emblemMat = new THREE.MeshStandardMaterial({
-        color: 0xffd54f,
+        color: 0xfbc02d,
         roughness: 0.25,
         metalness: 0.35
     });
@@ -204,11 +204,11 @@ function createFriesMesh() {
     emblem.position.set(0, -0.08, 0.23);
     fries.add(emblem);
 
-    // Papas Fritas doradas y crujientes con variación de tostado
+    // Papas Fritas doradas y crujientes con variación de tostado profundo
     const fryMats = [
-        new THREE.MeshStandardMaterial({ color: 0xfbc02d, roughness: 0.52 }),
-        new THREE.MeshStandardMaterial({ color: 0xffd54f, roughness: 0.50 }),
-        new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.58 }),
+        new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.52 }),
+        new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.50 }),
+        new THREE.MeshStandardMaterial({ color: 0xe65100, roughness: 0.58 }),
         new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.54 })
     ];
 
@@ -237,34 +237,34 @@ function createTacoMesh() {
     const taco = new THREE.Group();
 
     const tortillaMat = new THREE.MeshStandardMaterial({
-        color: 0xf3ba6d,
-        roughness: 0.68,
+        color: 0xc68a3c,
+        roughness: 0.70,
         metalness: 0.02
     });
     const meatMat = new THREE.MeshStandardMaterial({
-        color: 0x8a230c,
+        color: 0x6a1505,
         roughness: 0.85,
         metalness: 0.05
     });
     const pineappleMat = new THREE.MeshStandardMaterial({
-        color: 0xffd600,
-        roughness: 0.25,
+        color: 0xf59e0b,
+        roughness: 0.28,
         metalness: 0.05
     });
     const onionMat = new THREE.MeshStandardMaterial({
-        color: 0xf8fafc,
-        roughness: 0.30
+        color: 0xf1f5f9,
+        roughness: 0.35
     });
     const cilantroMat = new THREE.MeshStandardMaterial({
-        color: 0x2e7d32,
+        color: 0x1b5e20,
         roughness: 0.60
     });
     const limeRindMat = new THREE.MeshStandardMaterial({
-        color: 0x2e7d32,
+        color: 0x1b5e20,
         roughness: 0.45
     });
     const limePulpMat = new THREE.MeshStandardMaterial({
-        color: 0x76ff03,
+        color: 0x64dd17,
         roughness: 0.25,
         metalness: 0.1
     });
@@ -366,13 +366,13 @@ function createEmpanadaMesh() {
     const empanada = new THREE.Group();
 
     const doughMat = new THREE.MeshStandardMaterial({
-        color: 0xe09744,
-        roughness: 0.38,
+        color: 0xbf6718,
+        roughness: 0.40,
         metalness: 0.04
     });
     const braidMat = new THREE.MeshStandardMaterial({
-        color: 0xb56d20,
-        roughness: 0.44,
+        color: 0x8a4007,
+        roughness: 0.46,
         metalness: 0.05
     });
 
@@ -421,13 +421,13 @@ function createDessertMesh() {
     const dessert = new THREE.Group();
 
     const doughMat = new THREE.MeshStandardMaterial({
-        color: 0xdeb887,
+        color: 0xad6b2d,
         roughness: 0.60,
         metalness: 0.02
     });
     const glazeMat = new THREE.MeshStandardMaterial({
-        color: 0xff1493,
-        roughness: 0.10,
+        color: 0xc2185b,
+        roughness: 0.12,
         metalness: 0.08
     });
     const drizzleMat = new THREE.MeshStandardMaterial({
@@ -502,6 +502,23 @@ const FOOD_PRIZES = [
     { type: 'dessert', name: 'Dona Glaseada de Fresa', emoji: '🍩', create: createDessertMesh }
 ];
 
+// Curva matemática helicoidal para el cable espiral negro tipo teléfono
+class SpiralCableCurve extends THREE.Curve {
+    constructor(radius = 0.12, turns = 11, height = 1.0) {
+        super();
+        this.radius = radius;
+        this.turns = turns;
+        this.height = height;
+    }
+    getPoint(t, optionalTarget = new THREE.Vector3()) {
+        const angle = t * Math.PI * 2 * this.turns;
+        const x = Math.cos(angle) * this.radius;
+        const y = -t * this.height;
+        const z = Math.sin(angle) * this.radius;
+        return optionalTarget.set(x, y, z);
+    }
+}
+
 class Real3DClawcade {
     constructor() {
         this.container = document.querySelector('.glass-chamber');
@@ -539,6 +556,8 @@ class Real3DClawcade {
         // Lista de peluches 3D
         this.plushies = [];
         this.grabbedPlushie = null;
+        this.fallingPrize = null;
+        this.releaseTimer = 0;
 
         // Inicializar Three.js
         this.initThree();
@@ -581,42 +600,48 @@ class Real3DClawcade {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1.0;
+        this.renderer.toneMappingExposure = 0.95; // Exposición rica y equilibrada (cero aspecto lavado)
 
         // Entorno de iluminación IBL de estudio para reflejos reales de cromo y acero en la garra y cadena
         this.initStudioEnvironment();
 
         // 4. Luces en tiempo real
-        // Luz ambiente calibrada para mantener contraste y sombras en metales
-        const ambient = new THREE.AmbientLight(0xffffff, 0.38);
+        // Luz ambiente suave que preserva sombras profundas y saturación rica en los premios
+        const ambient = new THREE.AmbientLight(0xffffff, 0.28);
         this.scene.add(ambient);
 
-        // Foco cenital principal con proyección de sombras nítidas de 2048px
-        this.spotLight = new THREE.SpotLight(0xfff8f5, 1.25);
+        // Foco cenital principal cálido y contrastado enfocado al lecho de premios
+        this.spotLight = new THREE.SpotLight(0xffeedd, 1.15);
         this.spotLight.position.set(0, 9, 2);
         this.spotLight.angle = Math.PI / 3;
-        this.spotLight.penumbra = 0.35;
+        this.spotLight.penumbra = 0.45;
         this.spotLight.castShadow = true;
         this.spotLight.shadow.mapSize.width = 2048;
         this.spotLight.shadow.mapSize.height = 2048;
         this.spotLight.shadow.camera.near = 1;
         this.spotLight.shadow.camera.far = 15;
         this.spotLight.shadow.bias = -0.0004;
+
+        // Objetivo fijo del foco en el suelo de premios para iluminar la comida y no quemar la garra
+        const spotTarget = new THREE.Object3D();
+        spotTarget.position.set(0, -4.0, 0);
+        this.scene.add(spotTarget);
+        this.spotLight.target = spotTarget;
         this.scene.add(this.spotLight);
 
         // Luz Neón Cian (Pilar Izquierdo)
-        const cyanLight = new THREE.PointLight(0x00e5ff, 1.2, 16);
+        const cyanLight = new THREE.PointLight(0x00e5ff, 1.0, 16);
         cyanLight.position.set(-6, 2, 2);
         this.scene.add(cyanLight);
 
         // Luz Neón Magenta (Pilar Derecho)
-        const pinkLight = new THREE.PointLight(0xff1493, 1.2, 16);
+        const pinkLight = new THREE.PointLight(0xff1493, 1.0, 16);
         pinkLight.position.set(6, 2, 2);
         this.scene.add(pinkLight);
 
-        // Foco frontal suave calibrado para no sobreexponer ni crear velo blanco en el cromo
-        const clawFrontLight = new THREE.DirectionalLight(0xdbeafe, 0.28);
-        clawFrontLight.position.set(0, 6, 9);
+        // Foco frontal sutil sin sobreexponer ni blanquear la garra ni los productos
+        const clawFrontLight = new THREE.DirectionalLight(0xffffff, 0.18);
+        clawFrontLight.position.set(0, 5, 8);
         this.scene.add(clawFrontLight);
 
         // Redimensionamiento
@@ -645,12 +670,12 @@ class Real3DClawcade {
             };
 
             const drawSide = (ctx, accent) => {
-                // Mitad superior: Cielo de estudio con degradado metálico plata
+                // Mitad superior: Cielo de estudio con degradado metálico plata/acero auténtico
                 const skyGrad = ctx.createLinearGradient(0, 0, 0, 128);
-                skyGrad.addColorStop(0.0, '#3a4756');  // Gris acero oscuro superior
-                skyGrad.addColorStop(0.5, '#75889e');  // Tono medio plata
-                skyGrad.addColorStop(0.85, '#dbe5f0'); // Plata brillante
-                skyGrad.addColorStop(1.0, '#ffffff');  // Destello blanco puro en el horizonte
+                skyGrad.addColorStop(0.0, '#2e3947');  // Gris acero oscuro superior
+                skyGrad.addColorStop(0.5, '#607285');  // Tono medio plata
+                skyGrad.addColorStop(0.85, '#a4b8cc'); // Plata satinada suave
+                skyGrad.addColorStop(1.0, '#d0dee9');  // Destello satinado en el horizonte (sin quemar blancos)
                 ctx.fillStyle = skyGrad;
                 ctx.fillRect(0, 0, 256, 128);
 
@@ -668,9 +693,9 @@ class Real3DClawcade {
 
                 // Reflejos específicos por cara
                 if (accent === 'front') {
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.fillStyle = 'rgba(215, 230, 245, 0.75)';
                     ctx.fillRect(48, 40, 160, 16);
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+                    ctx.fillStyle = 'rgba(215, 230, 245, 0.25)';
                     ctx.fillRect(36, 36, 184, 24);
                 } else if (accent === 'cyan') {
                     const cyanG = ctx.createLinearGradient(116, 0, 140, 0);
@@ -700,14 +725,12 @@ class Real3DClawcade {
                 ctx.fillStyle = '#2b3644';
                 ctx.fillRect(0, 0, 256, 256);
                 const glow = ctx.createRadialGradient(128, 128, 20, 128, 128, 110);
-                glow.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
-                glow.addColorStop(0.5, 'rgba(240, 246, 255, 0.85)');
-                glow.addColorStop(0.8, 'rgba(150, 175, 205, 0.4)');
+                glow.addColorStop(0, 'rgba(235, 245, 255, 0.85)');
+                glow.addColorStop(0.5, 'rgba(195, 215, 235, 0.65)');
+                glow.addColorStop(0.8, 'rgba(130, 155, 185, 0.3)');
                 glow.addColorStop(1.0, 'rgba(43, 54, 68, 0.0)');
                 ctx.fillStyle = glow;
                 ctx.fillRect(0, 0, 256, 256);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(80, 80, 96, 96);
             };
 
             const drawBottom = (ctx) => {
@@ -731,14 +754,15 @@ class Real3DClawcade {
             cubeTexture.needsUpdate = true;
             this.chromeCubeMap = cubeTexture;
 
-            // Compilar PMREM para el cubemap si el renderizador está disponible
+            // Generar textura PMREM optimizada exclusivamente para materiales metálicos
+            // (NO contamina la escena global para preservar saturación profunda en comida y peluches)
             try {
                 const pmremGen = new THREE.PMREMGenerator(this.renderer);
                 pmremGen.compileCubemapShader();
-                this.scene.environment = pmremGen.fromCubemap(cubeTexture).texture;
+                this.chromeCubeMap = pmremGen.fromCubemap(cubeTexture).texture;
                 pmremGen.dispose();
             } catch (pmremErr) {
-                this.scene.environment = cubeTexture;
+                this.chromeCubeMap = cubeTexture;
             }
         } catch (e) {
             console.warn('Environment map warning:', e);
@@ -873,32 +897,19 @@ class Real3DClawcade {
         this.scene.add(acrylicRail);
 
         // ----------------------------------------------------
-        // ENTORNO DEL MUEBLE REAL: TECHO, POSTES ESQUINEROS Y CRISTALERÍA 3D
+        // ENTORNO DEL MUEBLE REAL: TECHO Y POSTES ESQUINEROS ESTRUCTURALES
         // ----------------------------------------------------
-        // 7. Techo interior cerrado (Caja física real iluminada desde el techo)
+        // 7. Techo interior cerrado (Caja física real con acabado industrial)
         const ceilingGeo = new THREE.PlaneGeometry(13, 10);
         const ceilingMat = new THREE.MeshStandardMaterial({
             color: 0x180515,
-            roughness: 0.45,
+            roughness: 0.55,
             metalness: 0.15
         });
         const ceiling = new THREE.Mesh(ceilingGeo, ceilingMat);
         ceiling.rotation.x = Math.PI / 2;
         ceiling.position.y = 5.0;
         this.scene.add(ceiling);
-
-        // Paneles softbox empotrados en el techo interior
-        const lightPanelGeo = new THREE.PlaneGeometry(3.6, 2.0);
-        const lightPanelMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const lightPanel1 = new THREE.Mesh(lightPanelGeo, lightPanelMat);
-        lightPanel1.rotation.x = Math.PI / 2;
-        lightPanel1.position.set(-2.5, 4.98, 0);
-        this.scene.add(lightPanel1);
-
-        const lightPanel2 = new THREE.Mesh(lightPanelGeo, lightPanelMat);
-        lightPanel2.rotation.x = Math.PI / 2;
-        lightPanel2.position.set(2.5, 4.98, 0);
-        this.scene.add(lightPanel2);
 
         // 8. Cuatro Postes Esquineros de Acero Cromado / Aluminio de Grado Industrial
         const postGeo = new THREE.BoxGeometry(0.32, 9.8, 0.32);
@@ -907,7 +918,7 @@ class Real3DClawcade {
             metalness: 0.92,
             roughness: 0.08,
             envMap: this.chromeCubeMap || this.scene.environment,
-            envMapIntensity: 2.0
+            envMapIntensity: 1.8
         });
 
         // Poste Frontal Izquierdo
@@ -930,7 +941,7 @@ class Real3DClawcade {
         postBR.position.set(6.32, 0.1, -4.8);
         this.scene.add(postBR);
 
-        // 9. Dintel Superior Frontal y Alféizar Inferior de Cristal
+        // 9. Dintel Superior Frontal y Alféizar Inferior Metálicos
         const headerGeo = new THREE.BoxGeometry(12.9, 0.35, 0.35);
         const headerMesh = new THREE.Mesh(headerGeo, cornerPostMat);
         headerMesh.position.set(0, 4.85, 4.8);
@@ -940,94 +951,44 @@ class Real3DClawcade {
         const sillMesh = new THREE.Mesh(sillGeo, cornerPostMat);
         sillMesh.position.set(0, -4.7, 4.8);
         this.scene.add(sillMesh);
-
-        // Tira de luz LED frontal superior (Ilumina la vitrina desde arriba hacia el frente)
-        const ledBarGeo = new THREE.BoxGeometry(12.4, 0.06, 0.08);
-        const ledBarMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            emissive: 0xffffff,
-            emissiveIntensity: 1.2
-        });
-        const ledBar = new THREE.Mesh(ledBarGeo, ledBarMat);
-        ledBar.position.set(0, 4.70, 4.75);
-        this.scene.add(ledBar);
-
-        // 10. Paneles de Vidrio Físicos en 3D (Cristal templado con reflejos especulares de entorno)
-        const physicalGlassMat = new THREE.MeshPhysicalMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.08,
-            roughness: 0.03,
-            transmission: 0.95,
-            reflectivity: 0.85,
-            envMap: this.chromeCubeMap || this.scene.environment,
-            envMapIntensity: 1.1,
-            depthWrite: false
-        });
-
-        // Cristal Frontal Principal
-        const frontGlassGeo = new THREE.PlaneGeometry(12.3, 9.3);
-        const frontGlass = new THREE.Mesh(frontGlassGeo, physicalGlassMat);
-        frontGlass.position.set(0, 0.1, 4.78);
-        this.scene.add(frontGlass);
-
-        // Cristal Lateral Izquierdo
-        const sideGlassGeo = new THREE.PlaneGeometry(9.4, 9.3);
-        const leftGlass = new THREE.Mesh(sideGlassGeo, physicalGlassMat);
-        leftGlass.rotation.y = Math.PI / 2;
-        leftGlass.position.set(-6.30, 0.1, 0);
-        this.scene.add(leftGlass);
-
-        // Cristal Lateral Derecho
-        const rightGlass = new THREE.Mesh(sideGlassGeo, physicalGlassMat);
-        rightGlass.rotation.y = -Math.PI / 2;
-        rightGlass.position.set(6.30, 0.1, 0);
-        this.scene.add(rightGlass);
     }
 
     buildCraneAndClaw3D() {
-        // Materiales de Grado Industrial y PBR Realista
-        const chromeMirrorMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            metalness: 0.98,
-            roughness: 0.05
-        });
-
-        const darkSteelMat = new THREE.MeshStandardMaterial({
-            color: 0x263238,
-            metalness: 0.88,
-            roughness: 0.22
-        });
-
-        const brassBoltMat = new THREE.MeshStandardMaterial({
-            color: 0xffd54f,
-            metalness: 0.95,
-            roughness: 0.15
-        });
-
-        // Materiales de Grado Industrial - 100% Cromo Espejo y Acero Plateado Auténtico
-        const silverChromeMat = new THREE.MeshStandardMaterial({
-            color: 0xdce6f2,          // Plata / cromo metálico brillante y puro
-            metalness: 0.98,          // Metal puro (98%)
-            roughness: 0.03,          // Acabado espejo pulido de cromo puro (reflejos hiper-nítidos)
-            envMap: this.chromeCubeMap || this.scene.environment,
-            envMapIntensity: 2.5
-        });
-
+        // Materiales de Grado Industrial - 100% Acero Plateado y Cromo Espejo Auténtico de Arcade
         const silverSteelMat = new THREE.MeshStandardMaterial({
-            color: 0x9bb0c4,          // Acero estructural plateado satinado
-            metalness: 0.92,
-            roughness: 0.10,          // Ligeramente satinado pero reflectante
-            envMap: this.chromeCubeMap || this.scene.environment,
-            envMapIntensity: 1.8
+            color: 0x8a9dae,              // Tono plata / acero satinado auténtico (NO blanco, NO plástico)
+            metalness: 0.94,              // Metal puro 94%
+            roughness: 0.08,              // Reflejo pulido limpio
+            envMap: this.chromeCubeMap,
+            envMapIntensity: 1.2
+        });
+
+        const silverChromeMat = new THREE.MeshStandardMaterial({
+            color: 0xa8b8c8,              // Cromo plateado brillante para ejes, pernos y herrajes
+            metalness: 0.96,
+            roughness: 0.04,
+            envMap: this.chromeCubeMap,
+            envMapIntensity: 1.3
         });
 
         const silverBoltMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,          // Pernos y herrajes de plata espejo
-            metalness: 1.0,
-            roughness: 0.02,
-            envMap: this.chromeCubeMap || this.scene.environment,
-            envMapIntensity: 3.0
+            color: 0xc0d0e0,              // Pernos y pasadores de articulación
+            metalness: 0.98,
+            roughness: 0.03,
+            envMap: this.chromeCubeMap,
+            envMapIntensity: 1.4
+        });
+
+        const darkSteelMat = new THREE.MeshStandardMaterial({
+            color: 0x1e242b,              // Retenes y bujes de acero templado
+            metalness: 0.88,
+            roughness: 0.25
+        });
+
+        const coiledCableMat = new THREE.MeshStandardMaterial({
+            color: 0x111315,              // Cable espiral negro mate vulcanizado estilo teléfono
+            roughness: 0.65,
+            metalness: 0.12
         });
 
         // 1. Rieles Longitudinales (Eje Z en el techo)
@@ -1059,7 +1020,6 @@ class Real3DClawcade {
         guideRight.position.set(5.5, 0, 0);
         this.crossbeam.add(guideRight);
 
-        // Anclaje permanente de la viga en el riel superior del techo
         this.crossbeam.position.set(0, 4.8, this.clawPos.z);
         this.scene.add(this.crossbeam);
 
@@ -1078,9 +1038,8 @@ class Real3DClawcade {
         this.crossbeam.add(this.trolley);
 
         // 4. Cadena Metálica de Eslabones de Acero Cromado Realista
-        // Eslabones ovalados entrelazados (Torus) que se extienden y recogen físicamente
         const linkGeo = new THREE.TorusGeometry(0.065, 0.018, 10, 18);
-        linkGeo.scale(1.0, 1.45, 1.0); // Eslabón ovalado alargado de cadena real
+        linkGeo.scale(1.0, 1.45, 1.0);
 
         this.maxChainLinks = 44;
         this.chainMesh = new THREE.InstancedMesh(linkGeo, silverChromeMat, this.maxChainLinks);
@@ -1088,65 +1047,92 @@ class Real3DClawcade {
         this.chainMesh.castShadow = true;
         this.scene.add(this.chainMesh);
 
-        // 5. CABEZA DE LA GARRA METÁLICA DE PLATA REALISTA (CERO ROSA, CERO ELEMENTOS FLOTANTES)
+        // 5. CABLE ESPIRAL NEGRO REALISTA (Tipo teléfono / muelle helicoidal que se estira y contrae)
+        const spiralCurve = new SpiralCableCurve(0.12, 11, 1.0);
+        const spiralGeo = new THREE.TubeGeometry(spiralCurve, 72, 0.024, 8, false);
+        this.coiledCableMesh = new THREE.Mesh(spiralGeo, coiledCableMat);
+        this.coiledCableMesh.castShadow = true;
+        this.scene.add(this.coiledCableMesh);
+
+        // 6. CABEZA DE LA GARRA METÁLICA DE PLATA REALISTA (IDÉNTICA A FOTO REAL DEL USUARIO)
         this.clawHead = new THREE.Group();
         this.clawHead.position.set(this.clawPos.x, this.clawPos.y, this.clawPos.z);
         this.scene.add(this.clawHead);
 
-        // Anilla giratoria superior de suspensión
-        const swivelGeo = new THREE.TorusGeometry(0.18, 0.045, 16, 24);
+        // Anilla giratoria superior de suspensión (Swivel)
+        const swivelGeo = new THREE.TorusGeometry(0.16, 0.04, 16, 24);
         const swivelMesh = new THREE.Mesh(swivelGeo, silverChromeMat);
-        swivelMesh.position.set(0, 0.95, 0);
+        swivelMesh.position.set(0, 1.18, 0);
         this.clawHead.add(swivelMesh);
 
-        // Casquillo de sujeción cónico superior
-        const topCapGeo = new THREE.CylinderGeometry(0.25, 0.62, 0.35, 32);
+        // Pasador transversal superior
+        const swivelPin = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.22, 16), silverBoltMat);
+        swivelPin.rotation.x = Math.PI / 2;
+        swivelPin.position.set(0, 1.02, 0);
+        this.clawHead.add(swivelPin);
+
+        // Tapa superior del solenoide con boquilla de cable espiral
+        const topCapGeo = new THREE.CylinderGeometry(0.40, 0.44, 0.22, 32);
         const topCap = new THREE.Mesh(topCapGeo, silverChromeMat);
-        topCap.position.y = 0.65;
+        topCap.position.y = 0.88;
         this.clawHead.add(topCap);
 
-        // Cúpula / Domo Superior en Plata Pulida Brillante (Realista como en máquina real)
-        const domeGeo = new THREE.SphereGeometry(0.65, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        const dome = new THREE.Mesh(domeGeo, silverChromeMat);
-        dome.position.y = 0.25;
-        this.clawHead.add(dome);
+        // Conector de entrada para el cable espiral negro
+        const cableInlet = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.16, 16), darkSteelMat);
+        cableInlet.position.set(0.35, 0.88, -0.12);
+        this.clawHead.add(cableInlet);
 
-        // Bisel / Corona de plata del domo
-        const domeBezelGeo = new THREE.TorusGeometry(0.66, 0.05, 16, 32);
-        const domeBezel = new THREE.Mesh(domeBezelGeo, silverChromeMat);
-        domeBezel.rotation.x = Math.PI / 2;
-        domeBezel.position.y = 0.25;
-        this.clawHead.add(domeBezel);
-
-        // Carcasa Principal Cilíndrica (Motor/Gearbox) en Acero Plateado
-        const casingGeo = new THREE.CylinderGeometry(0.62, 0.68, 0.65, 32);
+        // Cilindro principal del solenoide (Carcasa mecanizada en acero plateado)
+        const casingGeo = new THREE.CylinderGeometry(0.44, 0.44, 1.05, 32);
         const casing = new THREE.Mesh(casingGeo, silverSteelMat);
-        casing.position.y = -0.1;
+        casing.position.y = 0.32;
         this.clawHead.add(casing);
 
-        // Anillo inferior cromado con reborde
-        const baseRingGeo = new THREE.CylinderGeometry(0.72, 0.72, 0.12, 32);
-        const baseRing = new THREE.Mesh(baseRingGeo, silverChromeMat);
-        baseRing.position.y = -0.42;
-        this.clawHead.add(baseRing);
+        // Anillos y ranuras mecanizados decorativos de alta fidelidad
+        [-0.05, 0.32, 0.65].forEach(yPos => {
+            const groove = new THREE.Mesh(new THREE.TorusGeometry(0.444, 0.022, 12, 32), silverChromeMat);
+            groove.rotation.x = Math.PI / 2;
+            groove.position.y = yPos;
+            this.clawHead.add(groove);
+        });
 
-        // Núcleo central inferior cerrado (Buje limpio en plata, sin varillas colgantes)
-        const centerHubGeo = new THREE.CylinderGeometry(0.3, 0.15, 0.25, 24);
-        const centerHub = new THREE.Mesh(centerHubGeo, silverChromeMat);
-        centerHub.position.y = -0.55;
-        this.clawHead.add(centerHub);
+        // Brida inferior de montaje del cuerpo
+        const baseFlangeGeo = new THREE.CylinderGeometry(0.48, 0.48, 0.16, 32);
+        const baseFlange = new THREE.Mesh(baseFlangeGeo, silverChromeMat);
+        baseFlange.position.y = -0.28;
+        this.clawHead.add(baseFlange);
 
-        // 6. Tres Tenazas Mecánicas Continuas de Plata Pulida (120° entre sí)
-        // CERO partes sueltas, CERO elementos flotantes: cada tenaza es una curva 3D continua e indivisible
-        const fingerCurve = new THREE.CatmullRomCurve3([
-            new THREE.Vector3(0.00,  0.00, 0.0), // Bisagra superior en el cuerpo
-            new THREE.Vector3(0.18, -0.55, 0.0), // Brazo superior descendente
-            new THREE.Vector3(0.32, -1.15, 0.0), // Codo exterior curvado
-            new THREE.Vector3(0.22, -1.70, 0.0), // Curva hacia adentro
-            new THREE.Vector3(-0.08, -2.15, 0.0), // Dedo curvado hacia el centro
-            new THREE.Vector3(-0.35, -2.35, 0.0)  // Punta afilada dirigida al centro
+        // Eje central cromado (Plunger Rod)
+        const shaftGeo = new THREE.CylinderGeometry(0.09, 0.09, 1.35, 20);
+        const shaftMesh = new THREE.Mesh(shaftGeo, silverChromeMat);
+        shaftMesh.position.y = -0.75;
+        this.clawHead.add(shaftMesh);
+
+        // Puntera redondeada inferior del eje central
+        const shaftTip = new THREE.Mesh(new THREE.SphereGeometry(0.095, 16, 16), silverChromeMat);
+        shaftTip.position.y = -1.42;
+        this.clawHead.add(shaftTip);
+
+        // Buje / Collar actuador central deslizante (se mueve en Y mecánicamente con clawAngle)
+        this.actuatorCollar = new THREE.Group();
+        const collarRing = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.20, 24), silverSteelMat);
+        this.actuatorCollar.add(collarRing);
+        const collarRim = new THREE.Mesh(new THREE.TorusGeometry(0.285, 0.03, 12, 24), silverBoltMat);
+        collarRim.rotation.x = Math.PI / 2;
+        this.actuatorCollar.add(collarRim);
+        this.actuatorCollar.position.y = -0.65;
+        this.clawHead.add(this.actuatorCollar);
+
+        // 7. TRES TENAZAS MECÁNICAS ARTICULADAS DE ACERO PLATEADO (120° entre sí)
+        const prongCurve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(0.00,  0.00, 0.0), // Codo de articulación
+            new THREE.Vector3(0.14, -0.42, 0.0), // Descenso curvado
+            new THREE.Vector3(0.22, -0.92, 0.0), // Amplitud exterior máxima
+            new THREE.Vector3(0.14, -1.42, 0.0), // Curva hacia adentro
+            new THREE.Vector3(-0.08, -1.85, 0.0), // Inflexión hacia el centro
+            new THREE.Vector3(-0.35, -2.05, 0.0)  // Punta redondeada hacia el centro
         ]);
-        const fingerGeo = new THREE.TubeGeometry(fingerCurve, 36, 0.075, 12, false);
+        const prongGeo = new THREE.TubeGeometry(prongCurve, 32, 0.068, 12, false);
 
         this.prongs = [];
         for (let i = 0; i < 3; i++) {
@@ -1154,59 +1140,46 @@ class Real3DClawcade {
             const prongGroup = new THREE.Group();
             prongGroup.rotation.y = angle;
 
-            // Horquilla de Montaje Superior en el cuerpo (Plata)
-            const bracketGeo = new THREE.BoxGeometry(0.16, 0.22, 0.25);
-            const bracket = new THREE.Mesh(bracketGeo, silverSteelMat);
-            bracket.position.set(0.68, -0.42, 0);
-            prongGroup.add(bracket);
+            // Horquilla superior en la brida
+            const mountBracket = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.18, 0.22), silverSteelMat);
+            mountBracket.position.set(0.46, -0.28, 0);
+            prongGroup.add(mountBracket);
 
-            // Perno de articulación superior en plata
-            const pinGeo = new THREE.CylinderGeometry(0.065, 0.065, 0.32, 16);
-            const pin = new THREE.Mesh(pinGeo, silverBoltMat);
-            pin.rotation.x = Math.PI / 2;
-            pin.position.set(0.68, -0.42, 0);
-            prongGroup.add(pin);
+            // Brazo diagonal superior (Strut fijo)
+            const strutGeo = new THREE.CylinderGeometry(0.042, 0.042, 0.48, 12);
+            const upperStrut = new THREE.Mesh(strutGeo, silverSteelMat);
+            upperStrut.position.set(0.56, -0.50, 0);
+            upperStrut.rotation.z = -0.42;
+            prongGroup.add(upperStrut);
 
-            // PIVOTE COMPLETO DE LA TENAZA SÓLIDA DE PLATA
+            // Pivote principal del codo y tenaza
             const upperPivot = new THREE.Group();
-            upperPivot.position.set(0.68, -0.42, 0);
+            upperPivot.position.set(0.66, -0.68, 0);
 
-            // Bisagra cilíndrica de sujeción
-            const hingeJoint = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.085, 0.085, 0.22, 16),
-                silverBoltMat
-            );
-            hingeJoint.rotation.x = Math.PI / 2;
-            upperPivot.add(hingeJoint);
+            // Perno de articulación del codo
+            const elbowPin = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.22, 16), silverBoltMat);
+            elbowPin.rotation.x = Math.PI / 2;
+            upperPivot.add(elbowPin);
 
-            // Cuerpo tubular continuo de la garra (Una sola pieza sólida sin uniones partidas)
-            const fingerMesh = new THREE.Mesh(fingerGeo, silverChromeMat);
+            // Brazo tensor hacia el collar central
+            const linkArm = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.06, 0.08), silverSteelMat);
+            linkArm.position.set(-0.16, 0.02, 0);
+            upperPivot.add(linkArm);
+
+            // Tenaza de acero curvada pulida
+            const fingerMesh = new THREE.Mesh(prongGeo, silverSteelMat);
             fingerMesh.castShadow = true;
             upperPivot.add(fingerMesh);
 
-            // Refuerzo en el codo de plata
-            const knuckle = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.09, 0.09, 0.18, 16),
-                silverBoltMat
-            );
-            knuckle.rotation.x = Math.PI / 2;
-            knuckle.position.set(0.32, -1.15, 0.0);
-            upperPivot.add(knuckle);
-
-            // Puntera suave de terminación en la punta de la garra
-            const tipCap = new THREE.Mesh(
-                new THREE.SphereGeometry(0.076, 16, 16),
-                silverChromeMat
-            );
-            tipCap.position.set(-0.35, -2.35, 0.0);
+            // Puntera redondeada suave en el extremo (Spoon tip)
+            const tipCap = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 16), silverChromeMat);
+            tipCap.position.set(-0.35, -2.05, 0.0);
             upperPivot.add(tipCap);
 
             prongGroup.add(upperPivot);
             this.clawHead.add(prongGroup);
 
-            this.prongs.push({
-                upperPivot
-            });
+            this.prongs.push({ upperPivot });
         }
     }
 
@@ -1613,26 +1586,73 @@ class Real3DClawcade {
                 }
             } else {
                 this.clawPos.x = this.chutePos.x;
+                this.clawPos.z = this.chutePos.z;
                 this.state = 'RELEASING';
-                this.targetClawAngle = 1.0; // ¡Abre ampliamente sobre el depósito y suelta el premio!
-
-                if (this.grabbedPlushie) {
-                    this.onWinPrize3D(this.grabbedPlushie);
-                    this.grabbedPlushie = null;
-                } else {
-                    this.onMissed3D();
-                }
+                this.releaseTimer = 0;
+                this.targetClawAngle = 1.0; // Inicia la apertura de las tenazas sobre el depósito
             }
         }
 
-        // 1. Cinemática de apertura/cierre de tenazas de plata maciza (Mecanismo real de arcade)
-        this.clawAngle += (this.targetClawAngle - this.clawAngle) * 0.18;
+        // 6. Apertura de la garra y desprendimiento físico del producto (Free-fall)
+        if (this.state === 'RELEASING') {
+            this.releaseTimer++;
+            this.targetClawAngle = 1.0;
 
-        // Animar las 3 tenazas continuas de plata (abre hacia afuera al bajar, cierra al centro al atrapar)
+            // Cuando las tenazas se abren mecánicamente (clawAngle > 0.32), el producto se desprende por gravedad
+            if (this.grabbedPlushie && this.clawAngle > 0.32 && !this.fallingPrize) {
+                this.fallingPrize = {
+                    prize: this.grabbedPlushie,
+                    mesh: this.grabbedPlushie.mesh,
+                    velY: -0.02,
+                    velX: (Math.random() - 0.5) * 0.01,
+                    velZ: (Math.random() - 0.5) * 0.01,
+                    rotVelX: (Math.random() - 0.5) * 0.05,
+                    rotVelY: (Math.random() - 0.5) * 0.04,
+                    rotVelZ: (Math.random() - 0.5) * 0.05
+                };
+                this.grabbedPlushie = null;
+                if (window.soundFX) window.soundFX.playClawGrab();
+            }
+
+            // Si la garra llegó vacía al depósito y pasaron ~1s
+            if (!this.grabbedPlushie && !this.fallingPrize && this.releaseTimer > 65) {
+                this.onMissed3D();
+                this.state = this.credits > 0 ? 'READY' : 'WAITING_COIN';
+                this.targetClawAngle = 0.15;
+            }
+        }
+
+        // 7. Simulación física de caída libre con gravedad acelerada (El producto cae de verdad)
+        if (this.fallingPrize) {
+            const fp = this.fallingPrize;
+            fp.velY -= 0.016; // Gravedad acelerada natural (9.8 m/s²)
+            fp.mesh.position.y += fp.velY;
+            fp.mesh.position.x += fp.velX;
+            fp.mesh.position.z += fp.velZ;
+            fp.mesh.rotation.x += fp.rotVelX;
+            fp.mesh.rotation.y += fp.rotVelY;
+            fp.mesh.rotation.z += fp.rotVelZ;
+
+            // El producto cae a través del brocal (Y = -1.55) hasta sumergirse en el depósito (Y <= -4.8)
+            if (fp.mesh.position.y <= -4.8) {
+                const wonPrize = fp.prize;
+                this.scene.remove(fp.mesh);
+                this.fallingPrize = null;
+                this.onPrizeLandedInChute(wonPrize);
+            }
+        }
+
+        // 1. Cinemática de apertura/cierre de tenazas de acero plateado y desplazamiento del collar actuador
+        this.clawAngle += (this.targetClawAngle - this.clawAngle) * 0.14;
+
         this.prongs.forEach(prong => {
-            const angleZ = (this.clawAngle * 0.65) - 0.24;
+            const angleZ = (this.clawAngle * 0.65) - 0.22;
             prong.upperPivot.rotation.z = angleZ;
         });
+
+        if (this.actuatorCollar) {
+            this.actuatorCollar.position.y = -0.65 - (this.clawAngle * 0.40);
+        }
 
         // 2. Física de inercia y balanceo pendular del cable (Sway)
         const accelX = (this.clawPos.x - this.prevClawX);
@@ -1687,8 +1707,14 @@ class Real3DClawcade {
         }
         this.chainMesh.instanceMatrix.needsUpdate = true;
 
-        // Foco de luz siguiendo la garra sutilmente
-        this.spotLight.target = this.clawHead;
+        // Actualizar el Cable Espiral Negro tipo teléfono en 3D (se estira y contrae dinámicamente)
+        if (this.coiledCableMesh) {
+            const cableTopY = 4.8;
+            const cableBottomY = this.clawPos.y + 0.88;
+            const cableSpan = Math.max(0.15, cableTopY - cableBottomY);
+            this.coiledCableMesh.position.set(this.clawPos.x + 0.35, cableTopY, this.clawPos.z - 0.12);
+            this.coiledCableMesh.scale.set(1, cableSpan, 1);
+        }
 
         // Parallax sutil de la cámara 3D para dar sensación de profundidad física
         this.camera.position.x = (this.clawPos.x * 0.15);
@@ -1751,7 +1777,7 @@ class Real3DClawcade {
         setTimeout(() => banner.classList.remove('show'), 2800);
     }
 
-    onWinPrize3D(prize) {
+    onPrizeLandedInChute(prize) {
         if (window.soundFX) window.soundFX.playWin();
 
         // Mostrar notificación de premio en pantalla
@@ -1764,23 +1790,16 @@ class Real3DClawcade {
             setTimeout(() => prizeDoor.classList.remove('glow-win'), 3800);
         }
 
-        // Caída física hacia el interior del depósito/tolva
-        const mesh = prize.mesh;
-        let dropStep = 0;
-        const dropInterval = setInterval(() => {
-            dropStep += 0.15;
-            mesh.position.y -= dropStep;
-            if (mesh.position.y <= -5.5) {
-                clearInterval(dropInterval);
-                this.scene.remove(mesh);
-            }
-        }, 30);
-
+        // Transición de regreso una vez celebrado el aterrizaje del premio en el dispensador
         setTimeout(() => {
             this.state = this.credits > 0 ? 'READY' : 'WAITING_COIN';
             this.targetClawAngle = 0.15; // Regresa al reposo relajado
             this.spawnPlushieMountain3D(); // Reponer montaña
-        }, 1500);
+        }, 1400);
+    }
+
+    onWinPrize3D(prize) {
+        this.onPrizeLandedInChute(prize);
     }
 
     onMissed3D() {
