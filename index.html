@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Virtual Arcade | Máquinas de Garra y Juegos para Negocios y Eventos</title>
+    <meta name="description" content="Plataforma profesional de juegos arcade virtuales para restaurantes, eventos, bares y retail. Gamificación y fidelización sin costos de maquinaria física.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Barra de Navegación Comercial -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span>🕹️</span>
+            <span>VIRTUAL ARCADE</span>
+            <span class="brand-badge">B2B PRO</span>
+        </div>
+        <div class="nav-links">
+            <a href="#demo" class="nav-link">Jugar Ahora</a>
+            <a href="#restaurantes" class="nav-link">Para Restaurantes</a>
+            <a href="#eventos" class="nav-link">Para Eventos</a>
+            <a href="#hardware" class="nav-link">Hardware</a>
+            <a href="https://wa.me/?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20las%20m%C3%A1quinas%20de%20Virtual%20Arcade" target="_blank" class="btn-nav-cta">Cotizar por WhatsApp</a>
+        </div>
+    </nav>
+
+    <!-- Contenedor Principal -->
+    <div class="main-wrapper">
+
+        <!-- SECCIÓN HERO CON LA MÁQUINA ARCADE VIRTUAL (IDÉNTICA A LA FOTO) -->
+        <section id="demo" class="hero-arcade-section">
+            <div class="hero-header">
+                <span class="hero-tag">Tecnología de Gamificación para Negocios</span>
+                <h1 class="hero-title">Máquinas Arcade Virtuales de Alta Fidelidad</h1>
+                <p class="hero-subtitle">
+                    Transforma cualquier Smart TV, tablet o tótem en una atracción irresistible para restaurantes, ferias y fiestas privadas. Cero fallas mecánicas, 100% personalizable.
+                </p>
+            </div>
+
+            <!-- Barra de Opciones del Arcade -->
+            <div class="arcade-toolbar">
+                <button id="btnThemePlushies" class="toolbar-btn active">🧸 Peluches & Juguetes</button>
+                <button id="btnThemeGourmet" class="toolbar-btn">🍔 Gourmet & Restaurante</button>
+                <button id="btnToggleKiosk" class="toolbar-btn" title="Ideal para pantallas de TV montadas en la pared">📺 Modo TV Vertical (Kiosco)</button>
+            </div>
+
+            <!-- EL MUEBLE ARCADE (VIRTUAL CLAWCADE) -->
+            <div class="arcade-viewport">
+                <div class="arcade-cabinet">
+                    
+                    <!-- Marquesina Superior -->
+                    <div class="cabinet-top-bezel">
+                        <span class="cabinet-title-badge">PREMIUM CLAW SYSTEM</span>
+                        <span style="font-size: 0.75rem; color: #81d4fa; font-weight: 800;">60 FPS 3D PHYSICS</span>
+                    </div>
+
+                    <!-- Vitrina de Cristal 3D -->
+                    <div class="glass-chamber">
+                        
+                        <!-- Logotipo 3D Idéntico a la Foto -->
+                        <div class="virtual-clawcade-logo">
+                            <div class="logo-line-virtual">VIRTUAL</div>
+                            <div class="logo-line-clawcade">CLAW CADE</div>
+                        </div>
+
+                        <!-- Reflejo del Cristal -->
+                        <div class="glass-reflection"></div>
+
+                        <!-- Canvas de Física, Montaña de Peluches y Garra -->
+                        <canvas id="gameCanvas"></canvas>
+                    </div>
+
+                    <!-- CONSOLA DE MANDOS 3D INTEGRADA EN PANTALLA (COMO EN LA FOTO) -->
+                    <div class="arcade-control-deck-3d">
+                        <div class="deck-surface">
+                            
+                            <!-- Estación de la Palanca con Bola Roja 3D -->
+                            <div class="joystick-3d-station" id="joystickStation">
+                                <div class="joystick-bezel-ring">
+                                    <div class="joystick-shaft-ball" id="joystickBall"></div>
+                                </div>
+                                <span class="joystick-hint">◀ Mover ▶</span>
+                            </div>
+
+                            <!-- Grupo de Botones de Domo Físico -->
+                            <div class="arcade-buttons-3d-group">
+                                <div class="dome-btn-wrapper">
+                                    <button class="dome-btn dome-btn-pink" id="btnHelpDome" title="Información">ℹ️</button>
+                                    <span class="dome-btn-label">INFO</span>
+                                </div>
+
+                                <div class="dome-btn-wrapper">
+                                    <button class="dome-btn dome-btn-catch" id="btnCatch3D" aria-label="Atrapar Premio">
+                                        ¡ATRAPAR!
+                                    </button>
+                                    <span class="dome-btn-label">ACCION</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- PARTE INFERIOR: RANURA PARA MONEDAS / BILLETES [$] (COMO EN LA FOTO) -->
+                    <div class="cabinet-lower-deck">
+                        <div class="bill-coin-acceptor" id="billCoinSlot" title="Toca para insertar crédito">
+                            <span class="coin-slot-dollar">$</span>
+                            <span class="coin-slot-text">INSERTAR FICHA</span>
+                        </div>
+                        <div class="credits-counter-box" id="creditsCount">1 CRED</div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <p style="font-size: 0.75rem; color: #64748b; margin-top: 14px; text-align: center;">
+                💡 Controles: Arrastra la palanca roja o usa las teclas <kbd>←</kbd> <kbd>→</kbd> y <kbd>Espacio</kbd> en tu teclado.
+            </p>
+        </section>
+
+        <!-- SECCIONES DE VALOR PARA CLIENTES B2B -->
+        <div class="business-sections">
+            
+            <!-- SECCIÓN 1: PARA RESTAURANTES -->
+            <section id="restaurantes" class="section-card">
+                <h2 class="section-heading">🍔 Fidelización de Alto Impacto para Restaurantes</h2>
+                <p class="section-desc">
+                    Reemplaza las tarjetas de puntos aburridas. Con cada ticket de consumo entregas una oportunidad de jugar en la garra virtual. El cliente gana postres, bebidas o descuentos con un código digital que se canjea en caja.
+                </p>
+                <div class="feature-grid">
+                    <div class="feature-box">
+                        <div class="feature-icon">📈</div>
+                        <h3 class="feature-title">+38% en Recompra</h3>
+                        <p class="feature-text">Los cupones con temporizador aceleran la próxima visita del cliente dentro de la misma semana.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">🛡️</div>
+                        <h3 class="feature-title">Control Total de Costos</h3>
+                        <p class="feature-text">Calibra el porcentaje exacto de premios según el costo de tus insumos y establece límites de premios por día.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">📱</div>
+                        <h3 class="feature-title">Sin Descargar Apps</h3>
+                        <p class="feature-text">Funciona escaneando un código QR desde cualquier iPhone o Android en menos de 2 segundos.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 2: PARA FIESTAS Y EVENTOS -->
+            <section id="eventos" class="section-card">
+                <h2 class="section-heading">🎉 Alquiler de Arcades para Fiestas, Bodas y Corporativos</h2>
+                <p class="section-desc">
+                    El negocio de máquinas de garra física exige invertir miles de dólares en muebles pesados de 150 kg que se averían a cada rato. Nuestra tecnología virtual te permite montar un negocio de alquiler ultra-portátil y altamente rentable.
+                </p>
+                <div class="feature-grid">
+                    <div class="feature-box">
+                        <div class="feature-icon">🚗</div>
+                        <h3 class="feature-title">Cabe en la Cajuela</h3>
+                        <p class="feature-text">Transporta una pantalla vertical delgada y una mini consola en tu automóvil sin necesidad de camiones de carga.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">🕹️</div>
+                        <h3 class="feature-title">Palanca Arcade Real</h3>
+                        <p class="feature-text">Se conecta a mandos USB con palanca de bola y botones luminosos para que la sensación táctil sea auténtica.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">✨</div>
+                        <h3 class="feature-title">Personalización en 1 Clic</h3>
+                        <p class="feature-text">Cambia la temática al instante: dinosaurios para niños, coctelería para bodas o logotipos para marcas corporativas.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: COMPARATIVA -->
+            <section id="hardware" class="section-card">
+                <h2 class="section-heading">⚡ Máquina Física Tradicional vs. Virtual Arcade</h2>
+                <p class="section-desc">Descubre por qué las máquinas virtuales 3D superan a las cabinas convencionales en retorno de inversión.</p>
+                <div class="table-wrapper">
+                    <table class="compare-table">
+                        <thead>
+                            <tr>
+                                <th>Característica</th>
+                                <th>Máquina Tradicional</th>
+                                <th>Virtual Arcade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Inversión Inicial</strong></td>
+                                <td>$3,000 - $5,000 USD</td>
+                                <td>Bajo costo (Cualquier pantalla o tablet)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mantenimiento</strong></td>
+                                <td>Alto (cables, motores y poleas rotas)</td>
+                                <td>Cero fallas mecánicas (100% digital)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Logística de Transporte</strong></td>
+                                <td>120 a 180 kg (Requiere camión)</td>
+                                <td>Menos de 15 kg (Ultra portátil)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cambio de Premios</strong></td>
+                                <td>Manual y toma horas</td>
+                                <td>Instantáneo desde el panel de control</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- BANNER DE CONTACTO -->
+            <section class="cta-banner">
+                <h2 class="cta-title">¿Listo para implementar Virtual Arcade en tu negocio?</h2>
+                <p style="font-size: 1.1rem; opacity: 0.9; max-width: 600px;">
+                    Te asesoramos para instalar la máquina en tu restaurante o comenzar a alquilar pantallas para fiestas y eventos privados.
+                </p>
+                <a href="https://wa.me/?text=Hola%2C%20quiero%20cotizar%20el%20sistema%20de%20Virtual%20Arcade%20para%20mi%20negocio" target="_blank" class="cta-btn-wa">
+                    <span>💬</span>
+                    <span>Hablar con un Asesor por WhatsApp</span>
+                </a>
+            </section>
+
+        </div>
+
+    </div>
+
+    <!-- Pie de Página -->
+    <footer class="site-footer">
+        <p>© 2026 Virtual Arcade. Plataforma de Gamificación Gastronómica y Eventos. Desplegado en Cloudflare Pages.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="audio.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

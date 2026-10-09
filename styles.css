@@ -1,0 +1,755 @@
+/* styles.css - Virtual Clawcade & Plataforma Comercial */
+
+:root {
+    --bg-dark: #07090e;
+    --cabinet-pink: #d81b60;
+    --cabinet-pink-dark: #880e4f;
+    --cabinet-pink-light: #ff4081;
+    --neon-cyan: #00e5ff;
+    --neon-cyan-glow: rgba(0, 229, 255, 0.6);
+    --neon-pink: #ff1493;
+    --neon-pink-glow: rgba(255, 20, 147, 0.6);
+    --console-blue: #00b0ff;
+    --console-blue-dark: #0077b6;
+    --joystick-red: #ff1744;
+    --font-bubble: 'Impact', 'Arial Black', sans-serif;
+    --font-ui: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: #fff;
+    font-family: var(--font-ui);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Barra de Navegación Comercial */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(13, 17, 27, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+}
+
+.brand-badge {
+    background: linear-gradient(135deg, var(--cabinet-pink-light), var(--neon-cyan));
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-link {
+    color: #a0aec0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.nav-link:hover {
+    color: var(--neon-cyan);
+}
+
+.btn-nav-cta {
+    background: linear-gradient(90deg, #ff007f, #00f3ff);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+    transition: transform 0.15s ease;
+}
+
+.btn-nav-cta:hover {
+    transform: scale(1.05);
+}
+
+/* Layout Principal de la Página */
+.main-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 60px;
+}
+
+/* SECCIÓN HERO / ARCADE SHOWCASE */
+.hero-arcade-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.hero-header {
+    text-align: center;
+    max-width: 700px;
+    margin-bottom: 25px;
+}
+
+.hero-tag {
+    display: inline-block;
+    background: rgba(0, 229, 255, 0.12);
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    color: var(--neon-cyan);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    padding: 4px 14px;
+    border-radius: 30px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.hero-title {
+    font-size: 2.3rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 40%, #ff80ab 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    color: #a0aec0;
+    line-height: 1.5;
+}
+
+/* Modos de Pantalla y Controles de la Cabina */
+.arcade-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.toolbar-btn {
+    background: #141824;
+    border: 1px solid #2d3748;
+    color: #e2e8f0;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.toolbar-btn:hover {
+    background: #1f2538;
+    border-color: var(--neon-cyan);
+    color: #fff;
+}
+
+.toolbar-btn.active {
+    background: linear-gradient(90deg, #d81b60, #00b0ff);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(216, 27, 96, 0.5);
+}
+
+/* ========================================================
+   CHASIS DE LA MÁQUINA ARCADE (IDÉNTICO A LA FOTO)
+   ======================================================== */
+.arcade-viewport {
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Modo Pantalla Completa Vertical (Smart TV Kiosk) */
+body.tv-kiosk-mode {
+    background: #000;
+    padding: 0;
+    overflow: hidden;
+}
+
+body.tv-kiosk-mode .navbar,
+body.tv-kiosk-mode .hero-header,
+body.tv-kiosk-mode .business-sections,
+body.tv-kiosk-mode .site-footer {
+    display: none !important;
+}
+
+body.tv-kiosk-mode .main-wrapper {
+    max-width: 100vw;
+    height: 100vh;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+}
+
+body.tv-kiosk-mode .arcade-viewport {
+    max-width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body.tv-kiosk-mode .arcade-cabinet {
+    height: 100vh;
+    width: min(100vw, 56.25vh); /* Mantiene proporción 9:16 vertical */
+    border-radius: 0;
+    box-shadow: none;
+    border-left: none;
+    border-right: none;
+}
+
+/* El Mueble Físico Rosa Magenta */
+.arcade-cabinet {
+    background: linear-gradient(180deg, #c2185b 0%, var(--cabinet-pink) 25%, #ad1457 100%);
+    border: 5px solid #880e4f;
+    border-radius: 24px;
+    box-shadow: 
+        0 25px 70px rgba(0, 0, 0, 0.9),
+        0 0 50px rgba(233, 30, 99, 0.3),
+        inset 0 3px 6px rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Columnas de Luz LED Neón Cian a los Lados (Como en la foto) */
+.arcade-cabinet::before,
+.arcade-cabinet::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    bottom: 90px;
+    width: 12px;
+    border-radius: 6px;
+    background: linear-gradient(180deg, #00e5ff 0%, #00b0ff 50%, #00e5ff 100%);
+    box-shadow: 
+        0 0 15px var(--neon-cyan),
+        0 0 30px var(--neon-cyan);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.arcade-cabinet::before { left: 8px; }
+.arcade-cabinet::after { right: 8px; }
+
+/* Marquesina Superior */
+.cabinet-top-bezel {
+    background: linear-gradient(180deg, #ad1457 0%, #880e4f 100%);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 4px solid #6a0036;
+    position: relative;
+    z-index: 12;
+}
+
+.cabinet-title-badge {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #ff80ab;
+    text-transform: uppercase;
+}
+
+/* Vitrina de Cristal 3D */
+.glass-chamber {
+    position: relative;
+    width: 100%;
+    height: 440px;
+    background: radial-gradient(circle at 50% 25%, #2a1124 0%, #120510 70%, #0a0208 100%);
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+/* Logo 3D Flotante "VIRTUAL CLAWCADE" (Idéntico a la foto) */
+.virtual-clawcade-logo {
+    position: absolute;
+    top: 24%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 8;
+    pointer-events: none;
+    text-align: center;
+    width: 90%;
+}
+
+.logo-line-virtual {
+    font-family: var(--font-bubble);
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #d7f7ff;
+    text-transform: uppercase;
+    text-shadow: 
+        0 2px 0 #0088cc,
+        0 4px 0 #005580,
+        0 6px 12px rgba(0, 0, 0, 0.8),
+        0 0 25px rgba(0, 229, 255, 0.7);
+    -webkit-text-stroke: 1.5px #fff;
+    line-height: 1;
+}
+
+.logo-line-clawcade {
+    font-family: var(--font-bubble);
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-shadow: 
+        0 2px 0 #d81b60,
+        0 4px 0 #880e4f,
+        0 7px 15px rgba(0, 0, 0, 0.9),
+        0 0 30px rgba(255, 64, 129, 0.8);
+    -webkit-text-stroke: 1.5px #ff80ab;
+    line-height: 1.1;
+    margin-top: -2px;
+}
+
+/* Reflejos de Cristal */
+.glass-reflection {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 30%, transparent 40%, transparent 100%);
+    pointer-events: none;
+    z-index: 15;
+}
+
+/* Canvas del Juego (Garra, Montaña de Peluches y Acrílico) */
+#gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+
+/* ========================================================
+   CONSOLA DE CONTROL 3D INTEGRADA EN PANTALLA (COMO LA FOTO)
+   ======================================================== */
+.arcade-control-deck-3d {
+    background: linear-gradient(180deg, #0091ea 0%, #00b0ff 25%, #0077b6 85%, #005b8c 100%);
+    border-top: 4px solid #40c4ff;
+    padding: 14px 24px 18px;
+    position: relative;
+    z-index: 20;
+    box-shadow: 
+        inset 0 3px 6px rgba(255, 255, 255, 0.4),
+        0 -4px 12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Bisel de la Consola */
+.deck-surface {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* PALANCA ARCADE FÍSICA 3D (JOYSTICK BOLA ROJA) */
+.joystick-3d-station {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: grab;
+    touch-action: none;
+}
+
+.joystick-3d-station:active {
+    cursor: grabbing;
+}
+
+.joystick-bezel-ring {
+    width: 74px;
+    height: 74px;
+    background: radial-gradient(circle, #1a1a1a 40%, #333 70%, #0a0a0a 100%);
+    border: 3px solid #005b8c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        inset 0 4px 8px rgba(0, 0, 0, 0.8),
+        0 4px 10px rgba(0, 0, 0, 0.4);
+    position: relative;
+}
+
+/* Palanca con Bola Roja 3D */
+.joystick-shaft-ball {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ff8a80 0%, var(--joystick-red) 55%, #b71c1c 100%);
+    box-shadow: 
+        0 6px 12px rgba(0, 0, 0, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.5),
+        0 0 15px rgba(255, 23, 68, 0.4);
+    transition: transform 0.08s ease-out;
+    position: relative;
+}
+
+/* Varilla metálica detrás de la bola */
+.joystick-shaft-ball::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 14px;
+    background: linear-gradient(90deg, #cfd8dc 0%, #eceff1 50%, #90a4ae 100%);
+    border-radius: 2px;
+    z-index: -1;
+}
+
+.joystick-hint {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #e0f7fa;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* BOTONES ARCADE DE DOMO (COMO LOS 2 BOTONES DE LA FOTO) */
+.arcade-buttons-3d-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dome-btn-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dome-btn {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.06s ease, box-shadow 0.06s ease;
+    touch-action: manipulation;
+}
+
+/* Botón 1: Domo Rosa / Blanco */
+.dome-btn-pink {
+    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f8bbd0 50%, #ec407a 100%);
+    border: 3px solid #c2185b;
+    box-shadow: 
+        0 6px 0 #880e4f,
+        0 10px 15px rgba(0, 0, 0, 0.5),
+        inset 0 2px 5px rgba(255, 255, 255, 0.8);
+}
+
+/* Botón 2: Domo Rojo Grande ¡ATRAPAR! */
+.dome-btn-catch {
+    width: 72px;
+    height: 72px;
+    background: radial-gradient(circle at 35% 30%, #ff8a80 0%, #ff1744 60%, #b71c1c 100%);
+    border: 4px solid #d50000;
+    box-shadow: 
+        0 7px 0 #5f0909,
+        0 12px 20px rgba(255, 23, 68, 0.5),
+        inset 0 3px 6px rgba(255, 255, 255, 0.6);
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.dome-btn:active, .dome-btn.pressed {
+    transform: translateY(5px);
+    box-shadow: 0 1px 0 #880e4f, 0 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.dome-btn-catch:active, .dome-btn-catch.pressed {
+    transform: translateY(6px);
+    box-shadow: 0 1px 0 #5f0909, 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dome-btn-label {
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #e0f7fa;
+    margin-top: 4px;
+    text-transform: uppercase;
+}
+
+/* PANEL INFERIOR CON RANURA DE MONEDAS / BILLETES [$] (COMO EN LA FOTO) */
+.cabinet-lower-deck {
+    background: #880e4f;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 3px solid #6a0036;
+}
+
+.bill-coin-acceptor {
+    background: #212121;
+    border: 2px solid #424242;
+    border-radius: 6px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+    transition: border-color 0.2s;
+}
+
+.bill-coin-acceptor:hover {
+    border-color: #76ff03;
+}
+
+.coin-slot-dollar {
+    background: #76ff03;
+    color: #000;
+    font-weight: 900;
+    font-size: 0.95rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(118, 255, 3, 0.6);
+}
+
+.coin-slot-text {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #eee;
+    letter-spacing: 0.5px;
+}
+
+.credits-counter-box {
+    background: #000;
+    border: 2px solid #333;
+    border-radius: 6px;
+    padding: 4px 12px;
+    color: #76ff03;
+    font-family: 'Courier New', monospace;
+    font-weight: 900;
+    font-size: 0.9rem;
+    text-shadow: 0 0 8px #76ff03;
+}
+
+/* ========================================================
+   SECCIONES COMERCIALES PARA NEGOCIOS Y EVENTOS
+   ======================================================== */
+.business-sections {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.section-card {
+    background: #0f1422;
+    border: 1px solid #1e2638;
+    border-radius: 20px;
+    padding: 36px 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--cabinet-pink), var(--neon-cyan));
+}
+
+.section-heading {
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 12px;
+    color: #fff;
+}
+
+.section-desc {
+    color: #a0aec0;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+    max-width: 800px;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.feature-box {
+    background: #141b2e;
+    border: 1px solid #24304c;
+    border-radius: 14px;
+    padding: 22px;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.feature-box:hover {
+    transform: translateY(-4px);
+    border-color: var(--neon-cyan);
+}
+
+.feature-icon {
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+}
+
+.feature-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.feature-text {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    line-height: 1.5;
+}
+
+/* Comparativa Hardware Tradicional vs Virtual */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.compare-table th, .compare-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #24304c;
+    font-size: 0.9rem;
+}
+
+.compare-table th {
+    background: #182035;
+    color: #fff;
+    font-weight: 800;
+}
+
+.compare-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Call to Action WhatsApp / Contacto */
+.cta-banner {
+    background: linear-gradient(135deg, #ad1457 0%, #0077b6 100%);
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+.cta-title {
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.cta-btn-wa {
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 900;
+    padding: 14px 32px;
+    border-radius: 30px;
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+    transition: transform 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cta-btn-wa:hover {
+    transform: scale(1.05);
+}
+
+/* Footer */
+.site-footer {
+    border-top: 1px solid #1a2234;
+    padding: 30px 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.85rem;
+}

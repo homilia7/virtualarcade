@@ -1,0 +1,11 @@
+# Secrets and keys
+CLAVES.txt
+*.env*
+CLAVES/
+
+# Dependencies and caches
+node_modules/
+.wrangler/
+dist/
+out/
+.DS_Store
