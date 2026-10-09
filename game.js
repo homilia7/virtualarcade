@@ -588,11 +588,11 @@ class Real3DClawcade {
 
         // 4. Luces en tiempo real
         // Luz ambiente calibrada para mantener contraste y sombras en metales
-        const ambient = new THREE.AmbientLight(0xffffff, 0.48);
+        const ambient = new THREE.AmbientLight(0xffffff, 0.38);
         this.scene.add(ambient);
 
         // Foco cenital principal con proyección de sombras nítidas de 2048px
-        this.spotLight = new THREE.SpotLight(0xfff5f8, 1.45);
+        this.spotLight = new THREE.SpotLight(0xfff8f5, 1.25);
         this.spotLight.position.set(0, 9, 2);
         this.spotLight.angle = Math.PI / 3;
         this.spotLight.penumbra = 0.35;
@@ -614,8 +614,8 @@ class Real3DClawcade {
         pinkLight.position.set(6, 2, 2);
         this.scene.add(pinkLight);
 
-        // Foco frontal suave para reflejos especulares metálicos (sin sobreexponer ni blanquear la garra)
-        const clawFrontLight = new THREE.DirectionalLight(0xffffff, 0.50);
+        // Foco frontal suave calibrado para no sobreexponer ni crear velo blanco en el cromo
+        const clawFrontLight = new THREE.DirectionalLight(0xdbeafe, 0.28);
         clawFrontLight.position.set(0, 6, 9);
         this.scene.add(clawFrontLight);
 
@@ -630,63 +630,116 @@ class Real3DClawcade {
     }
 
     /**
-     * Genera un mapa de entorno procedural HD para iluminación IBL de metal y cromo puro.
-     * Tiras de luz softbox delgadas y horizonte oscuro contrastado para resaltar el tono plata metálico real.
+     * Genera un mapa de entorno HD CubeTexture de 6 caras para cromo y acero espejo puro.
+     * Incluye línea de horizonte ultra-nítida de alto contraste, cielo metálico y destellos neón.
      */
     initStudioEnvironment() {
         try {
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 256;
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return;
+            const createFace = (drawFn) => {
+                const c = document.createElement('canvas');
+                c.width = 256;
+                c.height = 256;
+                const ctx = c.getContext('2d');
+                if (ctx) drawFn(ctx);
+                return c;
+            };
 
-            // Degradado de estudio arcade (Horizonte metálico y techo contrastado)
-            const bgGrad = ctx.createLinearGradient(0, 0, 0, 256);
-            bgGrad.addColorStop(0.0, '#334155');  // Techo gris estudio
-            bgGrad.addColorStop(0.44, '#1e293b'); // Transición a horizonte
-            bgGrad.addColorStop(0.50, '#0f172a'); // Línea de horizonte oscura
-            bgGrad.addColorStop(0.56, '#1e293b'); // Suelo estudio
-            bgGrad.addColorStop(1.0, '#020617');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, 512, 256);
+            const drawSide = (ctx, accent) => {
+                // Mitad superior: Cielo de estudio con degradado metálico plata
+                const skyGrad = ctx.createLinearGradient(0, 0, 0, 128);
+                skyGrad.addColorStop(0.0, '#3a4756');  // Gris acero oscuro superior
+                skyGrad.addColorStop(0.5, '#75889e');  // Tono medio plata
+                skyGrad.addColorStop(0.85, '#dbe5f0'); // Plata brillante
+                skyGrad.addColorStop(1.0, '#ffffff');  // Destello blanco puro en el horizonte
+                ctx.fillStyle = skyGrad;
+                ctx.fillRect(0, 0, 256, 128);
 
-            // Tiras de luces lineales de estudio (Softbox strips finas para crear destellos nítidos, no manchas blancas gigantes)
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(160, 22, 192, 16); // Tira de luz cenital superior fina
-            ctx.fillRect(40, 35, 75, 12);   // Foco izquierdo fino
-            ctx.fillRect(395, 35, 75, 12);  // Foco derecho fino
+                // Línea de horizonte nítida de alto contraste (esencial para la percepción de cromo espejo)
+                ctx.fillStyle = '#0a0e14';
+                ctx.fillRect(0, 128, 256, 6);
 
-            // Reflejos neón laterales en el cromo
-            const cyanGrad = ctx.createLinearGradient(0, 60, 0, 150);
-            cyanGrad.addColorStop(0, '#00e5ff');
-            cyanGrad.addColorStop(1, '#0369a1');
-            ctx.fillStyle = cyanGrad;
-            ctx.fillRect(6, 65, 20, 80);
+                // Mitad inferior: Suelo de estudio / arcade con degradado oscuro
+                const groundGrad = ctx.createLinearGradient(0, 134, 0, 256);
+                groundGrad.addColorStop(0.0, '#161d26');
+                groundGrad.addColorStop(0.4, '#242e3d');
+                groundGrad.addColorStop(1.0, '#0a0d12');
+                ctx.fillStyle = groundGrad;
+                ctx.fillRect(0, 134, 256, 122);
 
-            const pinkGrad = ctx.createLinearGradient(0, 60, 0, 150);
-            pinkGrad.addColorStop(0, '#ff1493');
-            pinkGrad.addColorStop(1, '#831843');
-            ctx.fillStyle = pinkGrad;
-            ctx.fillRect(486, 65, 20, 80);
+                // Reflejos específicos por cara
+                if (accent === 'front') {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.fillRect(48, 40, 160, 16);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+                    ctx.fillRect(36, 36, 184, 24);
+                } else if (accent === 'cyan') {
+                    const cyanG = ctx.createLinearGradient(116, 0, 140, 0);
+                    cyanG.addColorStop(0, 'rgba(0, 229, 255, 0.0)');
+                    cyanG.addColorStop(0.5, 'rgba(0, 229, 255, 0.95)');
+                    cyanG.addColorStop(1, 'rgba(0, 229, 255, 0.0)');
+                    ctx.fillStyle = cyanG;
+                    ctx.fillRect(116, 40, 24, 166);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(126, 50, 4, 146);
+                } else if (accent === 'pink') {
+                    const pinkG = ctx.createLinearGradient(116, 0, 140, 0);
+                    pinkG.addColorStop(0, 'rgba(255, 20, 147, 0.0)');
+                    pinkG.addColorStop(0.5, 'rgba(255, 20, 147, 0.95)');
+                    pinkG.addColorStop(1, 'rgba(255, 20, 147, 0.0)');
+                    ctx.fillStyle = pinkG;
+                    ctx.fillRect(116, 40, 24, 166);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(126, 50, 4, 146);
+                } else if (accent === 'back') {
+                    ctx.fillStyle = 'rgba(220, 235, 255, 0.6)';
+                    ctx.fillRect(60, 60, 136, 10);
+                }
+            };
 
-            // Línea de horizonte plateada fina
-            const horizonLine = ctx.createLinearGradient(0, 124, 0, 132);
-            horizonLine.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-            horizonLine.addColorStop(1, 'rgba(150, 180, 210, 0.0)');
-            ctx.fillStyle = horizonLine;
-            ctx.fillRect(0, 124, 512, 8);
+            const drawTop = (ctx) => {
+                ctx.fillStyle = '#2b3644';
+                ctx.fillRect(0, 0, 256, 256);
+                const glow = ctx.createRadialGradient(128, 128, 20, 128, 128, 110);
+                glow.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+                glow.addColorStop(0.5, 'rgba(240, 246, 255, 0.85)');
+                glow.addColorStop(0.8, 'rgba(150, 175, 205, 0.4)');
+                glow.addColorStop(1.0, 'rgba(43, 54, 68, 0.0)');
+                ctx.fillStyle = glow;
+                ctx.fillRect(0, 0, 256, 256);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(80, 80, 96, 96);
+            };
 
-            const texture = new THREE.CanvasTexture(canvas);
-            texture.mapping = THREE.EquirectangularReflectionMapping;
+            const drawBottom = (ctx) => {
+                ctx.fillStyle = '#0d1117';
+                ctx.fillRect(0, 0, 256, 256);
+                const floorGrad = ctx.createRadialGradient(128, 128, 10, 128, 128, 120);
+                floorGrad.addColorStop(0, 'rgba(30, 41, 59, 0.6)');
+                floorGrad.addColorStop(1, 'rgba(10, 14, 20, 0.0)');
+                ctx.fillStyle = floorGrad;
+                ctx.fillRect(0, 0, 256, 256);
+            };
 
-            const pmremGen = new THREE.PMREMGenerator(this.renderer);
-            pmremGen.compileEquirectangularShader();
-            const envMap = pmremGen.fromEquirectangular(texture).texture;
-            pmremGen.dispose();
-            texture.dispose();
+            const px = createFace((ctx) => drawSide(ctx, 'cyan'));
+            const nx = createFace((ctx) => drawSide(ctx, 'pink'));
+            const py = createFace(drawTop);
+            const ny = createFace(drawBottom);
+            const pz = createFace((ctx) => drawSide(ctx, 'front'));
+            const nz = createFace((ctx) => drawSide(ctx, 'back'));
 
-            this.scene.environment = envMap;
+            const cubeTexture = new THREE.CubeTexture([px, nx, py, ny, pz, nz]);
+            cubeTexture.needsUpdate = true;
+            this.chromeCubeMap = cubeTexture;
+
+            // Compilar PMREM para el cubemap si el renderizador está disponible
+            try {
+                const pmremGen = new THREE.PMREMGenerator(this.renderer);
+                pmremGen.compileCubemapShader();
+                this.scene.environment = pmremGen.fromCubemap(cubeTexture).texture;
+                pmremGen.dispose();
+            } catch (pmremErr) {
+                this.scene.environment = cubeTexture;
+            }
         } catch (e) {
             console.warn('Environment map warning:', e);
         }
@@ -799,8 +852,7 @@ class Real3DClawcade {
             transparent: true,
             opacity: 0.4,
             roughness: 0.06,
-            transmission: 0.95,
-            thickness: 0.5
+            transmission: 0.95
         });
         const acrylic = new THREE.Mesh(acrylicGeo, acrylicMat);
         acrylic.position.set(-3.1, -2.8, 1.2);
@@ -841,26 +893,29 @@ class Real3DClawcade {
             roughness: 0.15
         });
 
-        // Materiales de Grado Industrial - 100% Metal Plata Real y Acero Cromado (Tono metálico con contraste, CERO blanco)
+        // Materiales de Grado Industrial - 100% Cromo Espejo y Acero Plateado Auténtico
         const silverChromeMat = new THREE.MeshStandardMaterial({
-            color: 0x758595,          // Auténtico color plata / acero pulido (NO blanco)
-            metalness: 0.90,          // Conducción metálica física de plata/cromo
-            roughness: 0.16,          // Reflejo especular brillante y definido
-            envMapIntensity: 0.95
+            color: 0xdce6f2,          // Plata / cromo metálico brillante y puro
+            metalness: 0.98,          // Metal puro (98%)
+            roughness: 0.03,          // Acabado espejo pulido de cromo puro (reflejos hiper-nítidos)
+            envMap: this.chromeCubeMap || this.scene.environment,
+            envMapIntensity: 2.5
         });
 
         const silverSteelMat = new THREE.MeshStandardMaterial({
-            color: 0x546373,          // Acero estructural plateado más oscuro para profundidad
-            metalness: 0.85,
-            roughness: 0.26,
-            envMapIntensity: 0.85
+            color: 0x9bb0c4,          // Acero estructural plateado satinado
+            metalness: 0.92,
+            roughness: 0.10,          // Ligeramente satinado pero reflectante
+            envMap: this.chromeCubeMap || this.scene.environment,
+            envMapIntensity: 1.8
         });
 
         const silverBoltMat = new THREE.MeshStandardMaterial({
-            color: 0x90a0b0,          // Pernos y herrajes de plata espejo
-            metalness: 0.94,
-            roughness: 0.10,
-            envMapIntensity: 1.10
+            color: 0xffffff,          // Pernos y herrajes de plata espejo
+            metalness: 1.0,
+            roughness: 0.02,
+            envMap: this.chromeCubeMap || this.scene.environment,
+            envMapIntensity: 3.0
         });
 
         // 1. Rieles Longitudinales (Eje Z en el techo)

@@ -208,8 +208,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Se ajustó la exposición del mapeo tonal a `1.0`.
    - Se refinó el mapa de entorno de estudio con tiras lineales de luz finas en lugar de bloques masivos, generando destellos de cromo finos y elegantes.
 
+---
 
+## 📦 ENTRADA: Versión 1.8.2 - Acabado de Cromo Espejo Metálico Puro con Cubemap de Horizonte de Alto Contraste y Rugosidad Ultra-Baja
 
+### Funcionalidades Implementadas:
+1. **Entorno de Reflexión Cúbica de 6 Caras (`THREE.CubeTexture`):**
+   - Se implementó un mapa de entorno cúbico nativo de 6 caras (`+X`, `-X`, `+Y`, `-Y`, `+Z`, `-Z`) a resolución de 256x256 por cara.
+   - Cada cara lateral implementa la línea de horizonte cromada nítida de alto contraste (división matemática entre el cielo de estudio plateado en la mitad superior y el suelo oscuro del mueble en la mitad inferior), el elemento visual indispensable para la percepción óptica cerebral de metal pulido y cromo espejo.
+   - Reflejos dinámicos de los pilares de neón cian y magenta proyectados a través del cromo con gradientes de color reales.
+   - Cara cenital superior (`+Y`) con panel difusor de luz de estudio softbox para generar reflejos nítidos en la cúpula y anillas superiores.
 
+2. **Materiales de Cromo Puro y Acero Pulido de Grado Industrial:**
+   - **`silverChromeMat`:** Base plata pura `0xdce6f2`, conducción metálica pura `metalness: 0.98`, rugosidad mínima de espejo `roughness: 0.03`, enlace directo a `envMap: this.chromeCubeMap` con `envMapIntensity: 2.5`. El resultado es un acabado cromado brillante e hiper-reflectante que envuelve naturalmente las curvas 3D de la cúpula, las tenazas continuas y la cadena.
+   - **`silverSteelMat`:** Acero pulido satinado `0x9bb0c4`, `metalness: 0.92`, `roughness: 0.10`, `envMapIntensity: 1.8` en la carcasa central y el carro móvil.
+   - **`silverBoltMat`:** Herrajes y pernos de articulación en plata espejo brillante `0xffffff`, `metalness: 1.0`, `roughness: 0.02`, `envMapIntensity: 3.0`.
 
-
+3. **Calibración Lumínica Espectroscópica:**
+   - Reducción del foco frontal a `0.28` con temperatura de color fría (`0xdbeafe`) y luz ambiente a `0.38`, eliminando cualquier velo o sobreexposición blanca difusa y garantizando que los reflejos especulares del cromo sean los protagonistas visuales absolutos.
