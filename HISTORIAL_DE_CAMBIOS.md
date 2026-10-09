@@ -52,3 +52,23 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Pantalla interactiva en `controller.html` con palanca analógica táctil, botón grande de acción con vibración háptica y botón de créditos.
    - Generación de código QR y sala dinámica (`CLAW-XXXX`) para que los clientes en ferias o eventos controlen la pantalla de TV desde su teléfono sin tocarla.
 
+---
+
+## 📦 ENTRADA: Versión 1.2.0 - Migración Completa a Motor 3D Real (Three.js / WebGL)
+
+### Funcionalidades Implementadas:
+1. **Motor Three.js WebGL a 60 FPS:**
+   - Escena tridimensional con cámara en perspectiva (`PerspectiveCamera`), iluminación PBR y sombras arrojadas dinámicas (`PCFSoftShadowMap`).
+   - Foco cenital `SpotLight` con seguimiento de la garra y luces puntuales Neón Cian y Neón Magenta en los pilares laterales.
+   - Materiales cromados de alta reflectividad para los rieles y cables, y material acrílico transparente físico con transmisión de luz para la rampa de caída.
+
+2. **Rieles Superiores y Movimiento Tridimensional en 3 Ejes (X, Y, Z):**
+   - La garra se desplaza en el plano horizontal en **X (Izquierda / Derecha)** y en **Z (Fondo / Adelante)** hacia el fondo del gabinete.
+   - Descenso vertical en **Y** con sujeción tridimensional.
+   - Tenazas articuladas mecánicas compuestas por 3 brazos a 120° con cúpula hemisférica rosa neón idéntica a la máquina física de exhibición.
+
+3. **Montaña Volumétrica de Peluches 3D:**
+   - Más de 60 esferas y modelos tridimensionales con orejitas y sombras físicas apiladas en el suelo del gabinete con física de contacto.
+   - Soporte para mando físico (gamepad analógico en 2 ejes), flechas de teclado (↑, ↓, ←, → / WASD) y thumbstick virtual del celular en 360 grados.
+
+

@@ -249,37 +249,38 @@
             if (navigator.vibrate) navigator.vibrate(30);
         }
 
-        // Joystick táctil
+        // Joystick táctil 3D (Ejes X y Z)
         const base = document.getElementById('touchJoystickBase');
         const knob = document.getElementById('touchJoystickKnob');
         let isTouching = false;
-        let startX = 0;
+        let startX = 0, startY = 0;
 
         base.addEventListener('pointerdown', (e) => {
             isTouching = true;
             startX = e.clientX;
+            startY = e.clientY;
         });
 
         window.addEventListener('pointermove', (e) => {
             if (!isTouching) return;
             const deltaX = e.clientX - startX;
-            const clampedX = Math.max(-45, Math.min(45, deltaX));
-            knob.style.transform = `translateX(${clampedX}px)`;
+            const deltaY = e.clientY - startY;
 
-            if (clampedX < -15) {
-                sendAction('MOVE', { dir: -1 });
-            } else if (clampedX > 15) {
-                sendAction('MOVE', { dir: 1 });
-            } else {
-                sendAction('MOVE', { dir: 0 });
-            }
+            const clampedX = Math.max(-45, Math.min(45, deltaX));
+            const clampedY = Math.max(-45, Math.min(45, deltaY));
+            knob.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
+
+            const dirX = clampedX < -15 ? -1 : (clampedX > 15 ? 1 : 0);
+            const dirZ = clampedY < -15 ? -1 : (clampedY > 15 ? 1 : 0); // Arriba = fondo, Abajo = frente
+
+            sendAction('MOVE', { dirX, dirZ });
         });
 
         const resetJoystick = () => {
             if (!isTouching) return;
             isTouching = false;
-            knob.style.transform = 'translateX(0px)';
-            sendAction('MOVE', { dir: 0 });
+            knob.style.transform = 'translate(0px, 0px)';
+            sendAction('MOVE', { dirX: 0, dirZ: 0 });
         };
 
         window.addEventListener('pointerup', resetJoystick);

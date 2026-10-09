@@ -1,159 +1,383 @@
 /**
- * game.js - Motor de Física y Gráficos para "Virtual Clawcade"
- * Renderizado de la montaña de peluches volumétrica 3D, separador acrílico y garra idéntica a la imagen.
+ * game.js - Motor 3D Real para "Virtual Clawcade" basado en Three.js / WebGL.
+ * Entorno 3D con perspectiva, iluminación PBR, sombras dinámicas, rieles en X y Z,
+ * garra articulada y montaña volumétrica de peluches tridimensionales.
  */
 
-// Temas de premios disponibles
-const THEMES = {
-    plushies: [
-        { name: 'Peluchetón Rosa', color: '#ff80ab', eye: '🐰', radius: 24 },
-        { name: 'Osito Menta', color: '#69f0ae', eye: '🐻', radius: 25 },
-        { name: 'Gatito Dorado', color: '#ffd54f', eye: '🐱', radius: 23 },
-        { name: 'Conejito Pastel', color: '#ea80fc', eye: '🐰', radius: 24 },
-        { name: 'Pollito Solar', color: '#ffee58', eye: '🐥', radius: 22 },
-        { name: 'Pulpo Turquesa', color: '#40c4ff', eye: '🐙', radius: 26 },
-        { name: 'Panda Suave', color: '#f5f5f5', eye: '🐼', radius: 25 },
-        { name: 'Dino Pastel', color: '#b9f6ca', eye: '🦖', radius: 24 },
-        { name: 'Zorrito Coral', color: '#ffab91', eye: '🦊', radius: 23 },
-        { name: 'Golosina Gigante', color: '#ff4081', eye: '🍬', radius: 22 }
-    ],
-    gourmet: [
-        { name: 'Mega Burger Doble', color: '#ff9800', eye: '🍔', radius: 26 },
-        { name: 'Papas Trufadas', color: '#ffd600', eye: '🍟', radius: 24 },
-        { name: 'Tacos al Pastor', color: '#4caf50', eye: '🌮', radius: 25 },
-        { name: 'Pizza 4 Quesos', color: '#f44336', eye: '🍕', radius: 25 },
-        { name: 'Helado Sundae', color: '#29b6f6', eye: '🍨', radius: 24 },
-        { name: 'Bebida Gigante', color: '#00e5ff', eye: '🥤', radius: 25 },
-        { name: 'Dona Glaseada', color: '#e91e63', eye: '🍩', radius: 23 },
-        { name: 'Cupón 50% OFF', color: '#ffb300', eye: '🎟️', radius: 22 }
-    ]
-};
+// Paleta de peluches para la montaña 3D
+const PLUSHIE_COLORS = [
+    { name: 'Peluchetón Rosa', color: 0xff80ab, earColor: 0xff4081, emoji: '🐰' },
+    { name: 'Osito Menta', color: 0x69f0ae, earColor: 0x00e676, emoji: '🐻' },
+    { name: 'Gatito Dorado', color: 0xffd54f, earColor: 0xffb300, emoji: '🐱' },
+    { name: 'Conejito Pastel', color: 0xea80fc, earColor: 0xaa00ff, emoji: '🐰' },
+    { name: 'Pollito Solar', color: 0xffee58, earColor: 0xfdd835, emoji: '🐥' },
+    { name: 'Pulpo Turquesa', color: 0x40c4ff, earColor: 0x00b0ff, emoji: '🐙' },
+    { name: 'Panda Suave', color: 0xf5f5f5, earColor: 0x212121, emoji: '🐼' },
+    { name: 'Dino Pastel', color: 0xb9f6ca, earColor: 0x69f0ae, emoji: '🦖' },
+    { name: 'Zorrito Coral', color: 0xffab91, earColor: 0xff7043, emoji: '🦊' }
+];
 
-class VirtualClawcadeGame {
+class Real3DClawcade {
     constructor() {
+        this.container = document.querySelector('.glass-chamber');
         this.canvas = document.getElementById('gameCanvas');
-        this.ctx = this.canvas.getContext('2d');
-
-        this.currentTheme = 'plushies';
-        this.resize();
-        window.addEventListener('resize', () => this.resize());
 
         // Estado del juego
         this.state = 'WAITING_COIN';
-        this.credits = 1; // 1 crédito de bienvenida
-        this.timeRemaining = 25;
-        this.timerInterval = null;
+        this.credits = 1;
+        this.currentTheme = 'plushies';
 
-        // Físicas y Cinemática de la Garra
-        this.clawX = this.width / 2;
-        this.clawY = 40;
-        this.restingY = 40;
-        this.clawAngle = 36;
-        this.clawTargetAngle = 36;
-        this.cableLength = 40;
+        // Coordenadas de la Garra en el espacio 3D
+        // Límites del gabinete: X [-2.2, 5.0], Z [-3.5, 3.5], Y [4.2 arriba, -2.8 abajo]
+        this.clawPos = { x: 1.5, y: 4.0, z: 0.0 };
+        this.restingY = 4.0;
+        this.chutePos = { x: -4.2, y: 4.0, z: 1.8 }; // Posición de la rampa a la izquierda
+        this.clawAngle = 0.6; // Radianes de apertura de tenazas
+        this.targetClawAngle = 0.6;
 
-        // Geometría de la Rampa y el Separador Acrílico
-        this.chuteWidth = 92;
-        this.acrylicX = 96; // Línea del separador acrílico
-        this.minX = this.acrylicX + 25;
-        this.maxX = this.width - 35;
-        this.floorY = this.height - 40;
+        // Entradas de movimiento (Ejes X y Z)
+        this.moveX = 0; // -1 izquierda, +1 derecha
+        this.moveZ = 0; // -1 fondo, +1 adelante
 
-        // Controles
+        // Compatibilidad con controladores existentes
         this.moveLeft = false;
         this.moveRight = false;
 
-        // La Montaña de Peluches (Volumétrica)
-        this.plushieMountain = [];
-        this.grabbedItem = null;
-        this.wonItem = null;
-        this.confetti = [];
+        // Lista de peluches 3D
+        this.plushies = [];
+        this.grabbedPlushie = null;
 
-        // Generar montaña inicial
-        this.generatePlushieMountain();
+        // Inicializar Three.js
+        this.initThree();
+        this.buildCabinet3D();
+        this.buildCraneAndClaw3D();
+        this.spawnPlushieMountain3D();
         this.bindEvents();
 
-        // Actualizar contador inicial
+        // Actualizar créditos en UI
         this.updateCreditsDisplay();
 
-        // Bucle 60 FPS
-        requestAnimationFrame((t) => this.loop(t));
+        // Bucle de animación 60 FPS
+        this.animate = this.animate.bind(this);
+        requestAnimationFrame(this.animate);
     }
 
-    resize() {
-        const rect = this.canvas.parentElement.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        this.width = rect.width;
-        this.height = rect.height;
+    initThree() {
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
 
-        this.canvas.width = this.width * dpr;
-        this.canvas.height = this.height * dpr;
-        this.ctx.scale(dpr, dpr);
+        // 1. Escena
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x1a0515);
 
-        this.floorY = this.height - 35;
-        this.minX = this.acrylicX + 25;
-        this.maxX = this.width - 35;
+        // 2. Cámara en perspectiva
+        this.camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 100);
+        this.camera.position.set(0, 0.8, 12.2);
+        this.camera.lookAt(0, -0.4, 0);
+
+        // 3. Renderizador WebGL con sombras suaves
+        this.renderer = new THREE.WebGLRenderer({
+            canvas: this.canvas,
+            antialias: true,
+            alpha: true,
+            powerPreference: 'high-performance'
+        });
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        // 4. Luces en tiempo real
+        // Luz ambiente cálida
+        const ambient = new THREE.AmbientLight(0xffffff, 0.75);
+        this.scene.add(ambient);
+
+        // Foco cenital principal con proyección de sombras
+        this.spotLight = new THREE.SpotLight(0xfff5f8, 1.8);
+        this.spotLight.position.set(0, 9, 2);
+        this.spotLight.angle = Math.PI / 3;
+        this.spotLight.penumbra = 0.4;
+        this.spotLight.castShadow = true;
+        this.spotLight.shadow.mapSize.width = 1024;
+        this.spotLight.shadow.mapSize.height = 1024;
+        this.spotLight.shadow.camera.near = 1;
+        this.spotLight.shadow.camera.far = 15;
+        this.scene.add(this.spotLight);
+
+        // Luz Neón Cian (Pilar Izquierdo)
+        const cyanLight = new THREE.PointLight(0x00e5ff, 1.2, 16);
+        cyanLight.position.set(-6, 2, 2);
+        this.scene.add(cyanLight);
+
+        // Luz Neón Magenta (Pilar Derecho)
+        const pinkLight = new THREE.PointLight(0xff1493, 1.2, 16);
+        pinkLight.position.set(6, 2, 2);
+        this.scene.add(pinkLight);
+
+        // Redimensionamiento
+        window.addEventListener('resize', () => {
+            const w = this.container.clientWidth;
+            const h = this.container.clientHeight;
+            this.camera.aspect = w / h;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(w, h);
+        });
+    }
+
+    buildCabinet3D() {
+        // Material de paredes interiores rosa magenta (como la foto)
+        const wallMat = new THREE.MeshStandardMaterial({
+            color: 0x880e4f,
+            roughness: 0.5,
+            metalness: 0.1
+        });
+
+        // Suelo interior
+        const floorGeo = new THREE.PlaneGeometry(13, 10);
+        const floorMat = new THREE.MeshStandardMaterial({
+            color: 0x2d0720,
+            roughness: 0.3,
+            metalness: 0.2
+        });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -4.8;
+        floor.receiveShadow = true;
+        this.scene.add(floor);
+
+        // Pared trasera
+        const backGeo = new THREE.PlaneGeometry(13, 11);
+        const backWall = new THREE.Mesh(backGeo, wallMat);
+        backWall.position.set(0, 0.5, -4.9);
+        backWall.receiveShadow = true;
+        this.scene.add(backWall);
+
+        // Pared izquierda
+        const sideGeo = new THREE.PlaneGeometry(10, 11);
+        const leftWall = new THREE.Mesh(sideGeo, wallMat);
+        leftWall.rotation.y = Math.PI / 2;
+        leftWall.position.set(-6.4, 0.5, 0);
+        leftWall.receiveShadow = true;
+        this.scene.add(leftWall);
+
+        // Pared derecha
+        const rightWall = new THREE.Mesh(sideGeo, wallMat);
+        rightWall.rotation.y = -Math.PI / 2;
+        rightWall.position.set(6.4, 0.5, 0);
+        rightWall.receiveShadow = true;
+        this.scene.add(rightWall);
+
+        // ----------------------------------------------------
+        // RAMPA DE PREMIOS (DUCTO) Y SEPARADOR ACRÍLICO 3D
+        // ----------------------------------------------------
+        // Caja de caída en la esquina frontal-izquierda
+        const chuteBoxGeo = new THREE.BoxGeometry(2.6, 2.5, 3.2);
+        const chuteBoxMat = new THREE.MeshStandardMaterial({
+            color: 0xf5f5f5,
+            roughness: 0.2,
+            metalness: 0.1
+        });
+        const chuteBox = new THREE.Mesh(chuteBoxGeo, chuteBoxMat);
+        chuteBox.position.set(-4.5, -3.6, 1.8);
+        chuteBox.receiveShadow = true;
+        this.scene.add(chuteBox);
+
+        // Hueco interior oscuro de la rampa
+        const chuteHoleGeo = new THREE.BoxGeometry(2.1, 0.2, 2.7);
+        const chuteHoleMat = new THREE.MeshBasicMaterial({ color: 0x0a0a0a });
+        const chuteHole = new THREE.Mesh(chuteHoleGeo, chuteHoleMat);
+        chuteHole.position.set(-4.5, -2.3, 1.8);
+        this.scene.add(chuteHole);
+
+        // Separador Acrílico Transparente (Como en la foto)
+        const acrylicGeo = new THREE.BoxGeometry(0.12, 3.6, 6.5);
+        const acrylicMat = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.38,
+            roughness: 0.08,
+            transmission: 0.9,
+            thickness: 0.4
+        });
+        const acrylic = new THREE.Mesh(acrylicGeo, acrylicMat);
+        acrylic.position.set(-3.1, -3.0, 1.2);
+        this.scene.add(acrylic);
+    }
+
+    buildCraneAndClaw3D() {
+        // Material cromado metálico para los rieles
+        const chromeMat = new THREE.MeshStandardMaterial({
+            color: 0xe0e0e0,
+            metalness: 0.95,
+            roughness: 0.12
+        });
+
+        // 1. Rieles Longitudinales (Eje Z en el techo)
+        const railGeo = new THREE.CylinderGeometry(0.08, 0.08, 9.8, 16);
+        const railLeft = new THREE.Mesh(railGeo, chromeMat);
+        railLeft.rotation.x = Math.PI / 2;
+        railLeft.position.set(-5.5, 4.8, 0);
+        this.scene.add(railLeft);
+
+        const railRight = new THREE.Mesh(railGeo, chromeMat);
+        railRight.rotation.x = Math.PI / 2;
+        railRight.position.set(5.5, 4.8, 0);
+        this.scene.add(railRight);
+
+        // 2. Viga Transversal (Eje X que se desplaza en Z)
+        this.crossbeam = new THREE.Group();
+        const beamGeo = new THREE.CylinderGeometry(0.1, 0.1, 11.2, 16);
+        const beamMesh = new THREE.Mesh(beamGeo, chromeMat);
+        beamMesh.rotation.z = Math.PI / 2;
+        this.crossbeam.add(beamMesh);
+        this.scene.add(this.crossbeam);
+
+        // 3. Carro de Transporte (Trolley que se desplaza en X)
+        this.trolley = new THREE.Group();
+        const trolleyBoxGeo = new THREE.BoxGeometry(1.2, 0.4, 1.0);
+        const trolleyMat = new THREE.MeshStandardMaterial({ color: 0x424242, metalness: 0.6 });
+        const trolleyMesh = new THREE.Mesh(trolleyBoxGeo, trolleyMat);
+        this.trolley.add(trolleyMesh);
+        this.crossbeam.add(this.trolley);
+
+        // 4. Cable Metálico Extensible (Y)
+        const cableGeo = new THREE.CylinderGeometry(0.03, 0.03, 1, 8);
+        this.cableMesh = new THREE.Mesh(cableGeo, chromeMat);
+        this.cableMesh.position.y = -0.5;
+        this.trolley.add(this.cableMesh);
+
+        // 5. CABEZA DE LA GARRA Y DOMO ROSA BRILLANTE (IDÉNTICO A LA FOTO)
+        this.clawHead = new THREE.Group();
+        this.clawHead.position.set(this.clawPos.x, this.clawPos.y, this.clawPos.z);
+        this.scene.add(this.clawHead);
+
+        // Cúpula Hemisférica Rosa Neón
+        const domeGeo = new THREE.SphereGeometry(0.65, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const domeMat = new THREE.MeshStandardMaterial({
+            color: 0xff4081,
+            emissive: 0xc2185b,
+            emissiveIntensity: 0.45,
+            roughness: 0.25,
+            metalness: 0.2
+        });
+        const dome = new THREE.Mesh(domeGeo, domeMat);
+        dome.position.y = 0.1;
+        this.clawHead.add(dome);
+
+        // Anillo metálico base
+        const ringGeo = new THREE.CylinderGeometry(0.68, 0.68, 0.15, 32);
+        const ring = new THREE.Mesh(ringGeo, chromeMat);
+        ring.position.y = 0.05;
+        this.clawHead.add(ring);
+
+        // 6. Tres Tenazas Mecánicas Articuladas (120° entre sí)
+        this.prongs = [];
+        for (let i = 0; i < 3; i++) {
+            const angle = (i * Math.PI * 2) / 3;
+            const prongGroup = new THREE.Group();
+            prongGroup.rotation.y = angle;
+
+            // Pivote superior de rotación de la tenaza
+            const pivot = new THREE.Group();
+            pivot.position.set(0.55, 0, 0);
+
+            // Brazo superior de la tenaza
+            const armGeo = new THREE.CylinderGeometry(0.06, 0.06, 1.2, 12);
+            const arm = new THREE.Mesh(armGeo, chromeMat);
+            arm.position.set(0.3, -0.55, 0);
+            arm.rotation.z = -0.55;
+            arm.castShadow = true;
+            pivot.add(arm);
+
+            // Punta curva de sujeción (blanco con punta de goma rosa)
+            const tipGeo = new THREE.CylinderGeometry(0.065, 0.04, 0.8, 12);
+            const tip = new THREE.Mesh(tipGeo, chromeMat);
+            tip.position.set(0.75, -1.2, 0);
+            tip.rotation.z = 0.8;
+            tip.castShadow = true;
+            pivot.add(tip);
+
+            // Puntera de goma antideslizante rosa
+            const rubberGeo = new THREE.SphereGeometry(0.09, 12, 12);
+            const rubberMat = new THREE.MeshStandardMaterial({ color: 0xff4081, roughness: 0.8 });
+            const rubber = new THREE.Mesh(rubberGeo, rubberMat);
+            rubber.position.set(0.55, -1.5, 0);
+            pivot.add(rubber);
+
+            prongGroup.add(pivot);
+            this.clawHead.add(prongGroup);
+            this.prongs.push(pivot);
+        }
     }
 
     /**
-     * Genera una densa pila/montaña de peluches apilados en 3 capas
-     * dando la textura y volumen idénticos a la máquina física de la foto.
+     * Genera la montaña volumétrica de 60+ peluches 3D apilados físicamente
+     * con sombras y profundidad real.
      */
-    generatePlushieMountain() {
-        this.plushieMountain = [];
-        const itemsPool = THEMES[this.currentTheme];
+    spawnPlushieMountain3D() {
+        // Limpiar peluches previos
+        this.plushies.forEach(p => this.scene.remove(p.mesh));
+        this.plushies = [];
 
-        const startX = this.acrylicX + 10;
-        const availableWidth = this.width - startX - 10;
+        const startX = -2.4;
+        const endX = 5.2;
+        const startZ = -3.8;
+        const endZ = 3.8;
 
-        // Capa 1 (Fondo/Base - más oscuros y profundos)
-        for (let x = startX; x < this.width - 15; x += 36) {
-            const proto = itemsPool[Math.floor(Math.random() * itemsPool.length)];
-            this.plushieMountain.push({
-                ...proto,
-                x: x + (Math.random() * 12 - 6),
-                y: this.floorY - 10 + (Math.random() * 8),
-                layer: 1,
-                scale: 0.9,
-                rot: (Math.random() - 0.5) * 0.4
-            });
-        }
+        // Distribución en 3 niveles de altura (Capas volumétricas)
+        for (let x = startX; x <= endX; x += 0.85) {
+            for (let z = startZ; z <= endZ; z += 0.85) {
+                const proto = PLUSHIE_COLORS[Math.floor(Math.random() * PLUSHIE_COLORS.length)];
+                const radius = 0.52 + Math.random() * 0.12;
 
-        // Capa 2 (Media - el cuerpo de la montaña)
-        for (let x = startX + 12; x < this.width - 20; x += 38) {
-            const proto = itemsPool[Math.floor(Math.random() * itemsPool.length)];
-            this.plushieMountain.push({
-                ...proto,
-                x: x + (Math.random() * 10 - 5),
-                y: this.floorY - 38 + (Math.random() * 12),
-                layer: 2,
-                scale: 1.0,
-                rot: (Math.random() - 0.5) * 0.5
-            });
-        }
+                // Forma de colina: más alto hacia el centro y fondo
+                const distCenter = Math.sqrt(Math.pow(x - 1.5, 2) + Math.pow(z, 2));
+                const heightOffset = Math.max(0, 1.8 - distCenter * 0.35);
+                const posY = -4.5 + radius + heightOffset + (Math.random() * 0.3);
 
-        // Capa 3 (Cima / Superficie interactiva que la garra puede tocar)
-        for (let x = startX + 20; x < this.width - 30; x += 42) {
-            const proto = itemsPool[Math.floor(Math.random() * itemsPool.length)];
-            this.plushieMountain.push({
-                ...proto,
-                x: x + (Math.random() * 14 - 7),
-                y: this.floorY - 70 + (Math.random() * 14),
-                layer: 3,
-                scale: 1.05,
-                rot: (Math.random() - 0.5) * 0.6,
-                grabbed: false,
-                isTopTarget: true
-            });
+                const plushieGeo = new THREE.SphereGeometry(radius, 24, 24);
+                const plushieMat = new THREE.MeshStandardMaterial({
+                    color: proto.color,
+                    roughness: 0.55,
+                    metalness: 0.05
+                });
+
+                const mesh = new THREE.Mesh(plushieGeo, plushieMat);
+                mesh.position.set(
+                    x + (Math.random() * 0.25 - 0.12),
+                    posY,
+                    z + (Math.random() * 0.25 - 0.12)
+                );
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+
+                // Orejitas 3D
+                const earGeo = new THREE.SphereGeometry(radius * 0.35, 12, 12);
+                const earMat = new THREE.MeshStandardMaterial({ color: proto.earColor, roughness: 0.6 });
+                const ear1 = new THREE.Mesh(earGeo, earMat);
+                ear1.position.set(-radius * 0.7, radius * 0.7, 0);
+                mesh.add(ear1);
+
+                const ear2 = new THREE.Mesh(earGeo, earMat);
+                ear2.position.set(radius * 0.7, radius * 0.7, 0);
+                mesh.add(ear2);
+
+                this.scene.add(mesh);
+                this.plushies.push({
+                    mesh,
+                    name: proto.name,
+                    radius,
+                    initialY: posY,
+                    isTop: posY > -3.2 // Peluches de la cima que la garra puede agarrar
+                });
+            }
         }
     }
 
     bindEvents() {
-        // Inserción de Monedas / Billetes
+        // Monedas / Fichas
         const coinSlot = document.getElementById('billCoinSlot');
-        if (coinSlot) {
-            coinSlot.addEventListener('click', () => this.insertCoin());
-        }
+        if (coinSlot) coinSlot.addEventListener('click', () => this.insertCoin());
 
         // Botón ATRAPAR (Domo Rojo)
         const btnCatch = document.getElementById('btnCatch3D');
@@ -164,125 +388,127 @@ class VirtualClawcadeGame {
             });
         }
 
-        // Joystick 3D Interactivo
+        // Joystick 3D con Soporte en Ambos Ejes (X y Z)
         const joystickBall = document.getElementById('joystickBall');
         const joystickStation = document.getElementById('joystickStation');
-
-        let isDraggingJoystick = false;
-        let startX = 0;
-
-        const handleMoveStart = (clientX) => {
-            if (this.state !== 'READY') return;
-            isDraggingJoystick = true;
-            startX = clientX;
-        };
-
-        const handleMoveDrag = (clientX) => {
-            if (!isDraggingJoystick || this.state !== 'READY') return;
-            const deltaX = clientX - startX;
-            if (deltaX < -15) {
-                this.moveLeft = true;
-                this.moveRight = false;
-                this.tiltJoystick(-1);
-            } else if (deltaX > 15) {
-                this.moveRight = true;
-                this.moveLeft = false;
-                this.tiltJoystick(1);
-            } else {
-                this.moveLeft = false;
-                this.moveRight = false;
-                this.tiltJoystick(0);
-            }
-        };
-
-        const handleMoveEnd = () => {
-            isDraggingJoystick = false;
-            this.moveLeft = false;
-            this.moveRight = false;
-            this.tiltJoystick(0);
-        };
+        let isDragging = false;
+        let startX = 0, startY = 0;
 
         if (joystickStation) {
-            joystickStation.addEventListener('pointerdown', (e) => handleMoveStart(e.clientX));
-            window.addEventListener('pointermove', (e) => handleMoveDrag(e.clientX));
-            window.addEventListener('pointerup', handleMoveEnd);
-            window.addEventListener('pointercancel', handleMoveEnd);
+            joystickStation.addEventListener('pointerdown', (e) => {
+                if (this.state !== 'READY') return;
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+            });
+
+            window.addEventListener('pointermove', (e) => {
+                if (!isDragging || this.state !== 'READY') return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                // Eje X: Izquierda / Derecha
+                if (dx < -12) this.moveX = -1;
+                else if (dx > 12) this.moveX = 1;
+                else this.moveX = 0;
+
+                // Eje Z: Arriba (Fondo) / Abajo (Adelante)
+                if (dy < -12) this.moveZ = -1;
+                else if (dy > 12) this.moveZ = 1;
+                else this.moveZ = 0;
+
+                this.tiltJoystickVisual(this.moveX, this.moveZ);
+            });
+
+            const stopDrag = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                this.moveX = 0;
+                this.moveZ = 0;
+                this.tiltJoystickVisual(0, 0);
+            };
+
+            window.addEventListener('pointerup', stopDrag);
+            window.addEventListener('pointercancel', stopDrag);
         }
 
-        // Teclado Físico / Arcade USB Encoder
+        // Teclado con Flechas (↑, ↓, ←, →) y WASD para movimiento tridimensional completo
         window.addEventListener('keydown', (e) => {
-            if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
-                this.moveLeft = true;
-                this.tiltJoystick(-1);
-            } else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
-                this.moveRight = true;
-                this.tiltJoystick(1);
-            } else if (e.code === 'Space' || e.code === 'Enter') {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.moveX = -1;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') this.moveX = 1;
+            if (e.code === 'ArrowUp' || e.code === 'KeyW') this.moveZ = -1; // Hacia el fondo
+            if (e.code === 'ArrowDown' || e.code === 'KeyS') this.moveZ = 1;  // Hacia adelante
+
+            this.tiltJoystickVisual(this.moveX, this.moveZ);
+
+            if (e.code === 'Space' || e.code === 'Enter') {
                 e.preventDefault();
                 this.triggerGrab();
             }
         });
 
         window.addEventListener('keyup', (e) => {
-            if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
-                this.moveLeft = false;
-                this.tiltJoystick(0);
-            } else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
-                this.moveRight = false;
-                this.tiltJoystick(0);
-            }
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') if (this.moveX < 0) this.moveX = 0;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') if (this.moveX > 0) this.moveX = 0;
+            if (e.code === 'ArrowUp' || e.code === 'KeyW') if (this.moveZ < 0) this.moveZ = 0;
+            if (e.code === 'ArrowDown' || e.code === 'KeyS') if (this.moveZ > 0) this.moveZ = 0;
+
+            this.tiltJoystickVisual(this.moveX, this.moveZ);
         });
 
-        // Alternar Temas (Peluches vs Gourmet)
+        // Alternar Temas
         const btnThemePlushies = document.getElementById('btnThemePlushies');
         const btnThemeGourmet = document.getElementById('btnThemeGourmet');
-
         if (btnThemePlushies && btnThemeGourmet) {
             btnThemePlushies.addEventListener('click', () => {
                 this.currentTheme = 'plushies';
                 btnThemePlushies.classList.add('active');
                 btnThemeGourmet.classList.remove('active');
-                this.generatePlushieMountain();
+                this.spawnPlushieMountain3D();
             });
-
             btnThemeGourmet.addEventListener('click', () => {
                 this.currentTheme = 'gourmet';
                 btnThemeGourmet.classList.add('active');
                 btnThemePlushies.classList.remove('active');
-                this.generatePlushieMountain();
+                this.spawnPlushieMountain3D();
             });
         }
 
-        // Modo Kiosco Smart TV
+        // Modo TV Kiosco
         const btnToggleKiosk = document.getElementById('btnToggleKiosk');
         if (btnToggleKiosk) {
             btnToggleKiosk.addEventListener('click', () => {
                 document.body.classList.toggle('tv-kiosk-mode');
-                setTimeout(() => this.resize(), 100);
+                setTimeout(() => {
+                    const w = this.container.clientWidth;
+                    const h = this.container.clientHeight;
+                    this.camera.aspect = w / h;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(w, h);
+                }, 100);
             });
         }
     }
 
-    tiltJoystick(dir) {
+    tiltJoystickVisual(x, z) {
         const ball = document.getElementById('joystickBall');
         if (!ball) return;
-        if (dir < 0) {
-            ball.style.transform = 'rotate(-24deg) translateX(-12px) scale(0.98)';
-        } else if (dir > 0) {
-            ball.style.transform = 'rotate(24deg) translateX(12px) scale(0.98)';
-        } else {
-            ball.style.transform = 'rotate(0deg) translateX(0px) scale(1)';
-        }
+        const rotZ = x * 22;
+        const rotX = -z * 22;
+        ball.style.transform = `rotate(${rotZ}deg) translateY(${z * 8}px) translateX(${x * 10}px)`;
+    }
+
+    tiltJoystick(dir) {
+        this.tiltJoystickVisual(dir, 0);
     }
 
     insertCoin() {
         if (window.soundFX) window.soundFX.playCoin();
         this.credits++;
         this.updateCreditsDisplay();
-
         if (this.state === 'WAITING_COIN') {
             this.state = 'READY';
-            this.clawTargetAngle = 36;
+            this.targetClawAngle = 0.6; // Abrir garra
         }
     }
 
@@ -296,7 +522,6 @@ class VirtualClawcadeGame {
 
     triggerGrab() {
         if (this.state !== 'READY' || this.credits <= 0) return;
-
         this.credits--;
         this.updateCreditsDisplay();
         this.state = 'DROPPING';
@@ -310,396 +535,186 @@ class VirtualClawcadeGame {
     }
 
     update() {
-        // Movimiento horizontal en modo LISTO
+        const speed = 0.08;
+
+        // 1. Movimiento en X y Z (Hacia el fondo y los lados)
         if (this.state === 'READY') {
-            if (this.moveLeft) {
-                this.clawX = Math.max(this.minX, this.clawX - 3.8);
-                if (window.soundFX) window.soundFX.playMotor();
+            // Sincronizar con controladores externos (gamepad.js / mobile)
+            const finalX = this.moveX || (this.moveLeft ? -1 : (this.moveRight ? 1 : 0));
+            const finalZ = this.moveZ;
+
+            if (finalX !== 0) {
+                this.clawPos.x = Math.max(-2.2, Math.min(5.0, this.clawPos.x + finalX * speed));
+                if (window.soundFX && Math.random() < 0.15) window.soundFX.playMotor();
             }
-            if (this.moveRight) {
-                this.clawX = Math.min(this.maxX, this.clawX + 3.8);
-                if (window.soundFX) window.soundFX.playMotor();
+            if (finalZ !== 0) {
+                this.clawPos.z = Math.max(-3.5, Math.min(3.5, this.clawPos.z + finalZ * speed));
+                if (window.soundFX && Math.random() < 0.15) window.soundFX.playMotor();
             }
         }
 
-        // Descenso hacia la cima de la montaña
+        // 2. Descenso en Y (Bajada de la garra)
         if (this.state === 'DROPPING') {
-            this.clawY += 4.5;
-            // Altura de contacto con la montaña
-            const contactY = this.floorY - 82;
+            this.clawPos.y -= 0.12;
 
-            if (this.clawY >= contactY) {
-                this.clawY = contactY;
+            // Detección de contacto con la montaña en la posición (X, Z) actual
+            if (this.clawPos.y <= -2.4) {
+                this.clawPos.y = -2.4;
                 this.state = 'GRABBING';
-                this.clawTargetAngle = 8; // Cerrar tenazas
+                this.targetClawAngle = 0.12; // Cierra las tenazas
                 if (window.soundFX) window.soundFX.playClawGrab();
 
-                // Chequear colisión con el peluche más cercano de la cima
-                this.detectPlushieGrab();
+                this.detectPlushieCollision3D();
             }
         }
 
-        // Cierre de tenazas
+        // 3. Sujeción de tenazas
         if (this.state === 'GRABBING') {
-            if (Math.abs(this.clawAngle - this.clawTargetAngle) < 2) {
+            if (Math.abs(this.clawAngle - this.targetClawAngle) < 0.05) {
                 this.state = 'LIFTING';
             }
         }
 
-        // Elevación con el premio
+        // 4. Elevación de la garra (LIFTING)
         if (this.state === 'LIFTING') {
-            this.clawY -= 3.2;
+            this.clawPos.y += 0.09;
 
-            if (this.grabbedItem) {
-                this.grabbedItem.x = this.clawX;
-                this.grabbedItem.y = this.clawY + 32;
+            if (this.grabbedPlushie) {
+                this.grabbedPlushie.mesh.position.set(
+                    this.clawPos.x,
+                    this.clawPos.y - 1.2,
+                    this.clawPos.z
+                );
             }
 
-            if (this.clawY <= this.restingY) {
-                this.clawY = this.restingY;
+            if (this.clawPos.y >= this.restingY) {
+                this.clawPos.y = this.restingY;
                 this.state = 'RETURNING';
             }
         }
 
-        // Regreso al ducto de entrega (lado izquierdo, pasando el acrílico)
+        // 5. Traslado automático a la rampa de premios (Frontal Izquierda)
         if (this.state === 'RETURNING') {
-            const dropX = 48; // Centro de la rampa izquierda
-            if (this.clawX > dropX) {
-                this.clawX -= 2.8;
-                if (this.grabbedItem) {
-                    this.grabbedItem.x = this.clawX;
-                    this.grabbedItem.y = this.clawY + 32;
+            const dx = this.chutePos.x - this.clawPos.x;
+            const dz = this.chutePos.z - this.clawPos.z;
+            const dist = Math.sqrt(dx * dx + dz * dz);
+
+            if (dist > 0.1) {
+                this.clawPos.x += (dx / dist) * 0.07;
+                this.clawPos.z += (dz / dist) * 0.07;
+
+                if (this.grabbedPlushie) {
+                    this.grabbedPlushie.mesh.position.set(
+                        this.clawPos.x,
+                        this.clawPos.y - 1.2,
+                        this.clawPos.z
+                    );
                 }
             } else {
-                this.clawX = dropX;
+                this.clawPos.x = this.chutePos.x;
+                this.clawPos.z = this.chutePos.z;
                 this.state = 'RELEASING';
-                this.clawTargetAngle = 38; // Abrir garra
+                this.targetClawAngle = 0.65; // Abrir garra y soltar
 
-                if (this.grabbedItem) {
-                    this.wonItem = this.grabbedItem;
-                    this.grabbedItem = null;
-                    this.onWinPrize(this.wonItem);
+                if (this.grabbedPlushie) {
+                    this.onWinPrize3D(this.grabbedPlushie);
+                    this.grabbedPlushie = null;
                 } else {
-                    this.onMissed();
+                    this.onMissed3D();
                 }
             }
         }
 
-        // Interpolación de apertura de tenazas
-        this.clawAngle += (this.clawTargetAngle - this.clawAngle) * 0.16;
+        // Suavizado del ángulo de tenazas
+        this.clawAngle += (this.targetClawAngle - this.clawAngle) * 0.18;
+        this.prongs.forEach(p => {
+            p.rotation.z = -this.clawAngle;
+        });
 
-        // Actualizar confeti
-        this.updateConfetti();
+        // ----------------------------------------------------
+        // ACTUALIZAR MODELOS 3D EN LA ESCENA
+        // ----------------------------------------------------
+        // Mover viga transversal en Z
+        this.crossbeam.position.z = this.clawPos.z;
+        // Mover carro en X
+        this.trolley.position.x = this.clawPos.x;
+        // Mover cabeza de garra
+        this.clawHead.position.set(this.clawPos.x, this.clawPos.y, this.clawPos.z);
+
+        // Longitud del cable en 3D
+        const cableLength = Math.max(0.1, 4.8 - this.clawPos.y);
+        this.cableMesh.scale.y = cableLength;
+        this.cableMesh.position.y = -cableLength / 2;
+
+        // Foco de luz siguiendo la garra sutilmente
+        this.spotLight.target = this.clawHead;
+
+        // Parallax sutil de la cámara 3D para dar sensación de profundidad física
+        this.camera.position.x = (this.clawPos.x * 0.15);
+        this.camera.position.y = 0.8 + (this.clawPos.z * 0.1);
+        this.camera.lookAt(0, -0.6, 0);
     }
 
-    detectPlushieGrab() {
-        let nearest = null;
-        let minDist = 38;
+    detectPlushieCollision3D() {
+        let closest = null;
+        let minDist = 1.35; // Radio de agarre 3D
 
-        this.plushieMountain.forEach(item => {
-            if (item.isTopTarget) {
-                const dist = Math.abs(this.clawX - item.x);
+        this.plushies.forEach(p => {
+            if (p.isTop) {
+                const dx = this.clawPos.x - p.mesh.position.x;
+                const dz = this.clawPos.z - p.mesh.position.z;
+                const dist = Math.sqrt(dx * dx + dz * dz);
+
                 if (dist < minDist) {
                     minDist = dist;
-                    nearest = item;
+                    closest = p;
                 }
             }
         });
 
-        if (nearest) {
-            this.grabbedItem = nearest;
-            nearest.grabbed = true;
+        if (closest) {
+            this.grabbedPlushie = closest;
         } else {
-            this.grabbedItem = null;
+            this.grabbedPlushie = null;
         }
     }
 
-    onWinPrize(prize) {
+    onWinPrize3D(prize) {
         if (window.soundFX) window.soundFX.playWin();
 
-        // Generar confeti en la rampa
-        for (let i = 0; i < 45; i++) {
-            this.confetti.push({
-                x: 48 + (Math.random() * 20 - 10),
-                y: this.height - 40,
-                vx: (Math.random() - 0.5) * 6,
-                vy: -(Math.random() * 8 + 4),
-                size: Math.random() * 6 + 4,
-                color: ['#00e5ff', '#ff1744', '#ffd600', '#69f0ae', '#ffffff'][Math.floor(Math.random() * 5)],
-                alpha: 1
-            });
-        }
+        // Caída física hacia el interior de la rampa
+        const mesh = prize.mesh;
+        let dropStep = 0;
+        const dropInterval = setInterval(() => {
+            dropStep += 0.15;
+            mesh.position.y -= dropStep;
+            if (mesh.position.y <= -5.5) {
+                clearInterval(dropInterval);
+                this.scene.remove(mesh);
+            }
+        }, 30);
 
         setTimeout(() => {
             this.state = this.credits > 0 ? 'READY' : 'WAITING_COIN';
-            this.generatePlushieMountain();
-        }, 1200);
+            this.spawnPlushieMountain3D(); // Reponer montaña
+        }, 1500);
     }
 
-    onMissed() {
+    onMissed3D() {
         if (window.soundFX) window.soundFX.playMiss();
         setTimeout(() => {
             this.state = this.credits > 0 ? 'READY' : 'WAITING_COIN';
-        }, 800);
+        }, 1000);
     }
 
-    updateConfetti() {
-        for (let i = this.confetti.length - 1; i >= 0; i--) {
-            const p = this.confetti[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vy += 0.22;
-            p.alpha -= 0.015;
-            if (p.alpha <= 0) this.confetti.splice(i, 1);
-        }
-    }
-
-    // ========================================================
-    // RENDERIZADO DEL ESCENARIO 3D Y LA GARRA
-    // ========================================================
-    draw() {
-        const ctx = this.ctx;
-        ctx.clearRect(0, 0, this.width, this.height);
-
-        // 1. Fondo de la cámara 3D (Paredes interiores y techo rosa)
-        this.drawChamber3D(ctx);
-
-        // 2. Rampa de Caída (Ducto de entrega a la izquierda)
-        this.drawDropChute(ctx);
-
-        // 3. Montaña Volumétrica de Peluches / Premios
-        this.drawPlushieMountain(ctx);
-
-        // 4. Separador Acrílico Transparente (Como en la foto)
-        this.drawAcrylicPartition(ctx);
-
-        // 5. La Garra Mecánica con Domo Rosa Neón
-        this.drawClaw(ctx);
-
-        // 6. Confeti
-        this.drawConfetti(ctx);
-    }
-
-    drawChamber3D(ctx) {
-        // Fondo degradado profundo en magenta/rosa
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, this.height);
-        bgGrad.addColorStop(0, '#2e0824');
-        bgGrad.addColorStop(0.5, '#1b0515');
-        bgGrad.addColorStop(1, '#0e020c');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, this.width, this.height);
-
-        // Riel Superior Metálico en el Techo
-        ctx.fillStyle = '#424242';
-        ctx.fillRect(0, 16, this.width, 10);
-        ctx.fillStyle = '#9e9e9e';
-        ctx.fillRect(0, 20, this.width, 2);
-
-        // Suelo de la vitrina
-        ctx.fillStyle = '#1a0414';
-        ctx.fillRect(0, this.floorY, this.width, this.height - this.floorY);
-    }
-
-    drawDropChute(ctx) {
-        // La caja receptora blanca/acrílica a la izquierda
-        ctx.fillStyle = '#f5f5f5';
-        ctx.fillRect(10, this.floorY - 60, this.acrylicX - 10, 60);
-
-        // Interior oscuro del ducto de caída
-        ctx.fillStyle = '#212121';
-        ctx.fillRect(18, this.floorY - 50, this.acrylicX - 26, 50);
-
-        // Bisel de la rampa
-        ctx.strokeStyle = '#bdbdbd';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(10, this.floorY - 60, this.acrylicX - 10, 60);
-    }
-
-    drawPlushieMountain(ctx) {
-        // Ordenar por capas para dar sensación de volumen
-        this.plushieMountain.forEach(item => {
-            if (item.grabbed && this.state !== 'LIFTING' && this.state !== 'RETURNING') return;
-
-            ctx.save();
-            ctx.translate(item.x, item.y);
-            ctx.rotate(item.rot);
-
-            // Sombra inferior
-            ctx.beginPath();
-            ctx.ellipse(0, item.radius * 0.7, item.radius * 0.9, item.radius * 0.35, 0, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-            ctx.fill();
-
-            // Cuerpo del Peluche (Esfera 3D con degradado radial brillante)
-            const radGrad = ctx.createRadialGradient(
-                -item.radius * 0.3, -item.radius * 0.3, item.radius * 0.1,
-                0, 0, item.radius
-            );
-            radGrad.addColorStop(0, '#ffffff');
-            radGrad.addColorStop(0.3, item.color);
-            radGrad.addColorStop(1, this.shadeColor(item.color, -30));
-
-            ctx.beginPath();
-            ctx.arc(0, 0, item.radius, 0, Math.PI * 2);
-            ctx.fillStyle = radGrad;
-            ctx.fill();
-
-            // Borde suave
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            // Icono / Expresión del peluche
-            ctx.font = `${Math.round(item.radius * 1.1)}px "Segoe UI Emoji", sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(item.eye, 0, 1);
-
-            ctx.restore();
-        });
-    }
-
-    drawAcrylicPartition(ctx) {
-        // Separador acrílico vertical transparente entre el ducto y los peluches
-        const x = this.acrylicX;
-        const topY = this.floorY - 95;
-        const height = 95;
-
-        // Vidrio acrílico semitransparente
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
-        ctx.fillRect(x - 3, topY, 6, height);
-
-        // Borde brillante superior y frontal del acrílico
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(x, topY);
-        ctx.lineTo(x, this.floorY);
-        ctx.stroke();
-
-        // Destello blanco en la esquina superior del acrílico
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(x, topY, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    drawClaw(ctx) {
-        // 1. Carro superior en el riel
-        ctx.fillStyle = '#e0e0e0';
-        ctx.fillRect(this.clawX - 18, 12, 36, 14);
-        ctx.fillStyle = '#ff4081';
-        ctx.fillRect(this.clawX - 6, 22, 12, 4);
-
-        // 2. Cable metálico extensible
-        ctx.strokeStyle = '#eeeeee';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(this.clawX, 26);
-        ctx.lineTo(this.clawX, this.clawY);
-        ctx.stroke();
-
-        // 3. Mecanismo de la Garra (Domo Rosa Iluminado - Como en la foto)
-        ctx.save();
-        ctx.translate(this.clawX, this.clawY);
-
-        // Domo Rosa Brillante (Cúpula hemisférica superior)
-        const domeGrad = ctx.createRadialGradient(0, -6, 2, 0, -2, 14);
-        domeGrad.addColorStop(0, '#ffffff');
-        domeGrad.addColorStop(0.4, '#ff4081');
-        domeGrad.addColorStop(1, '#c2185b');
-
-        ctx.beginPath();
-        ctx.arc(0, 0, 14, Math.PI, 0); // Semicírculo
-        ctx.fillStyle = domeGrad;
-        ctx.fill();
-
-        // Brillo LED del domo
-        ctx.shadowColor = '#ff4081';
-        ctx.shadowBlur = 12;
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-
-        // Base metálica de las tenazas
-        ctx.fillStyle = '#9e9e9e';
-        ctx.fillRect(-10, 0, 20, 6);
-
-        // 4. Tenazas Metálicas Curvas (Izquierda, Centro y Derecha)
-        const rad = (this.clawAngle * Math.PI) / 180;
-
-        // Tenaza Izquierda
-        ctx.save();
-        ctx.translate(-7, 6);
-        ctx.rotate(-rad);
-        this.drawMetallicProng(ctx, -1);
-        ctx.restore();
-
-        // Tenaza Derecha
-        ctx.save();
-        ctx.translate(7, 6);
-        ctx.rotate(rad);
-        this.drawMetallicProng(ctx, 1);
-        ctx.restore();
-
-        ctx.restore();
-    }
-
-    drawMetallicProng(ctx, dir) {
-        // Brazo de la tenaza (blanco/plata metálico como la foto)
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 3.5;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(dir * 15, 20);
-        ctx.stroke();
-
-        // Curva de sujeción inferior
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.moveTo(dir * 15, 20);
-        ctx.quadraticCurveTo(dir * 18, 32, dir * 5, 36);
-        ctx.stroke();
-
-        // Puntera de goma rosa
-        ctx.fillStyle = '#ff4081';
-        ctx.beginPath();
-        ctx.arc(dir * 5, 36, 3.5, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    drawConfetti(ctx) {
-        this.confetti.forEach(p => {
-            ctx.save();
-            ctx.translate(p.x, p.y);
-            ctx.fillStyle = p.color;
-            ctx.globalAlpha = p.alpha;
-            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-            ctx.restore();
-        });
-    }
-
-    shadeColor(color, percent) {
-        let num = parseInt(color.replace('#', ''), 16),
-            amt = Math.round(2.55 * percent),
-            R = (num >> 16) + amt,
-            G = (num >> 8 & 0x00FF) + amt,
-            B = (num & 0x0000FF) + amt;
-        return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-    }
-
-    loop() {
+    animate() {
         this.update();
-        this.draw();
-        requestAnimationFrame(() => this.loop());
+        this.renderer.render(this.scene, this.camera);
+        requestAnimationFrame(this.animate);
     }
 }
 
 // Iniciar al cargar
 window.addEventListener('DOMContentLoaded', () => {
-    window.clawGame = new VirtualClawcadeGame();
+    window.clawGame = new Real3DClawcade();
 });

@@ -71,28 +71,27 @@ class ArcadeControllerManager {
 
         if (!activePad || !window.clawGame) return;
 
-        // Eje X de la palanca izquierda (Stick Analógico)
+        // Eje X (Izquierda / Derecha) y Eje Z (Fondo / Adelante)
         const axisX = activePad.axes[0] || 0;
+        const axisY = activePad.axes[1] || 0;
+
         // D-Pad Flechas
         const dpadLeft = activePad.buttons[14] && activePad.buttons[14].pressed;
         const dpadRight = activePad.buttons[15] && activePad.buttons[15].pressed;
+        const dpadUp = activePad.buttons[12] && activePad.buttons[12].pressed;
+        const dpadDown = activePad.buttons[13] && activePad.buttons[13].pressed;
 
-        const isLeft = axisX < -0.3 || dpadLeft;
-        const isRight = axisX > 0.3 || dpadRight;
+        // Movimiento X
+        if (axisX < -0.3 || dpadLeft) window.clawGame.moveX = -1;
+        else if (axisX > 0.3 || dpadRight) window.clawGame.moveX = 1;
+        else window.clawGame.moveX = 0;
 
-        if (isLeft && !window.clawGame.moveLeft) {
-            window.clawGame.moveLeft = true;
-            window.clawGame.moveRight = false;
-            window.clawGame.tiltJoystick(-1);
-        } else if (isRight && !window.clawGame.moveRight) {
-            window.clawGame.moveRight = true;
-            window.clawGame.moveLeft = false;
-            window.clawGame.tiltJoystick(1);
-        } else if (!isLeft && !isRight && (window.clawGame.moveLeft || window.clawGame.moveRight)) {
-            window.clawGame.moveLeft = false;
-            window.clawGame.moveRight = false;
-            window.clawGame.tiltJoystick(0);
-        }
+        // Movimiento Z (Profundidad 3D)
+        if (axisY < -0.3 || dpadUp) window.clawGame.moveZ = -1; // Fondo
+        else if (axisY > 0.3 || dpadDown) window.clawGame.moveZ = 1;  // Adelante
+        else window.clawGame.moveZ = 0;
+
+        window.clawGame.tiltJoystickVisual(window.clawGame.moveX, window.clawGame.moveZ);
 
         // Botones de Acción (A / X / Gatillo / Espacio)
         const btnCatch = (activePad.buttons[0] && activePad.buttons[0].pressed) ||
@@ -205,19 +204,11 @@ class ArcadeControllerManager {
 
         switch (data.action) {
             case 'MOVE':
-                if (data.dir === -1) {
-                    window.clawGame.moveLeft = true;
-                    window.clawGame.moveRight = false;
-                    window.clawGame.tiltJoystick(-1);
-                } else if (data.dir === 1) {
-                    window.clawGame.moveRight = true;
-                    window.clawGame.moveLeft = false;
-                    window.clawGame.tiltJoystick(1);
-                } else {
-                    window.clawGame.moveLeft = false;
-                    window.clawGame.moveRight = false;
-                    window.clawGame.tiltJoystick(0);
-                }
+                const moveX = data.dirX !== undefined ? data.dirX : (data.dir === -1 ? -1 : (data.dir === 1 ? 1 : 0));
+                const moveZ = data.dirZ !== undefined ? data.dirZ : 0;
+                window.clawGame.moveX = moveX;
+                window.clawGame.moveZ = moveZ;
+                window.clawGame.tiltJoystickVisual(moveX, moveZ);
                 break;
             case 'CATCH':
                 window.clawGame.triggerGrab();
