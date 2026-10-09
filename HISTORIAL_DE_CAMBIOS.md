@@ -148,6 +148,25 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - **En la garra:** Se eliminaron las bielas y varillas diagonales desconectadas (`linkageRod`) y el vástago/collar colgante que flotaban en el aire debajo de la cabeza de la garra, logrando una silueta mecánica limpia y sólida de 3 brazos articulados continuos.
    - **En la piscina de premios:** Se reestructuró la distribución de los productos 3D en 2 capas continuas asentadas sólidamente sobre el suelo (`Y = -4.32` y `-3.55`). Se eliminó la dispersión en altura que dejaba comida suspendida en el aire en el centro, garantizando un espacio vertical completamente despejado entre los alimentos y la garra.
 
+---
+
+## 📦 ENTRADA: Versión 1.7.0 - Tenazas Mecánicas Continuas Monolíticas de Plata Real Radiante
+
+### Funcionalidades Implementadas:
+1. **Erradicación Definitiva de Segmentos Desconectados / Elementos Flotantes:**
+   - Cada una de las 3 tenazas fue reconstruida como una **curva 3D continua indivisible** (`THREE.CatmullRomCurve3D` extruida con `THREE.TubeGeometry`), fusionando en una sola pieza geométrica el anclaje superior, el brazo descendente, el codo articulado exterior y la punta curvada hacia el centro.
+   - Se eliminaron por completo los 4 cilindros, bielas y conos independientes que se separaban en el aire al rotar. Es físicamente imposible que existan huecos, holguras o elementos flotantes en la garra.
+   - Se integró un perno de articulación cilíndrico de plata en el pivote superior, refuerzo en el codo y una terminación cóncava suave en la punta, todo emparentado rígidamente al pivote único (`upperPivot`).
+
+2. **Acabado Metálico de Plata Pura Radiante y Brillante:**
+   - Se calibraron los materiales PBR de Three.js (`silverChromeMat`, `silverSteelMat`, `silverBoltMat`) con `metalness: 0.45`, `roughness: 0.14` y luminiscencia plateada sutil (`emissive: 0x303844`), resolviendo la falta de environment map que hacía que la garra se viera negra u oscura.
+   - Se incorporó un foco direccional frontal dedicado (`clawFrontLight` de intensidad 1.8 en `Y=6, Z=9`) orientado de frente a la máquina, logrando destellos cromados especulares nítidos y un color plateado brillante idéntico a las garras de acero inoxidable de ferias y arcades.
+
+3. **Cinemática Suave y Agarre Optimizado:**
+   - Apertura en abanico suave y controlada de las 3 tenazas al descender (`targetClawAngle = 1.0`, envergadura > 2.8 unidades).
+   - Altura de contacto de descenso ajustada a `clawPos.y <= -1.6` para que las puntas de plata alcancen la profundidad exacta de la comida sobre el suelo (`Y = -4.37`) sin atravesar el chasis.
+   - Centro de sujeción vertical calibrado a `clawPos.y - 1.65` para que la hamburguesa, papas o tacos queden abrazados dentro de las tenazas de plata durante la elevación y traslado a la tolva.
+
 
 
 

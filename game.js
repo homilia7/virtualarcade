@@ -391,6 +391,11 @@ class Real3DClawcade {
         pinkLight.position.set(6, 2, 2);
         this.scene.add(pinkLight);
 
+        // Foco frontal radiante para reflejo metálico cromado y plata pura de la garra
+        const clawFrontLight = new THREE.DirectionalLight(0xffffff, 1.8);
+        clawFrontLight.position.set(0, 6, 9);
+        this.scene.add(clawFrontLight);
+
         // Redimensionamiento
         window.addEventListener('resize', () => {
             const w = this.container.clientWidth;
@@ -550,23 +555,29 @@ class Real3DClawcade {
             roughness: 0.15
         });
 
-        // Materiales de Grado Industrial - 100% Plata y Acero Cromado Realista
+        // Materiales de Plata Cromada Realista Ultra-Brillante (Reflectividad real sin sombras oscuras)
         const silverChromeMat = new THREE.MeshStandardMaterial({
-            color: 0xf5f7fa,      // Plata pulida de alta pureza
-            metalness: 0.98,
-            roughness: 0.08
+            color: 0xffffff,          // Plata pura brillante
+            metalness: 0.45,          // Permite brillo difuso radiante
+            roughness: 0.14,          // Destello especular metálico nítido
+            emissive: 0x303844,       // Tinte plateado sutil para evitar sombras negras
+            emissiveIntensity: 0.28
         });
 
         const silverSteelMat = new THREE.MeshStandardMaterial({
-            color: 0xd8e0e8,      // Acero inoxidable cepillado color plata
-            metalness: 0.92,
-            roughness: 0.22
+            color: 0xe8eef5,          // Acero plateado pulido
+            metalness: 0.40,
+            roughness: 0.22,
+            emissive: 0x242a34,
+            emissiveIntensity: 0.22
         });
 
         const silverBoltMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,      // Pernos cromados brillantes
-            metalness: 0.99,
-            roughness: 0.05
+            color: 0xffffff,          // Pernos y herrajes de plata espejo
+            metalness: 0.55,
+            roughness: 0.08,
+            emissive: 0x38404c,
+            emissiveIntensity: 0.30
         });
 
         // 1. Rieles Longitudinales (Eje Z en el techo)
@@ -670,7 +681,18 @@ class Real3DClawcade {
         centerHub.position.y = -0.55;
         this.clawHead.add(centerHub);
 
-        // 6. Tres Tenazas Mecánicas Articuladas de Plata Pulida (120° entre sí)
+        // 6. Tres Tenazas Mecánicas Continuas de Plata Pulida (120° entre sí)
+        // CERO partes sueltas, CERO elementos flotantes: cada tenaza es una curva 3D continua e indivisible
+        const fingerCurve = new THREE.CatmullRomCurve3D([
+            new THREE.Vector3(0.00,  0.00, 0.0), // Bisagra superior en el cuerpo
+            new THREE.Vector3(0.18, -0.55, 0.0), // Brazo superior descendente
+            new THREE.Vector3(0.32, -1.15, 0.0), // Codo exterior curvado
+            new THREE.Vector3(0.22, -1.70, 0.0), // Curva hacia adentro
+            new THREE.Vector3(-0.08, -2.15, 0.0), // Dedo curvado hacia el centro
+            new THREE.Vector3(-0.35, -2.35, 0.0)  // Punta afilada dirigida al centro
+        ]);
+        const fingerGeo = new THREE.TubeGeometry(fingerCurve, 36, 0.075, 12, false);
+
         this.prongs = [];
         for (let i = 0; i < 3; i++) {
             const angle = (i * Math.PI * 2) / 3;
@@ -690,58 +712,45 @@ class Real3DClawcade {
             pin.position.set(0.68, -0.42, 0);
             prongGroup.add(pin);
 
-            // PIVOTE DEL BRAZO SUPERIOR
+            // PIVOTE COMPLETO DE LA TENAZA SÓLIDA DE PLATA
             const upperPivot = new THREE.Group();
             upperPivot.position.set(0.68, -0.42, 0);
 
-            // Brazo Superior Curvado de Acero Cromado Plata
-            const armPlateGeo = new THREE.BoxGeometry(0.12, 1.4, 0.18);
-            const armPlate = new THREE.Mesh(armPlateGeo, silverChromeMat);
-            armPlate.position.set(0.35, -0.62, 0);
-            armPlate.rotation.z = -0.52;
-            armPlate.castShadow = true;
-            upperPivot.add(armPlate);
+            // Bisagra cilíndrica de sujeción
+            const hingeJoint = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.085, 0.085, 0.22, 16),
+                silverBoltMat
+            );
+            hingeJoint.rotation.x = Math.PI / 2;
+            upperPivot.add(hingeJoint);
 
-            // PIVOTE DE LA PINZA CURVA INFERIOR (Codo articulado)
-            const lowerTalon = new THREE.Group();
-            lowerTalon.position.set(0.72, -1.25, 0);
+            // Cuerpo tubular continuo de la garra (Una sola pieza sólida sin uniones partidas)
+            const fingerMesh = new THREE.Mesh(fingerGeo, silverChromeMat);
+            fingerMesh.castShadow = true;
+            upperPivot.add(fingerMesh);
 
-            // Perno de articulación del codo en plata
-            const elbowPin = new THREE.Mesh(pinGeo, silverBoltMat);
-            elbowPin.rotation.x = Math.PI / 2;
-            lowerTalon.add(elbowPin);
+            // Refuerzo en el codo de plata
+            const knuckle = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.09, 0.09, 0.18, 16),
+                silverBoltMat
+            );
+            knuckle.rotation.x = Math.PI / 2;
+            knuckle.position.set(0.32, -1.15, 0.0);
+            upperPivot.add(knuckle);
 
-            // Hoja de la Garra Curva - Segmento 1 (Plata pulida)
-            const talonSeg1Geo = new THREE.CylinderGeometry(0.085, 0.06, 0.85, 16);
-            const talonSeg1 = new THREE.Mesh(talonSeg1Geo, silverChromeMat);
-            talonSeg1.position.set(0.2, -0.38, 0);
-            talonSeg1.rotation.z = 0.55;
-            talonSeg1.castShadow = true;
-            lowerTalon.add(talonSeg1);
+            // Puntera suave de terminación en la punta de la garra
+            const tipCap = new THREE.Mesh(
+                new THREE.SphereGeometry(0.076, 16, 16),
+                silverChromeMat
+            );
+            tipCap.position.set(-0.35, -2.35, 0.0);
+            upperPivot.add(tipCap);
 
-            // Hoja de la Garra Curva - Segmento 2 (Plata pulida hacia adentro)
-            const talonSeg2Geo = new THREE.CylinderGeometry(0.06, 0.035, 0.75, 16);
-            const talonSeg2 = new THREE.Mesh(talonSeg2Geo, silverChromeMat);
-            talonSeg2.position.set(-0.05, -0.88, 0);
-            talonSeg2.rotation.z = 1.25;
-            talonSeg2.castShadow = true;
-            lowerTalon.add(talonSeg2);
-
-            // Puntera afilada integrada en plata cromada continua (Sin partes sueltas)
-            const tipConeGeo = new THREE.ConeGeometry(0.045, 0.3, 16);
-            const tipCone = new THREE.Mesh(tipConeGeo, silverChromeMat);
-            tipCone.position.set(-0.32, -1.05, 0);
-            tipCone.rotation.z = 1.95;
-            tipCone.castShadow = true;
-            lowerTalon.add(tipCone);
-
-            upperPivot.add(lowerTalon);
             prongGroup.add(upperPivot);
             this.clawHead.add(prongGroup);
 
             this.prongs.push({
-                upperPivot,
-                lowerTalon
+                upperPivot
             });
         }
     }
@@ -1092,9 +1101,9 @@ class Real3DClawcade {
             this.clawPos.y -= 0.12;
             this.targetClawAngle = 1.0; // Asegura que las tenazas estén totalmente abiertas al bajar
 
-            // Detección de contacto con la montaña en la posición (X, Z) actual
-            if (this.clawPos.y <= -2.4) {
-                this.clawPos.y = -2.4;
+            // Detección de contacto con la montaña en la posición (X, Z) actual (puntas tocan la comida a Y = -4.37)
+            if (this.clawPos.y <= -1.6) {
+                this.clawPos.y = -1.6;
                 this.state = 'GRABBING';
                 this.targetClawAngle = 0.05; // Cierra firmemente las tenazas sobre el producto
                 if (window.soundFX) window.soundFX.playClawGrab();
@@ -1118,7 +1127,7 @@ class Real3DClawcade {
             if (this.grabbedPlushie) {
                 this.grabbedPlushie.mesh.position.set(
                     this.clawPos.x,
-                    this.clawPos.y - 1.2,
+                    this.clawPos.y - 1.65,
                     this.clawPos.z
                 );
             }
@@ -1143,7 +1152,7 @@ class Real3DClawcade {
                 if (this.grabbedPlushie) {
                     this.grabbedPlushie.mesh.position.set(
                         this.clawPos.x,
-                        this.clawPos.y - 1.2,
+                        this.clawPos.y - 1.65,
                         this.clawPos.z
                     );
                 }
@@ -1161,17 +1170,13 @@ class Real3DClawcade {
             }
         }
 
-        // 1. Cinemática de apertura/cierre de tenazas de plata (Mecanismo real de garras de arcade)
+        // 1. Cinemática de apertura/cierre de tenazas de plata maciza (Mecanismo real de arcade)
         this.clawAngle += (this.targetClawAngle - this.clawAngle) * 0.18;
 
-        // Animar las 3 tenazas articuladas de plata
+        // Animar las 3 tenazas continuas de plata (abre hacia afuera al bajar, cierra al centro al atrapar)
         this.prongs.forEach(prong => {
-            // Rotación del brazo superior (abre hacia afuera en abanico, cierra hacia el centro)
-            const openOffset = (this.clawAngle * 0.85) - 0.38;
-            prong.upperPivot.rotation.z = openOffset;
-
-            // Articulación de la pinza inferior curvada (se expande hacia afuera al abrir, se curva hacia adentro al cerrar)
-            prong.lowerTalon.rotation.z = 0.75 - (this.clawAngle * 0.85);
+            const angleZ = (this.clawAngle * 0.65) - 0.24;
+            prong.upperPivot.rotation.z = angleZ;
         });
 
         // 2. Física de inercia y balanceo pendular del cable (Sway)
@@ -1221,8 +1226,9 @@ class Real3DClawcade {
 
     detectPlushieCollision3D() {
         let closest = null;
-        let minDist = 1.35; // Radio de agarre 3D
+        let minDist = 1.45; // Radio de agarre 3D optimizado
 
+        // Prioridad 1: Premios en la cima (isTop)
         this.plushies.forEach(p => {
             if (p.isTop) {
                 const dx = this.clawPos.x - p.mesh.position.x;
@@ -1235,6 +1241,19 @@ class Real3DClawcade {
                 }
             }
         });
+
+        // Prioridad 2: Si no hubo en la cima pero la garra cayó justo encima de uno de la base
+        if (!closest) {
+            this.plushies.forEach(p => {
+                const dx = this.clawPos.x - p.mesh.position.x;
+                const dz = this.clawPos.z - p.mesh.position.z;
+                const dist = Math.sqrt(dx * dx + dz * dz);
+
+                if (dist < 1.15) {
+                    closest = p;
+                }
+            });
+        }
 
         if (closest) {
             this.grabbedPlushie = closest;
