@@ -683,7 +683,7 @@ class Real3DClawcade {
 
         // 6. Tres Tenazas Mecánicas Continuas de Plata Pulida (120° entre sí)
         // CERO partes sueltas, CERO elementos flotantes: cada tenaza es una curva 3D continua e indivisible
-        const fingerCurve = new THREE.CatmullRomCurve3D([
+        const fingerCurve = new THREE.CatmullRomCurve3([
             new THREE.Vector3(0.00,  0.00, 0.0), // Bisagra superior en el cuerpo
             new THREE.Vector3(0.18, -0.55, 0.0), // Brazo superior descendente
             new THREE.Vector3(0.32, -1.15, 0.0), // Codo exterior curvado

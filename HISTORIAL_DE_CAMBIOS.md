@@ -154,7 +154,7 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ### Funcionalidades Implementadas:
 1. **Erradicación Definitiva de Segmentos Desconectados / Elementos Flotantes:**
-   - Cada una de las 3 tenazas fue reconstruida como una **curva 3D continua indivisible** (`THREE.CatmullRomCurve3D` extruida con `THREE.TubeGeometry`), fusionando en una sola pieza geométrica el anclaje superior, el brazo descendente, el codo articulado exterior y la punta curvada hacia el centro.
+   - Cada una de las 3 tenazas fue reconstruida como una **curva 3D continua indivisible** (`THREE.CatmullRomCurve3` extruida con `THREE.TubeGeometry`), fusionando en una sola pieza geométrica el anclaje superior, el brazo descendente, el codo articulado exterior y la punta curvada hacia el centro.
    - Se eliminaron por completo los 4 cilindros, bielas y conos independientes que se separaban en el aire al rotar. Es físicamente imposible que existan huecos, holguras o elementos flotantes en la garra.
    - Se integró un perno de articulación cilíndrico de plata en el pivote superior, refuerzo en el codo y una terminación cóncava suave en la punta, todo emparentado rígidamente al pivote único (`upperPivot`).
 
