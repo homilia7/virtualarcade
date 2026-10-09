@@ -9,7 +9,7 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 - **Repositorio:** [https://github.com/homilia7/virtualarcade](https://github.com/homilia7/virtualarcade)
 - **Rama:** main
-- **Commit:** b509261
+- **Commit:** dfef2f2
 - **URL Producción:** [https://virtualarcade-duz.pages.dev](https://virtualarcade-duz.pages.dev)
 
 ---
