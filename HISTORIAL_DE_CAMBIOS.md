@@ -71,4 +71,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Más de 60 esferas y modelos tridimensionales con orejitas y sombras físicas apiladas en el suelo del gabinete con física de contacto.
    - Soporte para mando físico (gamepad analógico en 2 ejes), flechas de teclado (↑, ↓, ←, → / WASD) y thumbstick virtual del celular en 360 grados.
 
+---
+
+## 📦 ENTRADA: Versión 1.3.0 - Garra Metálica Industrial de Alta Fidelidad y Cinemática Real
+
+### Funcionalidades Implementadas:
+1. **Modelado Mecánico Industrial en Acero y Cromo:**
+   - Carcasa central de acero oscuro con anillo estriado cromado y anilla superior de suspensión giratoria.
+   - Vástago de pistón central vertical deslizable acoplado a un collar inferior de 3 vías.
+   - 3 brazos articulados de doble placa de acero cromado con pernos hexagonales de latón dorado.
+   - Bielas de articulación (linkage rods) conectadas entre el pistón central y los brazos superiores en mecanismo de tijera.
+   - Pinzas inferiores curvadas de acero inoxidable con punteras cónicas de alta precisión y almohadillas de goma negra antideslizantes (*grip pads*).
+
+2. **Cinemática Realista de Apertura, Cierre y Balanceo:**
+   - Apertura completa de hasta 48 grados con retroceso al iniciar la partida o soltar el premio.
+   - Cierre progresivo mecánico al tocar los peluches con descenso simultáneo del pistón central hacia abajo.
+   - Física de inercia y balanceo pendular armónico (*Sway Physics*) en los ejes X y Z cuando el carro se desplaza y frena.
+
+
 

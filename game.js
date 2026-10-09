@@ -32,8 +32,16 @@ class Real3DClawcade {
         this.clawPos = { x: 1.5, y: 4.0, z: 0.0 };
         this.restingY = 4.0;
         this.chutePos = { x: -4.2, y: 4.0, z: 1.8 }; // Posición de la rampa a la izquierda
-        this.clawAngle = 0.6; // Radianes de apertura de tenazas
-        this.targetClawAngle = 0.6;
+        this.clawAngle = 0.82; // Arranca abierta como en las máquinas reales
+        this.targetClawAngle = 0.82;
+
+        // Físicas de inercia y balanceo pendular del cable (Sway)
+        this.swayX = 0;
+        this.swayZ = 0;
+        this.swayVelX = 0;
+        this.swayVelZ = 0;
+        this.prevClawX = this.clawPos.x;
+        this.prevClawZ = this.clawPos.z;
 
         // Entradas de movimiento (Ejes X y Z)
         this.moveX = 0; // -1 izquierda, +1 derecha
@@ -205,21 +213,47 @@ class Real3DClawcade {
     }
 
     buildCraneAndClaw3D() {
-        // Material cromado metálico para los rieles
-        const chromeMat = new THREE.MeshStandardMaterial({
-            color: 0xe0e0e0,
+        // Materiales de Grado Industrial y PBR Realista
+        const chromeMirrorMat = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            metalness: 0.98,
+            roughness: 0.05
+        });
+
+        const darkSteelMat = new THREE.MeshStandardMaterial({
+            color: 0x263238,
+            metalness: 0.88,
+            roughness: 0.22
+        });
+
+        const brassBoltMat = new THREE.MeshStandardMaterial({
+            color: 0xffd54f,
             metalness: 0.95,
-            roughness: 0.12
+            roughness: 0.15
+        });
+
+        const pinkGlowMat = new THREE.MeshStandardMaterial({
+            color: 0xff4081,
+            emissive: 0xc2185b,
+            emissiveIntensity: 0.5,
+            roughness: 0.2,
+            metalness: 0.2
+        });
+
+        const rubberGripMat = new THREE.MeshStandardMaterial({
+            color: 0x1a1a1a,
+            roughness: 0.92,
+            metalness: 0.05
         });
 
         // 1. Rieles Longitudinales (Eje Z en el techo)
         const railGeo = new THREE.CylinderGeometry(0.08, 0.08, 9.8, 16);
-        const railLeft = new THREE.Mesh(railGeo, chromeMat);
+        const railLeft = new THREE.Mesh(railGeo, chromeMirrorMat);
         railLeft.rotation.x = Math.PI / 2;
         railLeft.position.set(-5.5, 4.8, 0);
         this.scene.add(railLeft);
 
-        const railRight = new THREE.Mesh(railGeo, chromeMat);
+        const railRight = new THREE.Mesh(railGeo, chromeMirrorMat);
         railRight.rotation.x = Math.PI / 2;
         railRight.position.set(5.5, 4.8, 0);
         this.scene.add(railRight);
@@ -227,86 +261,167 @@ class Real3DClawcade {
         // 2. Viga Transversal (Eje X que se desplaza en Z)
         this.crossbeam = new THREE.Group();
         const beamGeo = new THREE.CylinderGeometry(0.1, 0.1, 11.2, 16);
-        const beamMesh = new THREE.Mesh(beamGeo, chromeMat);
+        const beamMesh = new THREE.Mesh(beamGeo, chromeMirrorMat);
         beamMesh.rotation.z = Math.PI / 2;
         this.crossbeam.add(beamMesh);
         this.scene.add(this.crossbeam);
 
-        // 3. Carro de Transporte (Trolley que se desplaza en X)
+        // 3. Carro de Transporte (Trolley con polea y motor)
         this.trolley = new THREE.Group();
-        const trolleyBoxGeo = new THREE.BoxGeometry(1.2, 0.4, 1.0);
-        const trolleyMat = new THREE.MeshStandardMaterial({ color: 0x424242, metalness: 0.6 });
-        const trolleyMesh = new THREE.Mesh(trolleyBoxGeo, trolleyMat);
+        const trolleyBoxGeo = new THREE.BoxGeometry(1.2, 0.35, 1.0);
+        const trolleyMesh = new THREE.Mesh(trolleyBoxGeo, darkSteelMat);
         this.trolley.add(trolleyMesh);
+
+        // Polea cromada en el carro
+        const pulleyGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.12, 24);
+        const pulleyMesh = new THREE.Mesh(pulleyGeo, chromeMirrorMat);
+        pulleyMesh.rotation.z = Math.PI / 2;
+        pulleyMesh.position.set(0, -0.2, 0);
+        this.trolley.add(pulleyMesh);
         this.crossbeam.add(this.trolley);
 
-        // 4. Cable Metálico Extensible (Y)
-        const cableGeo = new THREE.CylinderGeometry(0.03, 0.03, 1, 8);
-        this.cableMesh = new THREE.Mesh(cableGeo, chromeMat);
+        // 4. Cable de Acero Trenzado Extensible (Y)
+        const cableGeo = new THREE.CylinderGeometry(0.025, 0.025, 1, 12);
+        this.cableMesh = new THREE.Mesh(cableGeo, chromeMirrorMat);
         this.cableMesh.position.y = -0.5;
         this.trolley.add(this.cableMesh);
 
-        // 5. CABEZA DE LA GARRA Y DOMO ROSA BRILLANTE (IDÉNTICO A LA FOTO)
+        // 5. CABEZA DE LA GARRA METÁLICA REALISTA
         this.clawHead = new THREE.Group();
         this.clawHead.position.set(this.clawPos.x, this.clawPos.y, this.clawPos.z);
         this.scene.add(this.clawHead);
 
-        // Cúpula Hemisférica Rosa Neón
+        // Anilla giratoria superior de suspensión
+        const swivelGeo = new THREE.TorusGeometry(0.18, 0.045, 12, 24);
+        const swivelMesh = new THREE.Mesh(swivelGeo, chromeMirrorMat);
+        swivelMesh.position.set(0, 0.95, 0);
+        this.clawHead.add(swivelMesh);
+
+        // Cúpula Hemisférica Rosa Neón Superior con anillo cromado
         const domeGeo = new THREE.SphereGeometry(0.65, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        const domeMat = new THREE.MeshStandardMaterial({
-            color: 0xff4081,
-            emissive: 0xc2185b,
-            emissiveIntensity: 0.45,
-            roughness: 0.25,
-            metalness: 0.2
-        });
-        const dome = new THREE.Mesh(domeGeo, domeMat);
-        dome.position.y = 0.1;
+        const dome = new THREE.Mesh(domeGeo, pinkGlowMat);
+        dome.position.y = 0.25;
         this.clawHead.add(dome);
 
-        // Anillo metálico base
-        const ringGeo = new THREE.CylinderGeometry(0.68, 0.68, 0.15, 32);
-        const ring = new THREE.Mesh(ringGeo, chromeMat);
-        ring.position.y = 0.05;
-        this.clawHead.add(ring);
+        // Corona / Bisel metálico del domo
+        const domeBezelGeo = new THREE.TorusGeometry(0.66, 0.05, 12, 32);
+        const domeBezel = new THREE.Mesh(domeBezelGeo, chromeMirrorMat);
+        domeBezel.rotation.x = Math.PI / 2;
+        domeBezel.position.y = 0.25;
+        this.clawHead.add(domeBezel);
 
-        // 6. Tres Tenazas Mecánicas Articuladas (120° entre sí)
+        // Carcasa Principal Cilindro de Acero Oscuro (Gearbox)
+        const casingGeo = new THREE.CylinderGeometry(0.62, 0.68, 0.65, 32);
+        const casing = new THREE.Mesh(casingGeo, darkSteelMat);
+        casing.position.y = -0.1;
+        this.clawHead.add(casing);
+
+        // Anillo inferior cromado con reborde
+        const baseRingGeo = new THREE.CylinderGeometry(0.72, 0.72, 0.12, 32);
+        const baseRing = new THREE.Mesh(baseRingGeo, chromeMirrorMat);
+        baseRing.position.y = -0.42;
+        this.clawHead.add(baseRing);
+
+        // Vástago Central Móvil (Pistón Neumático de Accionamiento)
+        this.pistonShaft = new THREE.Group();
+        const rodGeo = new THREE.CylinderGeometry(0.1, 0.1, 1.4, 16);
+        const rod = new THREE.Mesh(rodGeo, chromeMirrorMat);
+        this.pistonShaft.add(rod);
+
+        // Collar inferior del pistón (Conector de bielas de tijera)
+        const collarGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.18, 24);
+        const collar = new THREE.Mesh(collarGeo, darkSteelMat);
+        collar.position.y = -0.65;
+        this.pistonShaft.add(collar);
+        this.clawHead.add(this.pistonShaft);
+
+        // 6. Tres Tenazas Mecánicas Articuladas con Bielas de Tijera (120° entre sí)
         this.prongs = [];
         for (let i = 0; i < 3; i++) {
             const angle = (i * Math.PI * 2) / 3;
             const prongGroup = new THREE.Group();
             prongGroup.rotation.y = angle;
 
-            // Pivote superior de rotación de la tenaza
-            const pivot = new THREE.Group();
-            pivot.position.set(0.55, 0, 0);
+            // Horquilla de Montaje Superior en el cuerpo
+            const bracketGeo = new THREE.BoxGeometry(0.15, 0.2, 0.25);
+            const bracket = new THREE.Mesh(bracketGeo, darkSteelMat);
+            bracket.position.set(0.68, -0.42, 0);
+            prongGroup.add(bracket);
 
-            // Brazo superior de la tenaza
-            const armGeo = new THREE.CylinderGeometry(0.06, 0.06, 1.2, 12);
-            const arm = new THREE.Mesh(armGeo, chromeMat);
-            arm.position.set(0.3, -0.55, 0);
-            arm.rotation.z = -0.55;
-            arm.castShadow = true;
-            pivot.add(arm);
+            // Perno dorado hexagonal del eje superior
+            const pinGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.3, 12);
+            const pin = new THREE.Mesh(pinGeo, brassBoltMat);
+            pin.rotation.x = Math.PI / 2;
+            pin.position.set(0.68, -0.42, 0);
+            prongGroup.add(pin);
 
-            // Punta curva de sujeción (blanco con punta de goma rosa)
-            const tipGeo = new THREE.CylinderGeometry(0.065, 0.04, 0.8, 12);
-            const tip = new THREE.Mesh(tipGeo, chromeMat);
-            tip.position.set(0.75, -1.2, 0);
-            tip.rotation.z = 0.8;
-            tip.castShadow = true;
-            pivot.add(tip);
+            // PIVOTE DEL BRAZO SUPERIOR
+            const upperPivot = new THREE.Group();
+            upperPivot.position.set(0.68, -0.42, 0);
 
-            // Puntera de goma antideslizante rosa
-            const rubberGeo = new THREE.SphereGeometry(0.09, 12, 12);
-            const rubberMat = new THREE.MeshStandardMaterial({ color: 0xff4081, roughness: 0.8 });
-            const rubber = new THREE.Mesh(rubberGeo, rubberMat);
-            rubber.position.set(0.55, -1.5, 0);
-            pivot.add(rubber);
+            // Brazo de Doble Placa de Acero Cromado
+            const armPlateGeo = new THREE.BoxGeometry(0.12, 1.35, 0.16);
+            const armPlate = new THREE.Mesh(armPlateGeo, chromeMirrorMat);
+            armPlate.position.set(0.35, -0.62, 0);
+            armPlate.rotation.z = -0.52;
+            armPlate.castShadow = true;
+            upperPivot.add(armPlate);
 
-            prongGroup.add(pivot);
+            // Biela de Articulación (Linkage rod conectada a la tijera)
+            const linkGeo = new THREE.CylinderGeometry(0.045, 0.045, 0.85, 12);
+            const linkageRod = new THREE.Mesh(linkGeo, chromeMirrorMat);
+            linkageRod.position.set(0.15, -0.4, 0);
+            linkageRod.rotation.z = 0.65;
+            upperPivot.add(linkageRod);
+
+            // PIVOTE DE LA PINZA CURVA INFERIOR (Codo articulado)
+            const lowerTalon = new THREE.Group();
+            lowerTalon.position.set(0.72, -1.25, 0);
+
+            // Perno de articulación del codo
+            const elbowPin = new THREE.Mesh(pinGeo, brassBoltMat);
+            elbowPin.rotation.x = Math.PI / 2;
+            lowerTalon.add(elbowPin);
+
+            // Hoja de la Garra Curva (Segmento 1)
+            const talonSeg1Geo = new THREE.CylinderGeometry(0.09, 0.065, 0.8, 16);
+            const talonSeg1 = new THREE.Mesh(talonSeg1Geo, chromeMirrorMat);
+            talonSeg1.position.set(0.2, -0.35, 0);
+            talonSeg1.rotation.z = 0.55;
+            talonSeg1.castShadow = true;
+            lowerTalon.add(talonSeg1);
+
+            // Hoja de la Garra Curva (Segmento 2 hacia adentro)
+            const talonSeg2Geo = new THREE.CylinderGeometry(0.065, 0.04, 0.7, 16);
+            const talonSeg2 = new THREE.Mesh(talonSeg2Geo, chromeMirrorMat);
+            talonSeg2.position.set(-0.05, -0.85, 0);
+            talonSeg2.rotation.z = 1.25;
+            talonSeg2.castShadow = true;
+            lowerTalon.add(talonSeg2);
+
+            // Puntera Cónica Afilada
+            const tipConeGeo = new THREE.ConeGeometry(0.05, 0.28, 16);
+            const tipCone = new THREE.Mesh(tipConeGeo, chromeMirrorMat);
+            tipCone.position.set(-0.35, -1.02, 0);
+            tipCone.rotation.z = 1.95;
+            lowerTalon.add(tipCone);
+
+            // Puntera de Goma Negra Antideslizante (Grip Pad)
+            const gripGeo = new THREE.BoxGeometry(0.09, 0.22, 0.12);
+            const grip = new THREE.Mesh(gripGeo, rubberGripMat);
+            grip.position.set(-0.25, -0.95, 0);
+            grip.rotation.z = 1.25;
+            lowerTalon.add(grip);
+
+            upperPivot.add(lowerTalon);
+            prongGroup.add(upperPivot);
             this.clawHead.add(prongGroup);
-            this.prongs.push(pivot);
+
+            this.prongs.push({
+                upperPivot,
+                lowerTalon,
+                linkage: linkageRod
+            });
         }
     }
 
@@ -508,7 +623,7 @@ class Real3DClawcade {
         this.updateCreditsDisplay();
         if (this.state === 'WAITING_COIN') {
             this.state = 'READY';
-            this.targetClawAngle = 0.6; // Abrir garra
+            this.targetClawAngle = 0.82; // Abrir garra ampliamente
         }
     }
 
@@ -612,9 +727,8 @@ class Real3DClawcade {
                 }
             } else {
                 this.clawPos.x = this.chutePos.x;
-                this.clawPos.z = this.chutePos.z;
                 this.state = 'RELEASING';
-                this.targetClawAngle = 0.65; // Abrir garra y soltar
+                this.targetClawAngle = 0.85; // Abrir garra ampliamente y soltar
 
                 if (this.grabbedPlushie) {
                     this.onWinPrize3D(this.grabbedPlushie);
@@ -625,11 +739,43 @@ class Real3DClawcade {
             }
         }
 
-        // Suavizado del ángulo de tenazas
-        this.clawAngle += (this.targetClawAngle - this.clawAngle) * 0.18;
-        this.prongs.forEach(p => {
-            p.rotation.z = -this.clawAngle;
+        // 1. Cinemática de apertura/cierre de tenazas y pistón central (Mecanismo real de tijera)
+        this.clawAngle += (this.targetClawAngle - this.clawAngle) * 0.16;
+
+        // El vástago del pistón central sube al abrir y baja al cerrar
+        if (this.pistonShaft) {
+            this.pistonShaft.position.y = -0.15 - (0.85 - this.clawAngle) * 0.65;
+        }
+
+        // Animar las 3 tenazas articuladas
+        this.prongs.forEach(prong => {
+            // Rotación del brazo superior (abre y cierra)
+            prong.upperPivot.rotation.z = -this.clawAngle;
+            // Articulación de la pinza inferior curvada (se flexiona hacia el interior al cerrar)
+            prong.lowerTalon.rotation.z = (this.clawAngle * 0.65) + 0.45;
+            // Orientación de la biela de empuje
+            if (prong.linkage) {
+                prong.linkage.rotation.z = (this.clawAngle * 0.45) - 0.2;
+            }
         });
+
+        // 2. Física de inercia y balanceo pendular del cable (Sway)
+        const accelX = (this.clawPos.x - this.prevClawX);
+        const accelZ = (this.clawPos.z - this.prevClawZ);
+        this.prevClawX = this.clawPos.x;
+        this.prevClawZ = this.clawPos.z;
+
+        // Amortiguación armónica
+        this.swayVelX += -accelX * 0.35 - this.swayX * 0.08;
+        this.swayVelZ += -accelZ * 0.35 - this.swayZ * 0.08;
+        this.swayVelX *= 0.94;
+        this.swayVelZ *= 0.94;
+        this.swayX += this.swayVelX;
+        this.swayZ += this.swayVelZ;
+
+        // Aplicar balanceo a la cabeza de la garra
+        this.clawHead.rotation.z = this.swayX;
+        this.clawHead.rotation.x = -this.swayZ;
 
         // ----------------------------------------------------
         // ACTUALIZAR MODELOS 3D EN LA ESCENA
@@ -696,6 +842,7 @@ class Real3DClawcade {
 
         setTimeout(() => {
             this.state = this.credits > 0 ? 'READY' : 'WAITING_COIN';
+            this.targetClawAngle = 0.85; // Abre la garra ampliamente
             this.spawnPlushieMountain3D(); // Reponer montaña
         }, 1500);
     }
@@ -704,6 +851,7 @@ class Real3DClawcade {
         if (window.soundFX) window.soundFX.playMiss();
         setTimeout(() => {
             this.state = this.credits > 0 ? 'READY' : 'WAITING_COIN';
+            this.targetClawAngle = 0.85; // Abre la garra ampliamente
         }, 1000);
     }
 
