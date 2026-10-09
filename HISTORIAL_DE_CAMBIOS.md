@@ -112,6 +112,29 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Al activarse, solicita Fullscreen API exclusivamente para el elemento de la máquina (`.arcade-cabinet` / `.arcade-viewport`), ocultando todo el sitio web restante y centrando el mueble arcade en proporción 9:16 vertical con fondo negro absoluto, ideal para monitores, Smart TVs y tótems comerciales.
    - Banner y toast celebratorio animado con el emoji y nombre del premio (`#winBannerToast`) al depositar la comida en la rampa de premios.
 
+---
+
+## 📦 ENTRADA: Versión 1.5.0 - Depósito 3D Iluminado, Apertura de Garra en Descenso y Vitrina Cristal Despejada
+
+### Funcionalidades Implementadas:
+1. **Depósito / Tolva 3D de Premios de Alta Visibilidad:**
+   - Brocal de la tolva elevado y visible en la esquina frontal izquierda (`Y = -2.6` a `-1.55`), perfectamente observable sobre la consola de mandos.
+   - Marco perimetral con iluminación LED Neón Cian intensa (`0x00e5ff`, emissive 0.85) que resalta claramente el orificio de caída de los premios.
+   - Túnel interior profundo con luz puntual cian dedicada (`PointLight` de 1.8 de intensidad) que otorga sensación de profundidad real al conducto.
+   - Rótulo frontal 3D iluminado "PREMIOS" y barandilla superior de neón sobre el separador acrílico protector (`Y = -0.95`).
+   - Nueva compuerta física en el mueble exterior inferior (`.prize-dispenser-door`) con animación de brillo dorado intermitente (`.glow-win`) al conseguir un premio.
+
+2. **Cinemática de Apertura de la Garra en Descenso:**
+   - Estado de reposo relajado configurado a `targetClawAngle = 0.15` (semicerrada en espera).
+   - Al pulsar "¡ATRAPAR!" (`triggerGrab()`) y entrar en estado `DROPPING`, la garra se **abre amplia y dramáticamente** a `targetClawAngle = 1.0` en su camino hacia abajo.
+   - El vástago del pistón central neumático se extiende hacia abajo mientras los 3 brazos mecánicos y bielas se abren en abanico con un span superior a 2.4 unidades.
+   - Al tocar la montaña de comida (`clawPos.y <= -2.4`), se cierra con fuerza a `0.05` sujetando el producto.
+   - Al alcanzar el depósito (`RELEASING`), se abre completamente a `1.0` dejando caer la comida dentro del conducto iluminado y regresa suavemente a `0.15` en reposo.
+
+3. **Vitrina de Cristal 100% Despejada:**
+   - Se removió el texto central superpuesto en el cristal ("VIRTUAL CLAW CADE") que obstruía la visión hacia los premios y la garra, ofreciendo una visualización limpia y nítida de nivel exposición comercial.
+
+
 
 
 

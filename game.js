@@ -300,9 +300,9 @@ class Real3DClawcade {
         // Límites del gabinete: X [-2.2, 5.0], Z [-3.5, 3.5], Y [3.3 arriba, -2.4 abajo]
         this.clawPos = { x: 1.5, y: 3.3, z: 0.0 };
         this.restingY = 3.3;
-        this.chutePos = { x: -4.2, y: 3.3, z: 1.8 }; // Posición de la rampa a la izquierda
-        this.clawAngle = 0.82; // Arranca abierta como en las máquinas reales
-        this.targetClawAngle = 0.82;
+        this.chutePos = { x: -4.5, y: 3.3, z: 1.8 }; // Posición del depósito/tolva iluminada a la izquierda
+        this.clawAngle = 0.15; // Reposo relajado (se abre al descender)
+        this.targetClawAngle = 0.15;
 
         // Físicas de inercia y balanceo pendular del cable (Sway)
         this.swayX = 0;
@@ -445,40 +445,89 @@ class Real3DClawcade {
         this.scene.add(rightWall);
 
         // ----------------------------------------------------
-        // RAMPA DE PREMIOS (DUCTO) Y SEPARADOR ACRÍLICO 3D
+        // RAMPA Y DEPÓSITO DE PREMIOS 3D DE ALTA VISIBILIDAD
         // ----------------------------------------------------
-        // Caja de caída en la esquina frontal-izquierda
-        const chuteBoxGeo = new THREE.BoxGeometry(2.6, 2.5, 3.2);
-        const chuteBoxMat = new THREE.MeshStandardMaterial({
-            color: 0xf5f5f5,
-            roughness: 0.2,
-            metalness: 0.1
+        const chuteGroup = new THREE.Group();
+        chuteGroup.position.set(-4.5, -2.6, 1.8);
+
+        // 1. Tolva principal exterior (Caja sólida visible con buen contraste)
+        const chuteBodyGeo = new THREE.BoxGeometry(2.7, 3.2, 3.4);
+        const chuteBodyMat = new THREE.MeshStandardMaterial({
+            color: 0x1a2130,
+            roughness: 0.35,
+            metalness: 0.25
         });
-        const chuteBox = new THREE.Mesh(chuteBoxGeo, chuteBoxMat);
-        chuteBox.position.set(-4.5, -3.6, 1.8);
-        chuteBox.receiveShadow = true;
-        this.scene.add(chuteBox);
+        const chuteBody = new THREE.Mesh(chuteBodyGeo, chuteBodyMat);
+        chuteBody.position.y = -0.6;
+        chuteBody.receiveShadow = true;
+        chuteGroup.add(chuteBody);
 
-        // Hueco interior oscuro de la rampa
-        const chuteHoleGeo = new THREE.BoxGeometry(2.1, 0.2, 2.7);
-        const chuteHoleMat = new THREE.MeshBasicMaterial({ color: 0x0a0a0a });
-        const chuteHole = new THREE.Mesh(chuteHoleGeo, chuteHoleMat);
-        chuteHole.position.set(-4.5, -2.3, 1.8);
-        this.scene.add(chuteHole);
+        // 2. Marco superior LED Neón Cian que delimita el brocal del agujero
+        const rimGeo = new THREE.BoxGeometry(2.8, 0.16, 3.5);
+        const rimMat = new THREE.MeshStandardMaterial({
+            color: 0x00e5ff,
+            emissive: 0x00b0ff,
+            emissiveIntensity: 0.85,
+            roughness: 0.2,
+            metalness: 0.4
+        });
+        const rim = new THREE.Mesh(rimGeo, rimMat);
+        rim.position.y = 1.05;
+        chuteGroup.add(rim);
 
-        // Separador Acrílico Transparente (Como en la foto)
+        // 3. Orificio/embudo interior profundo donde caen los productos
+        const holeGeo = new THREE.BoxGeometry(2.3, 0.12, 2.9);
+        const holeMat = new THREE.MeshBasicMaterial({ color: 0x050508 });
+        const hole = new THREE.Mesh(holeGeo, holeMat);
+        hole.position.y = 0.98;
+        chuteGroup.add(hole);
+
+        // 4. Luz LED interior cian que ilumina el túnel de caída
+        const chuteLight = new THREE.PointLight(0x00e5ff, 1.8, 5.0);
+        chuteLight.position.set(0, 0.4, 0);
+        chuteGroup.add(chuteLight);
+
+        // 5. Señalética / Rótulo frontal iluminado "PREMIOS"
+        const signGeo = new THREE.BoxGeometry(1.9, 0.45, 0.08);
+        const signMat = new THREE.MeshStandardMaterial({
+            color: 0x00e5ff,
+            emissive: 0x00e5ff,
+            emissiveIntensity: 0.9,
+            roughness: 0.2
+        });
+        const sign = new THREE.Mesh(signGeo, signMat);
+        sign.position.set(0, 0.65, 1.74);
+        chuteGroup.add(sign);
+
+        this.scene.add(chuteGroup);
+
+        // 6. Separador Acrílico Transparente con Perfil Superior Iluminado
         const acrylicGeo = new THREE.BoxGeometry(0.12, 3.6, 6.5);
         const acrylicMat = new THREE.MeshPhysicalMaterial({
             color: 0xffffff,
             transparent: true,
-            opacity: 0.38,
-            roughness: 0.08,
-            transmission: 0.9,
-            thickness: 0.4
+            opacity: 0.4,
+            roughness: 0.06,
+            transmission: 0.95,
+            thickness: 0.5
         });
         const acrylic = new THREE.Mesh(acrylicGeo, acrylicMat);
-        acrylic.position.set(-3.1, -3.0, 1.2);
+        acrylic.position.set(-3.1, -2.8, 1.2);
         this.scene.add(acrylic);
+
+        // Barandilla superior de neón sobre el separador acrílico
+        const railGeo = new THREE.CylinderGeometry(0.06, 0.06, 6.5, 16);
+        const railMat = new THREE.MeshStandardMaterial({
+            color: 0x00e5ff,
+            emissive: 0x00b0ff,
+            emissiveIntensity: 0.7,
+            roughness: 0.2,
+            metalness: 0.8
+        });
+        const acrylicRail = new THREE.Mesh(railGeo, railMat);
+        acrylicRail.rotation.x = Math.PI / 2;
+        acrylicRail.position.set(-3.1, -0.95, 1.2);
+        this.scene.add(acrylicRail);
     }
 
     buildCraneAndClaw3D() {
@@ -974,7 +1023,7 @@ class Real3DClawcade {
         this.updateCreditsDisplay();
         if (this.state === 'WAITING_COIN') {
             this.state = 'READY';
-            this.targetClawAngle = 0.82; // Abrir garra ampliamente
+            this.targetClawAngle = 0.15; // Reposo relajado
         }
     }
 
@@ -991,6 +1040,7 @@ class Real3DClawcade {
         this.credits--;
         this.updateCreditsDisplay();
         this.state = 'DROPPING';
+        this.targetClawAngle = 1.0; // ¡LA GARRA SE ABRE AMPLIA Y VISIBLEMENTE AL DESCENDER!
         if (window.soundFX) window.soundFX.playCableDrop();
 
         const btnCatch = document.getElementById('btnCatch3D');
@@ -1019,15 +1069,16 @@ class Real3DClawcade {
             }
         }
 
-        // 2. Descenso en Y (Bajada de la garra)
+        // 2. Descenso en Y (Bajada de la garra abierta)
         if (this.state === 'DROPPING') {
             this.clawPos.y -= 0.12;
+            this.targetClawAngle = 1.0; // Asegura que las tenazas estén totalmente abiertas al bajar
 
             // Detección de contacto con la montaña en la posición (X, Z) actual
             if (this.clawPos.y <= -2.4) {
                 this.clawPos.y = -2.4;
                 this.state = 'GRABBING';
-                this.targetClawAngle = 0.12; // Cierra las tenazas
+                this.targetClawAngle = 0.05; // Cierra firmemente las tenazas sobre el producto
                 if (window.soundFX) window.soundFX.playClawGrab();
 
                 this.detectPlushieCollision3D();
@@ -1036,14 +1087,15 @@ class Real3DClawcade {
 
         // 3. Sujeción de tenazas
         if (this.state === 'GRABBING') {
-            if (Math.abs(this.clawAngle - this.targetClawAngle) < 0.05) {
+            if (Math.abs(this.clawAngle - this.targetClawAngle) < 0.08) {
                 this.state = 'LIFTING';
             }
         }
 
-        // 4. Elevación de la garra (LIFTING)
+        // 4. Elevación de la garra (LIFTING con producto atrapado)
         if (this.state === 'LIFTING') {
             this.clawPos.y += 0.09;
+            this.targetClawAngle = 0.05; // Mantiene el agarre firme
 
             if (this.grabbedPlushie) {
                 this.grabbedPlushie.mesh.position.set(
@@ -1059,8 +1111,9 @@ class Real3DClawcade {
             }
         }
 
-        // 5. Traslado automático a la rampa de premios (Frontal Izquierda)
+        // 5. Traslado automático al depósito de premios (Frontal Izquierda)
         if (this.state === 'RETURNING') {
+            this.targetClawAngle = 0.05; // Continúa sujetando el premio en el trayecto
             const dx = this.chutePos.x - this.clawPos.x;
             const dz = this.chutePos.z - this.clawPos.z;
             const dist = Math.sqrt(dx * dx + dz * dz);
@@ -1079,7 +1132,7 @@ class Real3DClawcade {
             } else {
                 this.clawPos.x = this.chutePos.x;
                 this.state = 'RELEASING';
-                this.targetClawAngle = 0.85; // Abrir garra ampliamente y soltar
+                this.targetClawAngle = 1.0; // ¡Abre ampliamente sobre el depósito y suelta el premio!
 
                 if (this.grabbedPlushie) {
                     this.onWinPrize3D(this.grabbedPlushie);
@@ -1091,22 +1144,25 @@ class Real3DClawcade {
         }
 
         // 1. Cinemática de apertura/cierre de tenazas y pistón central (Mecanismo real de tijera)
-        this.clawAngle += (this.targetClawAngle - this.clawAngle) * 0.16;
+        this.clawAngle += (this.targetClawAngle - this.clawAngle) * 0.18;
 
-        // El vástago del pistón central sube al abrir y baja al cerrar
+        // El vástago del pistón central baja al abrir (empuja bielas hacia afuera) y sube al cerrar
         if (this.pistonShaft) {
-            this.pistonShaft.position.y = -0.15 - (0.85 - this.clawAngle) * 0.65;
+            this.pistonShaft.position.y = -0.15 - (this.clawAngle * 0.45);
         }
 
         // Animar las 3 tenazas articuladas
         this.prongs.forEach(prong => {
-            // Rotación del brazo superior (abre y cierra)
-            prong.upperPivot.rotation.z = -this.clawAngle;
-            // Articulación de la pinza inferior curvada (se flexiona hacia el interior al cerrar)
-            prong.lowerTalon.rotation.z = (this.clawAngle * 0.65) + 0.45;
+            // Rotación del brazo superior (abre hacia afuera en abanico, cierra hacia el centro)
+            const openOffset = (this.clawAngle * 0.85) - 0.38;
+            prong.upperPivot.rotation.z = openOffset;
+
+            // Articulación de la pinza inferior curvada (se expande hacia afuera al abrir, se curva hacia adentro al cerrar)
+            prong.lowerTalon.rotation.z = 0.75 - (this.clawAngle * 0.85);
+
             // Orientación de la biela de empuje
             if (prong.linkage) {
-                prong.linkage.rotation.z = (this.clawAngle * 0.45) - 0.2;
+                prong.linkage.rotation.z = (this.clawAngle * 0.35) - 0.15;
             }
         });
 
@@ -1202,7 +1258,14 @@ class Real3DClawcade {
         // Mostrar notificación de premio en pantalla
         this.showWinBanner(prize);
 
-        // Caída física hacia el interior de la rampa
+        // Iluminar la compuerta exterior de entrega de premios
+        const prizeDoor = document.getElementById('prizeDispenserDoor');
+        if (prizeDoor) {
+            prizeDoor.classList.add('glow-win');
+            setTimeout(() => prizeDoor.classList.remove('glow-win'), 3800);
+        }
+
+        // Caída física hacia el interior del depósito/tolva
         const mesh = prize.mesh;
         let dropStep = 0;
         const dropInterval = setInterval(() => {
@@ -1216,7 +1279,7 @@ class Real3DClawcade {
 
         setTimeout(() => {
             this.state = this.credits > 0 ? 'READY' : 'WAITING_COIN';
-            this.targetClawAngle = 0.85; // Abre la garra ampliamente
+            this.targetClawAngle = 0.15; // Regresa al reposo relajado
             this.spawnPlushieMountain3D(); // Reponer montaña
         }, 1500);
     }
@@ -1225,7 +1288,7 @@ class Real3DClawcade {
         if (window.soundFX) window.soundFX.playMiss();
         setTimeout(() => {
             this.state = this.credits > 0 ? 'READY' : 'WAITING_COIN';
-            this.targetClawAngle = 0.85; // Abre la garra ampliamente
+            this.targetClawAngle = 0.15; // Regresa al reposo relajado
         }, 1000);
     }
 

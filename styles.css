@@ -539,14 +539,50 @@ body.tv-kiosk-mode .arcade-cabinet {
     text-transform: uppercase;
 }
 
-/* PANEL INFERIOR CON RANURA DE MONEDAS / BILLETES [$] (COMO EN LA FOTO) */
+/* PANEL INFERIOR CON COMPUERTA DE PREMIOS Y MONEDERO (COMO EN LA FOTO) */
 .cabinet-lower-deck {
     background: #880e4f;
-    padding: 10px 20px;
+    padding: 10px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
     border-top: 3px solid #6a0036;
+}
+
+.prize-dispenser-door {
+    background: linear-gradient(180deg, #1a1a24 0%, #0d0d12 100%);
+    border: 2px solid #00e5ff;
+    border-radius: 8px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.35), inset 0 2px 4px rgba(0, 0, 0, 0.8);
+    transition: all 0.3s ease;
+}
+
+.prize-dispenser-door.glow-win {
+    border-color: #ffd700;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.9), inset 0 0 15px rgba(255, 215, 0, 0.6);
+    animation: pulsePrizeDoor 0.6s infinite alternate;
+}
+
+@keyframes pulsePrizeDoor {
+    from { transform: scale(1); }
+    to { transform: scale(1.06); }
+}
+
+.prize-door-icon {
+    font-size: 1.15rem;
+}
+
+.prize-door-text {
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: #80d8ff;
+    text-transform: uppercase;
 }
 
 .bill-coin-acceptor {
