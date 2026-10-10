@@ -272,3 +272,23 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Se aisló el mapa de entorno cúbico de estudio (`chromeCubeMap`) exclusivamente a los materiales metálicos (garra, postes, rieles, pernos), eliminando la asignación global a `scene.environment`. Esto evita que el cielo blanco del cubemap lave de blanco los materiales dieléctricos (comida y peluches).
    - Se ajustó el objetivo del foco cenital (`this.spotLight.target`) hacia el suelo del lecho de premios (`Y = -4.0`), iluminando la comida con sombras nítidas y evitando quemar la superficie de la garra.
    - Exposición PBR calibrada a `0.95` con luz ambiente cálida a `0.28` y foco frontal suave a `0.18`.
+
+---
+
+## 📦 ENTRADA: Versión 1.9.2 - Físicas Orgánicas de Inercia, Balanceo y Asentamiento de Productos Dentro de la Garra
+
+### Funcionalidades Implementadas:
+1. **Balanceo Pendular Dinámico con Inercia Propia:**
+   - Se desacopló la posición fija del producto respecto a la garra. Ahora el producto tiene masa e inercia calculada mediante oscilador armónico amortiguado (`pp.swayVelX`, `pp.swayVelZ`).
+   - El producto reacciona a la aceleración horizontal del carro y al balanceo pendular del cable, inclinándose hacia el sentido del movimiento con retraso realista (*drag*).
+2. **Inclinación Asimétrica Natural y Centro de Masa Realista:**
+   - Al ser atrapado, el producto recibe una inclinación orgánica aleatoria de entre 8° y 15° (`targetTiltX`, `targetTiltZ`) y ángulo de orientación (*yaw*), reflejando que en una máquina real el objeto nunca queda atrapado perfectamente simétrico o plano.
+3. **Resorte Elástico de Asentamiento al Agarrar (*Grip Settling Bounce*):**
+   - Cuando las 3 tenazas se cierran (`GRABBING` -> `LIFTING`), el producto realiza un movimiento elástico hacia arriba de asentamiento (`bounceY`, `bounceVelY`), simulando el ajuste mecánico entre las puntas de acero y la comida/peluche.
+4. **Micro-vibraciones Mecánicas de Motor, Rieles y Cadena:**
+   - Durante la elevación (`LIFTING`) y traslado (`RETURNING`), se aplican micro-vibraciones de alta frecuencia (`motorJitter`), transmitiendo visualmente la tensión física de la suspensión.
+5. **Micro-deslizamiento por Desaceleración al Frenar sobre el Depósito (*"¡Casi se cae!"*):**
+   - Al llegar a la posición de la tolva (`chutePos`) y frenar en seco, la inercia provoca un deslizamiento vertical instantáneo hacia abajo (`dipVelY = -0.065`) y un balanceo frontal hacia la tolva antes de abrirse, logrando la máxima tensión arcade.
+6. **Conservación de Momento al Soltar el Premio:**
+   - En `RELEASING`, la caída libre hereda la velocidad tangencial y angular real del balanceo del producto al momento exacto en que las tenazas se abren, haciendo que la transición a la gravedad sea 100% continua y física.
+

@@ -559,6 +559,23 @@ class Real3DClawcade {
         this.fallingPrize = null;
         this.releaseTimer = 0;
 
+        // Físicas orgánicas del producto dentro de la garra (Inercia, balanceo, compresión y deslizamiento)
+        this.prizePhysics = {
+            tiltX: 0,
+            tiltZ: 0,
+            targetTiltX: 0,
+            targetTiltZ: 0,
+            targetYaw: 0,
+            swayX: 0,
+            swayZ: 0,
+            swayVelX: 0,
+            swayVelZ: 0,
+            bounceY: 0,
+            bounceVelY: 0,
+            dipY: 0,
+            dipVelY: 0
+        };
+
         // Inicializar Three.js
         this.initThree();
         this.buildCabinet3D();
@@ -1552,14 +1569,6 @@ class Real3DClawcade {
             this.clawPos.y += 0.09;
             this.targetClawAngle = 0.05; // Mantiene el agarre firme
 
-            if (this.grabbedPlushie) {
-                this.grabbedPlushie.mesh.position.set(
-                    this.clawPos.x,
-                    this.clawPos.y - 1.65,
-                    this.clawPos.z
-                );
-            }
-
             if (this.clawPos.y >= this.restingY) {
                 this.clawPos.y = this.restingY;
                 this.state = 'RETURNING';
@@ -1576,20 +1585,18 @@ class Real3DClawcade {
             if (dist > 0.1) {
                 this.clawPos.x += (dx / dist) * 0.07;
                 this.clawPos.z += (dz / dist) * 0.07;
-
-                if (this.grabbedPlushie) {
-                    this.grabbedPlushie.mesh.position.set(
-                        this.clawPos.x,
-                        this.clawPos.y - 1.65,
-                        this.clawPos.z
-                    );
-                }
             } else {
                 this.clawPos.x = this.chutePos.x;
                 this.clawPos.z = this.chutePos.z;
                 this.state = 'RELEASING';
                 this.releaseTimer = 0;
                 this.targetClawAngle = 1.0; // Inicia la apertura de las tenazas sobre el depósito
+
+                // Inercia de frenada brusca en la tolva ("¡Casi se cae!")
+                if (this.grabbedPlushie) {
+                    this.prizePhysics.dipVelY = -0.065; // Deslizamiento hacia abajo
+                    this.prizePhysics.swayVelX -= 0.045; // Balanceo frontal hacia el depósito
+                }
             }
         }
 
@@ -1600,15 +1607,16 @@ class Real3DClawcade {
 
             // Cuando las tenazas se abren mecánicamente (clawAngle > 0.32), el producto se desprende por gravedad
             if (this.grabbedPlushie && this.clawAngle > 0.32 && !this.fallingPrize) {
+                const pp = this.prizePhysics;
                 this.fallingPrize = {
                     prize: this.grabbedPlushie,
                     mesh: this.grabbedPlushie.mesh,
-                    velY: -0.02,
-                    velX: (Math.random() - 0.5) * 0.01,
-                    velZ: (Math.random() - 0.5) * 0.01,
-                    rotVelX: (Math.random() - 0.5) * 0.05,
-                    rotVelY: (Math.random() - 0.5) * 0.04,
-                    rotVelZ: (Math.random() - 0.5) * 0.05
+                    velY: -0.02 + pp.dipVelY,
+                    velX: (pp.swayVelX * 0.65) + (Math.random() - 0.5) * 0.01,
+                    velZ: (pp.swayVelZ * 0.65) + (Math.random() - 0.5) * 0.01,
+                    rotVelX: (pp.swayVelZ * 0.45) + (Math.random() - 0.5) * 0.03,
+                    rotVelY: (Math.random() - 0.5) * 0.03,
+                    rotVelZ: (-pp.swayVelX * 0.45) + (Math.random() - 0.5) * 0.03
                 };
                 this.grabbedPlushie = null;
                 if (window.soundFX) window.soundFX.playClawGrab();
@@ -1672,6 +1680,9 @@ class Real3DClawcade {
         this.clawHead.rotation.z = this.swayX;
         this.clawHead.rotation.x = -this.swayZ;
 
+        // Físicas dinámicas del producto atrapado (inercia, balanceo, vibraciones y rebote)
+        this.updateGrabbedPrizePhysics(accelX, accelZ);
+
         // ----------------------------------------------------
         // ACTUALIZAR MODELOS 3D EN LA ESCENA
         // ----------------------------------------------------
@@ -1722,6 +1733,57 @@ class Real3DClawcade {
         this.camera.lookAt(0, -0.6, 0);
     }
 
+    /**
+     * Físicas orgánicas del producto dentro de la garra:
+     * Balanceo pendular armónico con inercia propia, micro-vibraciones de motor y cadena,
+     * asentamiento elástico al agarrar e inclinación asimétrica natural.
+     */
+    updateGrabbedPrizePhysics(accelX, accelZ) {
+        if (!this.grabbedPlushie) return;
+
+        const pp = this.prizePhysics;
+        const mesh = this.grabbedPlushie.mesh;
+
+        // 1. Resorte elástico de asentamiento al agarrar (Bounce & Settle)
+        pp.bounceVelY += (-pp.bounceY * 0.24);
+        pp.bounceVelY *= 0.82;
+        pp.bounceY += pp.bounceVelY;
+
+        // 2. Deslizamiento por desaceleración inercial (Dip & Catch al frenar en el depósito)
+        pp.dipVelY += (-pp.dipY * 0.20);
+        pp.dipVelY *= 0.86;
+        pp.dipY += pp.dipVelY;
+
+        // 3. Balanceo pendular armónico con inercia propia dentro de las tenazas
+        // El producto siente la aceleración del carro más el acoplamiento elástico con la garra
+        pp.swayVelX += -accelX * 0.52 - pp.swayX * 0.08 + (this.swayX - pp.swayX) * 0.14;
+        pp.swayVelZ += -accelZ * 0.52 - pp.swayZ * 0.08 + (this.swayZ - pp.swayZ) * 0.14;
+        pp.swayVelX *= 0.93;
+        pp.swayVelZ *= 0.93;
+        pp.swayX += pp.swayVelX;
+        pp.swayZ += pp.swayVelZ;
+
+        // Suavizado hacia la inclinación asimétrica natural de agarre
+        pp.tiltX += (pp.targetTiltX - pp.tiltX) * 0.08;
+        pp.tiltZ += (pp.targetTiltZ - pp.tiltZ) * 0.08;
+
+        // 4. Micro-vibraciones mecánicas de motor, rieles y tensión de cadena
+        let motorJitter = 0;
+        if (this.state === 'LIFTING' || this.state === 'RETURNING') {
+            motorJitter = Math.sin(Date.now() * 0.045) * 0.007;
+        }
+
+        // 5. Aplicar posición física en el espacio 3D
+        mesh.position.x = this.clawPos.x + (pp.swayX * 0.38);
+        mesh.position.y = this.clawPos.y - 1.65 + pp.bounceY + pp.dipY + motorJitter;
+        mesh.position.z = this.clawPos.z + (pp.swayZ * 0.38);
+
+        // 6. Aplicar rotación física inercial (inclinación orgánica + balanceo dinámico)
+        mesh.rotation.x = pp.tiltX - (pp.swayZ * 0.75);
+        mesh.rotation.z = pp.tiltZ + (pp.swayX * 0.75);
+        mesh.rotation.y = pp.targetYaw + (pp.swayX * pp.swayZ * 0.4);
+    }
+
     detectPlushieCollision3D() {
         let closest = null;
         let minDist = 1.45; // Radio de agarre 3D optimizado
@@ -1755,6 +1817,20 @@ class Real3DClawcade {
 
         if (closest) {
             this.grabbedPlushie = closest;
+            // Inicializar físicas orgánicas del producto dentro de la garra
+            this.prizePhysics.targetTiltX = (Math.random() - 0.5) * 0.26; // Inclinación asimétrica de ~8-15°
+            this.prizePhysics.targetTiltZ = (Math.random() - 0.5) * 0.26;
+            this.prizePhysics.targetYaw = Math.random() * Math.PI * 2;
+            this.prizePhysics.tiltX = 0;
+            this.prizePhysics.tiltZ = 0;
+            this.prizePhysics.swayX = 0;
+            this.prizePhysics.swayZ = 0;
+            this.prizePhysics.swayVelX = 0;
+            this.prizePhysics.swayVelZ = 0;
+            this.prizePhysics.bounceY = -0.28; // Inicio comprimido hacia abajo
+            this.prizePhysics.bounceVelY = 0.075; // Rebote elástico hacia arriba
+            this.prizePhysics.dipY = 0;
+            this.prizePhysics.dipVelY = 0;
         } else {
             this.grabbedPlushie = null;
         }
