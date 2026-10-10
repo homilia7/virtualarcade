@@ -192,6 +192,13 @@ body {
     box-shadow: 0 0 15px rgba(216, 27, 96, 0.5);
 }
 
+.toolbar-btn.muted {
+    opacity: 0.65;
+    background: #0f131d;
+    border-color: #4a5568;
+    color: #94a3b8;
+}
+
 /* ========================================================
    CHASIS DE LA MÁQUINA ARCADE (IDÉNTICO A LA FOTO)
    ======================================================== */

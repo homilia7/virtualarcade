@@ -357,4 +357,34 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 6. **100% Conservación de Físicas y Jugabilidad:**
    - Se mantienen intactas las 5 físicas avanzadas (Squish, Pile Displacement, Arcade Grip Slip, Alignment Shadow y Peep Mode), con total compatibilidad en los tests automatizados.
 
+---
+
+## 📦 ENTRADA: Versión 1.9.6 - Motor de Sonido Fotorrealista y Profesional de Máquina Arcade (Web Audio API de Alta Definición)
+
+### Funcionalidades Implementadas:
+1. **Modelado Físico y Acústico de Monedero Mecánico Real (`playCoin`):**
+   - Transiente de entrada por ranura de microswitch, seguido de la resonancia modal física de un token de latón/níquel golpeando la rampa guía (`3180 Hz`, `4650 Hz`, `6120 Hz`, `7840 Hz`), segundo rebote metálico, golpe sordo en la gaveta colectora (`185 Hz`) y campana electrónica de crédito registrado con síntesis FM pura en dos tonos (`B5` -> `E6`).
+
+2. **Servomotores Paso a Paso Continuos en Rieles de Acero (`startMotor` / `stopMotor`):**
+   - Zumbido eléctrico continuo de motor paso a paso (armónicos dobles a `228 Hz` y `456 Hz`) combinado con fricción de rodamientos de bolas filtrada sobre rieles gantry.
+   - Envolventes suaves de ataque y desvanecimiento al mover o soltar el joystick y teclas de dirección, eliminando chasquidos aleatorios.
+
+3. **Cabrestante y Tambor de Cable de Acero (`playCableDrop` y `playCableLift`):**
+   - Descenso con glissando de motor y trémolo mecánico a 26 Hz que simula los dientes del engranaje del carrete giratorio, más fricción de cable en polea de nailon.
+   - Ascenso (`playCableLift`) con tono bajo esfuerzo de carga mecánica y tensión de suspensión.
+
+4. **Solenoide Electroimán de Alta Potencia e Impacto de Tenazas (`playClawGrab`):**
+   - Golpe electromagnético sordo en sub-graves (`95 Hz` a `28 Hz`, 60 ms), transiente de impacto seco de armadura mecánica y resonancia metálica de las 3 tenazas de acero inoxidable curvadas (`1520 Hz`, `2380 Hz`, `3420 Hz`, `4750 Hz`) con reverberación elástica de 350 ms.
+
+5. **Apertura de Garra, Resbalón y Aterrizaje en Tolva (`playClawRelease`, `playPrizeSlip`, `playPrizeDropChute`):**
+   - Clic-clack mecánico de distensión al abrirse sobre el depósito.
+   - Sonido de resbalón arcade con fricción metálica y caída sorda sobre la montaña de premios.
+   - Impacto acolchado sordo de tela/peluche contra la tolva dispensadora y balanceo de compuerta abatible.
+
+6. **Fanfarria Polifónica de Victoria Estilo Arcade Japonés (`playWin`):**
+   - Arpegio brillante de 7 notas con campanas FM cristalinas estilo UFO Catcher, rematado en un acorde mayor triunfal con armónicos de celebración.
+
+7. **Microswitches Arcade Táctiles y Control de Audio (`playButtonClick`, `btnToggleAudio`):**
+   - Clics táctiles de microswitch de pulsadores de domo tipo Sanwa en botones de atrapar, asomarse y ranura de monedas.
+   - Botón interactivo en la barra superior (`🔊 Sonido Arcade: ON / OFF`) con persistencia en `localStorage`.
 

@@ -1497,6 +1497,9 @@ class Real3DClawcade {
                 this.moveX = 0;
                 this.moveZ = 0;
                 this.tiltJoystickVisual(0, 0);
+                if (window.soundFX && window.soundFX.isMotorRunning) {
+                    window.soundFX.stopMotor();
+                }
             };
 
             window.addEventListener('pointerup', stopDrag);
@@ -1506,7 +1509,10 @@ class Real3DClawcade {
         // Botón ASOMARSE (Cámara de Inspección)
         const btnPeep = document.getElementById('btnPeepCamera');
         if (btnPeep) {
-            btnPeep.addEventListener('click', () => this.togglePeepMode());
+            btnPeep.addEventListener('click', () => {
+                if (window.soundFX) window.soundFX.playButtonClick();
+                this.togglePeepMode();
+            });
         }
 
         // Teclado con Flechas (↑, ↓, ←, →) y WASD para movimiento tridimensional completo
@@ -1534,8 +1540,29 @@ class Real3DClawcade {
             if (e.code === 'ArrowUp' || e.code === 'KeyW') if (this.moveZ < 0) this.moveZ = 0;
             if (e.code === 'ArrowDown' || e.code === 'KeyS') if (this.moveZ > 0) this.moveZ = 0;
 
+            if (this.moveX === 0 && this.moveZ === 0 && window.soundFX && window.soundFX.isMotorRunning) {
+                window.soundFX.stopMotor();
+            }
+
             this.tiltJoystickVisual(this.moveX, this.moveZ);
         });
+
+        // Botón de Sonido Arcade (ON / OFF)
+        const btnToggleAudio = document.getElementById('btnToggleAudio');
+        if (btnToggleAudio) {
+            if (window.soundFX && window.soundFX.muted) {
+                btnToggleAudio.textContent = '🔇 Sonido: OFF';
+                btnToggleAudio.classList.add('muted');
+            }
+            btnToggleAudio.addEventListener('click', () => {
+                if (window.soundFX) {
+                    const isMuted = window.soundFX.toggleMute();
+                    btnToggleAudio.textContent = isMuted ? '🔇 Sonido: OFF' : '🔊 Sonido Arcade: ON';
+                    btnToggleAudio.classList.toggle('muted', isMuted);
+                    if (!isMuted) window.soundFX.playButtonClick();
+                }
+            });
+        }
 
         // Alternar Temas
         const btnThemePlushies = document.getElementById('btnThemePlushies');
@@ -1629,7 +1656,7 @@ class Real3DClawcade {
         const toast = document.getElementById('peepModeToast');
         if (btn) btn.classList.toggle('active', this.isPeepMode);
         if (toast) toast.classList.toggle('show', this.isPeepMode);
-        if (window.soundFX && window.soundFX.playCoin) window.soundFX.playCoin();
+        if (window.soundFX && window.soundFX.playPeepCamera) window.soundFX.playPeepCamera();
     }
 
     insertCoin() {
@@ -1652,6 +1679,8 @@ class Real3DClawcade {
 
     triggerGrab() {
         if (this.state !== 'READY' || this.credits <= 0) return;
+        if (window.soundFX && window.soundFX.playButtonClick) window.soundFX.playButtonClick();
+        if (window.soundFX && window.soundFX.stopMotor) window.soundFX.stopMotor();
         if (this.isPeepMode) {
             this.togglePeepMode(); // Desactivar modo asomarse al soltar la garra
         }
@@ -1679,22 +1708,38 @@ class Real3DClawcade {
             if (this.isPeepMode) {
                 // Modo Asomarse: El joystick mueve e introduce la cámara hacia el cristal
                 const pSpeed = 0.085;
+                let isPanning = false;
                 if (finalX !== 0) {
                     this.camOffsetX = Math.max(-4.2, Math.min(4.2, this.camOffsetX + finalX * pSpeed));
+                    isPanning = true;
                 }
                 if (finalZ !== 0) {
                     // Mover hacia adelante (stick negativo o W) acerca la cámara al interior
                     this.camOffsetZ = Math.max(-1.0, Math.min(5.2, this.camOffsetZ - finalZ * pSpeed));
+                    isPanning = true;
+                }
+                if (window.soundFX) {
+                    if (isPanning) window.soundFX.startMotor();
+                    else window.soundFX.stopMotor();
                 }
             } else {
+                let isMoving = false;
                 if (finalX !== 0) {
                     this.clawPos.x = Math.max(-2.2, Math.min(5.0, this.clawPos.x + finalX * speed));
-                    if (window.soundFX && Math.random() < 0.15) window.soundFX.playMotor();
+                    isMoving = true;
                 }
                 if (finalZ !== 0) {
                     this.clawPos.z = Math.max(-3.5, Math.min(3.5, this.clawPos.z + finalZ * speed));
-                    if (window.soundFX && Math.random() < 0.15) window.soundFX.playMotor();
+                    isMoving = true;
                 }
+                if (window.soundFX) {
+                    if (isMoving) window.soundFX.startMotor();
+                    else window.soundFX.stopMotor();
+                }
+            }
+        } else {
+            if (window.soundFX && window.soundFX.isMotorRunning) {
+                window.soundFX.stopMotor();
             }
         }
 
@@ -1719,6 +1764,7 @@ class Real3DClawcade {
         if (this.state === 'GRABBING') {
             if (Math.abs(this.clawAngle - this.targetClawAngle) < 0.08) {
                 this.state = 'LIFTING';
+                if (window.soundFX && window.soundFX.playCableLift) window.soundFX.playCableLift();
             }
         }
 
@@ -1745,7 +1791,10 @@ class Real3DClawcade {
                 };
                 this.grabbedPlushie = null;
                 this.clawAngle = 0.28; // Las tenazas se abren levemente por el resbalón
-                if (window.soundFX) window.soundFX.playClawGrab();
+                if (window.soundFX) {
+                    if (window.soundFX.playPrizeSlip) window.soundFX.playPrizeSlip();
+                    else window.soundFX.playClawGrab();
+                }
             }
 
             if (this.clawPos.y >= this.restingY) {
@@ -1799,7 +1848,10 @@ class Real3DClawcade {
                     rotVelZ: (-pp.swayVelX * 0.45) + (Math.random() - 0.5) * 0.03
                 };
                 this.grabbedPlushie = null;
-                if (window.soundFX) window.soundFX.playClawGrab();
+                if (window.soundFX) {
+                    if (window.soundFX.playClawRelease) window.soundFX.playClawRelease();
+                    else window.soundFX.playClawGrab();
+                }
             }
 
             // Si la garra llegó vacía al depósito y pasaron ~1s
@@ -2117,7 +2169,12 @@ class Real3DClawcade {
     }
 
     onPrizeLandedInChute(prize) {
-        if (window.soundFX) window.soundFX.playWin();
+        if (window.soundFX) {
+            if (window.soundFX.playPrizeDropChute) window.soundFX.playPrizeDropChute();
+            setTimeout(() => {
+                if (window.soundFX) window.soundFX.playWin();
+            }, 90);
+        }
 
         // Mostrar notificación de premio en pantalla
         this.showWinBanner(prize);
