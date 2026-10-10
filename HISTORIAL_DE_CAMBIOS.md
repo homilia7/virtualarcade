@@ -292,3 +292,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 6. **Conservación de Momento al Soltar el Premio:**
    - En `RELEASING`, la caída libre hereda la velocidad tangencial y angular real del balanceo del producto al momento exacto en que las tenazas se abren, haciendo que la transición a la gravedad sea 100% continua y física.
 
+---
+
+## 📦 ENTRADA: Versión 1.9.3 - Persistencia Real de Productos en la Vitrina (Cero Reseteo entre Monedas y Rondas)
+
+### Funcionalidades Implementadas:
+1. **Permanencia de Productos en el Suelo:**
+   - Se eliminó el reseteo automático de la montaña de premios (`spawnPlushieMountain3D()`) al concluir cada ronda o insertar una nueva moneda.
+   - Todos los productos restantes (hamburguesas, tacos, papas, empanadas, donas y peluches) permanecen fijos y exactamente en las mismas coordenadas 3D de la vitrina entre jugadas sucesivas.
+2. **Remoción Atómica Exclusiva del Premio Ganado:**
+   - Al caer un producto con éxito por la tolva, únicamente esa unidad es extraída del array `this.plushies` y de la escena 3D.
+   - Los demás premios continúan intactos en su sitio, permitiendo al jugador apuntar a un producto específico en intentos continuos como en una máquina arcade real.
+3. **Reposición Inteligente por Agotamiento:**
+   - La piscina de premios solo se recarga automáticamente si el stock restante desciende por debajo de un umbral crítico (< 4 premios).
+   - El cambio manual de temática ("Peluches" o "Gourmet") mediante los botones de la interfaz sigue regenerando la piscina para la temática seleccionada.
+

@@ -1645,6 +1645,11 @@ class Real3DClawcade {
             if (fp.mesh.position.y <= -4.8) {
                 const wonPrize = fp.prize;
                 this.scene.remove(fp.mesh);
+                // Remover únicamente el premio ganado; todos los demás productos permanecen intactos
+                const pIndex = this.plushies.indexOf(wonPrize);
+                if (pIndex !== -1) {
+                    this.plushies.splice(pIndex, 1);
+                }
                 this.fallingPrize = null;
                 this.onPrizeLandedInChute(wonPrize);
             }
@@ -1870,7 +1875,11 @@ class Real3DClawcade {
         setTimeout(() => {
             this.state = this.credits > 0 ? 'READY' : 'WAITING_COIN';
             this.targetClawAngle = 0.15; // Regresa al reposo relajado
-            this.spawnPlushieMountain3D(); // Reponer montaña
+            // Los demás productos permanecen fijos e intactos en sus posiciones en la vitrina.
+            // Solo se reponen si la vitrina se queda prácticamente vacía (menos de 4 premios).
+            if (this.plushies.length < 4) {
+                this.spawnPlushieMountain3D();
+            }
         }, 1400);
     }
 
