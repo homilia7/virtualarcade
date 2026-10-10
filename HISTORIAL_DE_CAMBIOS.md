@@ -307,3 +307,24 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - La piscina de premios solo se recarga automáticamente si el stock restante desciende por debajo de un umbral crítico (< 4 premios).
    - El cambio manual de temática ("Peluches" o "Gourmet") mediante los botones de la interfaz sigue regenerando la piscina para la temática seleccionada.
 
+---
+
+## 📦 ENTRADA: Versión 1.9.4 - Las 5 Mejoras de Hiperrealismo Físico Arcade y Cámara de Inspección "Asomarse"
+
+### Funcionalidades Implementadas:
+1. **Deformación Elástica al Atrapar (*Squish / Soft-body Deformation*):**
+   - Presión elástica de las tenazas sobre el producto atrapado (`pp.squish`, `pp.targetSquish = 0.088`), comprimiendo la escala horizontal (`0.925`) y elongando la vertical (`1.10`) mientras está sujeto, recuperando su escala natural tras la liberación o caída.
+2. **Empuje e Interacción con Productos Vecinos en la Pila (*Pile Displacement*):**
+   - Al descender las tenazas abiertas en el lecho (`clawPos.y <= -1.6`), se calcula la proximidad con los productos colindantes (`displaceNeighborPlushies`) dentro de un radio de 1.45 unidades, empujándolos radialmente y generando una leve rotación orgánica, recreando el comportamiento de las garras reales al enterrarse en el montón de premios.
+3. **Agarre Imperfecto y Resbalón Arcade (*Arcade Grip Slip*):**
+   - Detección geométrica del centro de masa (`grabOffset > 0.44`). Si el producto es agarrado por el borde o de forma descentrada, se activa `willSlip = true` con una altura de desprendimiento aleatoria a media carrera (`slipDropY`).
+   - Al resbalar, el producto se desprende con rotación inercial, cae por gravedad natural, rebota amortiguadamente en su posición de suelo y permanece en la vitrina sin eliminarse.
+4. **Sombra de Alineación en Tiempo Real en Ejes X/Z (*Depth & Alignment Projection*):**
+   - Anillo de sombra dinámica proyectada sobre el lecho de premios (`this.alignmentShadow`) alineada en tiempo real con las coordenadas `(clawPos.x, clawPos.z)` de la garra.
+   - Escala y opacidad variables dinámicamente según la altura de descenso: se reduce y vuelve más nítida al bajar, facilitando al jugador el cálculo visual de la profundidad antes de soltar la garra.
+5. **Modo Cámara de "Asomarse" (*Peep / Inspection Mode*) con Palanca Joystick:**
+   - Botón de domo `👁️ ASOMARSE` en la consola arcade con feedback visual de anillo cian pulsante y notificación HUD flotante dentro de la cámara de cristal.
+   - Al estar activo, la palanca joystick (y teclas de dirección) controla el ángulo de la cámara: paneo lateral (`camOffsetX`) y acercamiento frontal hacia el interior del cristal (`camOffsetZ`), permitiendo al jugador examinar la posición de los premios en profundidad antes de soltar la garra.
+   - Desactivación automática al pulsar "¡ATRAPAR!" o al presionar de nuevo el botón/teclas de acceso rápido (`C`/`V`), regresando la cámara suavemente a su posición neutral.
+
+

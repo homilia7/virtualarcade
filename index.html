@@ -92,6 +92,9 @@
 
                         <!-- Canvas de Física, Montaña de Peluches y Garra -->
                         <canvas id="gameCanvas"></canvas>
+
+                        <!-- Notificación flotante de Modo Asomarse -->
+                        <div class="peep-mode-toast" id="peepModeToast">👁️ MODO ASOMARSE: Mueve la palanca para inspeccionar el ángulo</div>
                     </div>
 
                     <!-- CONSOLA DE MANDOS 3D INTEGRADA EN PANTALLA (COMO EN LA FOTO) -->
@@ -111,6 +114,11 @@
                                 <div class="dome-btn-wrapper">
                                     <button class="dome-btn dome-btn-pink" id="btnHelpDome" title="Información">ℹ️</button>
                                     <span class="dome-btn-label">INFO</span>
+                                </div>
+
+                                <div class="dome-btn-wrapper">
+                                    <button class="dome-btn dome-btn-peep" id="btnPeepCamera" title="Asomarse para ver el ángulo de la garra">👁️</button>
+                                    <span class="dome-btn-label">ASOMARSE</span>
                                 </div>
 
                                 <div class="dome-btn-wrapper">

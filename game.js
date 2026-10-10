@@ -559,6 +559,11 @@ class Real3DClawcade {
         this.fallingPrize = null;
         this.releaseTimer = 0;
 
+        // Modo Cámara Asomarse (Peep / Inspection Mode)
+        this.isPeepMode = false;
+        this.camOffsetX = 0;
+        this.camOffsetZ = 0;
+
         // Físicas orgánicas del producto dentro de la garra (Inercia, balanceo, compresión y deslizamiento)
         this.prizePhysics = {
             tiltX: 0,
@@ -573,7 +578,11 @@ class Real3DClawcade {
             bounceY: 0,
             bounceVelY: 0,
             dipY: 0,
-            dipVelY: 0
+            dipVelY: 0,
+            squish: 0,
+            targetSquish: 0,
+            willSlip: false,
+            slipDropY: 0
         };
 
         // Inicializar Three.js
@@ -968,6 +977,19 @@ class Real3DClawcade {
         const sillMesh = new THREE.Mesh(sillGeo, cornerPostMat);
         sillMesh.position.set(0, -4.7, 4.8);
         this.scene.add(sillMesh);
+
+        // 10. Sombra de alineación en tiempo real en el suelo de premios (Ejes X y Z)
+        const shadowGeo = new THREE.RingGeometry(0.12, 0.72, 32);
+        const shadowMat = new THREE.MeshBasicMaterial({
+            color: 0x050106,
+            transparent: true,
+            opacity: 0.38,
+            side: THREE.DoubleSide
+        });
+        this.alignmentShadow = new THREE.Mesh(shadowGeo, shadowMat);
+        this.alignmentShadow.rotation.x = -Math.PI / 2;
+        this.alignmentShadow.position.set(this.clawPos.x, -4.72, this.clawPos.z);
+        this.scene.add(this.alignmentShadow);
     }
 
     buildCraneAndClaw3D() {
@@ -1379,12 +1401,22 @@ class Real3DClawcade {
             window.addEventListener('pointercancel', stopDrag);
         }
 
+        // Botón ASOMARSE (Cámara de Inspección)
+        const btnPeep = document.getElementById('btnPeepCamera');
+        if (btnPeep) {
+            btnPeep.addEventListener('click', () => this.togglePeepMode());
+        }
+
         // Teclado con Flechas (↑, ↓, ←, →) y WASD para movimiento tridimensional completo
         window.addEventListener('keydown', (e) => {
             if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.moveX = -1;
             if (e.code === 'ArrowRight' || e.code === 'KeyD') this.moveX = 1;
             if (e.code === 'ArrowUp' || e.code === 'KeyW') this.moveZ = -1; // Hacia el fondo
             if (e.code === 'ArrowDown' || e.code === 'KeyS') this.moveZ = 1;  // Hacia adelante
+
+            if (e.code === 'KeyC' || e.code === 'KeyV') {
+                this.togglePeepMode();
+            }
 
             this.tiltJoystickVisual(this.moveX, this.moveZ);
 
@@ -1489,6 +1521,15 @@ class Real3DClawcade {
         this.tiltJoystickVisual(dir, 0);
     }
 
+    togglePeepMode() {
+        this.isPeepMode = !this.isPeepMode;
+        const btn = document.getElementById('btnPeepCamera');
+        const toast = document.getElementById('peepModeToast');
+        if (btn) btn.classList.toggle('active', this.isPeepMode);
+        if (toast) toast.classList.toggle('show', this.isPeepMode);
+        if (window.soundFX && window.soundFX.playCoin) window.soundFX.playCoin();
+    }
+
     insertCoin() {
         if (window.soundFX) window.soundFX.playCoin();
         this.credits++;
@@ -1509,6 +1550,9 @@ class Real3DClawcade {
 
     triggerGrab() {
         if (this.state !== 'READY' || this.credits <= 0) return;
+        if (this.isPeepMode) {
+            this.togglePeepMode(); // Desactivar modo asomarse al soltar la garra
+        }
         this.credits--;
         this.updateCreditsDisplay();
         this.state = 'DROPPING';
@@ -1527,17 +1571,28 @@ class Real3DClawcade {
 
         // 1. Movimiento en X y Z (Hacia el fondo y los lados)
         if (this.state === 'READY') {
-            // Sincronizar con controladores externos (gamepad.js / mobile)
             const finalX = this.moveX || (this.moveLeft ? -1 : (this.moveRight ? 1 : 0));
             const finalZ = this.moveZ;
 
-            if (finalX !== 0) {
-                this.clawPos.x = Math.max(-2.2, Math.min(5.0, this.clawPos.x + finalX * speed));
-                if (window.soundFX && Math.random() < 0.15) window.soundFX.playMotor();
-            }
-            if (finalZ !== 0) {
-                this.clawPos.z = Math.max(-3.5, Math.min(3.5, this.clawPos.z + finalZ * speed));
-                if (window.soundFX && Math.random() < 0.15) window.soundFX.playMotor();
+            if (this.isPeepMode) {
+                // Modo Asomarse: El joystick mueve e introduce la cámara hacia el cristal
+                const pSpeed = 0.085;
+                if (finalX !== 0) {
+                    this.camOffsetX = Math.max(-4.2, Math.min(4.2, this.camOffsetX + finalX * pSpeed));
+                }
+                if (finalZ !== 0) {
+                    // Mover hacia adelante (stick negativo o W) acerca la cámara al interior
+                    this.camOffsetZ = Math.max(-1.0, Math.min(5.2, this.camOffsetZ - finalZ * pSpeed));
+                }
+            } else {
+                if (finalX !== 0) {
+                    this.clawPos.x = Math.max(-2.2, Math.min(5.0, this.clawPos.x + finalX * speed));
+                    if (window.soundFX && Math.random() < 0.15) window.soundFX.playMotor();
+                }
+                if (finalZ !== 0) {
+                    this.clawPos.z = Math.max(-3.5, Math.min(3.5, this.clawPos.z + finalZ * speed));
+                    if (window.soundFX && Math.random() < 0.15) window.soundFX.playMotor();
+                }
             }
         }
 
@@ -1554,6 +1609,7 @@ class Real3DClawcade {
                 if (window.soundFX) window.soundFX.playClawGrab();
 
                 this.detectPlushieCollision3D();
+                this.displaceNeighborPlushies();
             }
         }
 
@@ -1568,6 +1624,27 @@ class Real3DClawcade {
         if (this.state === 'LIFTING') {
             this.clawPos.y += 0.09;
             this.targetClawAngle = 0.05; // Mantiene el agarre firme
+
+            // Agarre imperfecto y resbalón arcade a media altura
+            if (this.grabbedPlushie && this.prizePhysics.willSlip && this.clawPos.y >= this.prizePhysics.slipDropY) {
+                const slipPrize = this.grabbedPlushie;
+                this.prizePhysics.targetSquish = 0;
+                this.fallingPrize = {
+                    prize: slipPrize,
+                    mesh: slipPrize.mesh,
+                    velY: -0.04,
+                    velX: (Math.random() - 0.5) * 0.02,
+                    velZ: (Math.random() - 0.5) * 0.02,
+                    rotVelX: (Math.random() - 0.5) * 0.08,
+                    rotVelY: (Math.random() - 0.5) * 0.08,
+                    rotVelZ: (Math.random() - 0.5) * 0.08,
+                    isSlip: true,
+                    floorY: slipPrize.initialY || -4.32
+                };
+                this.grabbedPlushie = null;
+                this.clawAngle = 0.28; // Las tenazas se abren levemente por el resbalón
+                if (window.soundFX) window.soundFX.playClawGrab();
+            }
 
             if (this.clawPos.y >= this.restingY) {
                 this.clawPos.y = this.restingY;
@@ -1608,6 +1685,7 @@ class Real3DClawcade {
             // Cuando las tenazas se abren mecánicamente (clawAngle > 0.32), el producto se desprende por gravedad
             if (this.grabbedPlushie && this.clawAngle > 0.32 && !this.fallingPrize) {
                 const pp = this.prizePhysics;
+                pp.targetSquish = 0;
                 this.fallingPrize = {
                     prize: this.grabbedPlushie,
                     mesh: this.grabbedPlushie.mesh,
@@ -1641,17 +1719,38 @@ class Real3DClawcade {
             fp.mesh.rotation.y += fp.rotVelY;
             fp.mesh.rotation.z += fp.rotVelZ;
 
-            // El producto cae a través del brocal (Y = -1.55) hasta sumergirse en el depósito (Y <= -4.8)
-            if (fp.mesh.position.y <= -4.8) {
-                const wonPrize = fp.prize;
-                this.scene.remove(fp.mesh);
-                // Remover únicamente el premio ganado; todos los demás productos permanecen intactos
-                const pIndex = this.plushies.indexOf(wonPrize);
-                if (pIndex !== -1) {
-                    this.plushies.splice(pIndex, 1);
+            // Restaurar elasticidad hacia escala original (1, 1, 1)
+            if (Math.abs(fp.mesh.scale.x - 1) > 0.005) {
+                fp.mesh.scale.x += (1 - fp.mesh.scale.x) * 0.22;
+                fp.mesh.scale.y += (1 - fp.mesh.scale.y) * 0.22;
+                fp.mesh.scale.z += (1 - fp.mesh.scale.z) * 0.22;
+            }
+
+            if (fp.isSlip) {
+                // El producto resbaló y cae de vuelta sobre la pila sin desaparecer
+                if (fp.mesh.position.y <= fp.floorY) {
+                    if (Math.abs(fp.velY) > 0.035) {
+                        fp.velY = -fp.velY * 0.35; // Rebote amortiguado
+                        fp.mesh.position.y = fp.floorY;
+                    } else {
+                        fp.mesh.position.y = fp.floorY;
+                        fp.mesh.scale.set(1, 1, 1);
+                        this.fallingPrize = null;
+                    }
                 }
-                this.fallingPrize = null;
-                this.onPrizeLandedInChute(wonPrize);
+            } else {
+                // El producto cae a través del brocal (Y = -1.55) hasta sumergirse en el depósito (Y <= -4.8)
+                if (fp.mesh.position.y <= -4.8) {
+                    const wonPrize = fp.prize;
+                    this.scene.remove(fp.mesh);
+                    // Remover únicamente el premio ganado; todos los demás productos permanecen intactos
+                    const pIndex = this.plushies.indexOf(wonPrize);
+                    if (pIndex !== -1) {
+                        this.plushies.splice(pIndex, 1);
+                    }
+                    this.fallingPrize = null;
+                    this.onPrizeLandedInChute(wonPrize);
+                }
             }
         }
 
@@ -1732,10 +1831,28 @@ class Real3DClawcade {
             this.coiledCableMesh.scale.set(1, cableSpan, 1);
         }
 
-        // Parallax sutil de la cámara 3D para dar sensación de profundidad física
-        this.camera.position.x = (this.clawPos.x * 0.15);
-        this.camera.position.y = 0.8 + (this.clawPos.z * 0.1);
-        this.camera.lookAt(0, -0.6, 0);
+        // Actualizar sombra de alineación en tiempo real (Depth & Alignment Projection)
+        if (this.alignmentShadow) {
+            this.alignmentShadow.position.x = this.clawPos.x;
+            this.alignmentShadow.position.z = this.clawPos.z;
+            const depthFactor = Math.max(0, Math.min(1, (3.3 - this.clawPos.y) / 4.9));
+            const shadowScale = 1.0 - (depthFactor * 0.35);
+            this.alignmentShadow.scale.set(shadowScale, shadowScale, shadowScale);
+            this.alignmentShadow.material.opacity = 0.26 + (depthFactor * 0.26);
+        }
+
+        // Posicionamiento de cámara 3D con modo Asomarse (Peep Mode) y parallax de profundidad
+        if (!this.isPeepMode) {
+            this.camOffsetX += (0 - this.camOffsetX) * 0.12;
+            this.camOffsetZ += (0 - this.camOffsetZ) * 0.12;
+        }
+        const baseCamX = (this.clawPos.x * 0.15);
+        const baseCamY = 0.8 + (this.clawPos.z * 0.1);
+        const baseCamZ = 12.2;
+        this.camera.position.x = baseCamX + this.camOffsetX;
+        this.camera.position.y = baseCamY + (this.camOffsetZ * 0.08);
+        this.camera.position.z = baseCamZ - this.camOffsetZ;
+        this.camera.lookAt(this.camOffsetX * 0.35, -0.6, 0);
     }
 
     /**
@@ -1787,6 +1904,35 @@ class Real3DClawcade {
         mesh.rotation.x = pp.tiltX - (pp.swayZ * 0.75);
         mesh.rotation.z = pp.tiltZ + (pp.swayX * 0.75);
         mesh.rotation.y = pp.targetYaw + (pp.swayX * pp.swayZ * 0.4);
+
+        // 7. Deformación elástica al atrapar (Squish / Soft-body)
+        pp.squish += (pp.targetSquish - pp.squish) * 0.12;
+        mesh.scale.set(
+            1.0 - pp.squish * 0.85,
+            1.0 + pp.squish * 1.15,
+            1.0 - pp.squish * 0.85
+        );
+    }
+
+    /**
+     * Empuje e interacción con productos vecinos en la montaña (Pile Displacement).
+     * Las tenazas abiertas desplazan y reacomodan radialmente los productos colindantes.
+     */
+    displaceNeighborPlushies() {
+        const radiusLimit = 1.45;
+        this.plushies.forEach(p => {
+            if (p === this.grabbedPlushie) return;
+            const dx = p.mesh.position.x - this.clawPos.x;
+            const dz = p.mesh.position.z - this.clawPos.z;
+            const dist = Math.sqrt(dx * dx + dz * dz);
+            if (dist < radiusLimit && dist > 0.04) {
+                const push = (radiusLimit - dist) * 0.12;
+                p.mesh.position.x += (dx / dist) * push;
+                p.mesh.position.z += (dz / dist) * push;
+                p.mesh.rotation.y += (Math.random() - 0.5) * 0.18;
+                p.mesh.rotation.z = Math.max(-0.25, Math.min(0.25, p.mesh.rotation.z + (Math.random() - 0.5) * 0.12));
+            }
+        });
     }
 
     detectPlushieCollision3D() {
@@ -1822,6 +1968,16 @@ class Real3DClawcade {
 
         if (closest) {
             this.grabbedPlushie = closest;
+            const dx = this.clawPos.x - closest.mesh.position.x;
+            const dz = this.clawPos.z - closest.mesh.position.z;
+            const grabOffset = Math.hypot(dx, dz);
+
+            // Agarre imperfecto arcade (resbalón si la garra agarró por el borde descentrado)
+            this.prizePhysics.willSlip = grabOffset > 0.44;
+            this.prizePhysics.slipDropY = -0.5 + Math.random() * 1.8;
+            this.prizePhysics.squish = 0;
+            this.prizePhysics.targetSquish = 0.088; // Compresión elástica de ~9%
+
             // Inicializar físicas orgánicas del producto dentro de la garra
             this.prizePhysics.targetTiltX = (Math.random() - 0.5) * 0.26; // Inclinación asimétrica de ~8-15°
             this.prizePhysics.targetTiltZ = (Math.random() - 0.5) * 0.26;

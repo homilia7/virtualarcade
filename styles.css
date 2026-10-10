@@ -623,6 +623,65 @@ body.tv-kiosk-mode .arcade-cabinet {
     text-transform: uppercase;
 }
 
+/* Botón 3: Domo Cian / Neón ASOMARSE (Inspección de Cámara) */
+.dome-btn-peep {
+    background: radial-gradient(circle at 35% 30%, #e0f7fa 0%, #80deea 50%, #00acc1 100%);
+    border: 3px solid #00838f;
+    box-shadow: 
+        0 6px 0 #006064,
+        0 10px 15px rgba(0, 229, 255, 0.4),
+        inset 0 2px 5px rgba(255, 255, 255, 0.8);
+    color: #004d40;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dome-btn-peep.active {
+    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #00e5ff 60%, #00b0ff 100%);
+    border-color: #00e5ff;
+    box-shadow: 
+        0 3px 0 #0077b6,
+        0 0 22px rgba(0, 229, 255, 0.95),
+        inset 0 2px 5px #fff;
+    transform: translateY(3px);
+    animation: peepBtnPulse 1.2s infinite alternate;
+}
+
+@keyframes peepBtnPulse {
+    from { box-shadow: 0 3px 0 #0077b6, 0 0 15px rgba(0, 229, 255, 0.7); }
+    to { box-shadow: 0 3px 0 #0077b6, 0 0 28px rgba(0, 229, 255, 1.0); }
+}
+
+/* Notificación Flotante de Modo Asomarse en la Vitrina */
+.peep-mode-toast {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(0, 229, 255, 0.2);
+    border: 1px solid #00e5ff;
+    backdrop-filter: blur(8px);
+    color: #e0f7fa;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 30;
+    white-space: nowrap;
+}
+
+.peep-mode-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 /* PANEL INFERIOR CON COMPUERTA DE PREMIOS Y MONEDERO (COMO EN LA FOTO) */
 .cabinet-lower-deck {
     background: linear-gradient(180deg, #780943 0%, #5c002f 100%);
