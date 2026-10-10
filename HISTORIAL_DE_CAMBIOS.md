@@ -327,4 +327,34 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
    - Al estar activo, la palanca joystick (y teclas de dirección) controla el ángulo de la cámara: paneo lateral (`camOffsetX`) y acercamiento frontal hacia el interior del cristal (`camOffsetZ`), permitiendo al jugador examinar la posición de los premios en profundidad antes de soltar la garra.
    - Desactivación automática al pulsar "¡ATRAPAR!" o al presionar de nuevo el botón/teclas de acceso rápido (`C`/`V`), regresando la cámara suavemente a su posición neutral.
 
+---
+
+## 📦 ENTRADA: Versión 1.9.5 - Rediseño Fotorrealista según Fotografía de Referencia Arcade Real (Chasis Rosa Pastel, Vitrina Sin Logos, Iluminación de Estudio y Peluches Kawaii Afelpados)
+
+### Funcionalidades Implementadas:
+1. **Vitrina de Cristal Templado 100% Limpia ("Omite el Nombre"):**
+   - Se eliminaron todos los textos, rótulos, marquesinas y distintivos impresos sobre el cristal (`PREMIUM CLAW SYSTEM`, `60 FPS 3D PHYSICS`), dejando una vitrina pura y transparente idéntica a la máquina física de la fotografía de referencia.
+   - Se sustituyeron los herrajes oscuros por una franja de cristal pulido minimalista y se añadió el cilindro de cerradura de vitrina en cromo (`.cabinet-glass-lock`) en el marco derecho.
+
+2. **Chasis y Mueble en Rosa Pastel / Millennial Pink:**
+   - Rediseño estético completo del chasis arcade en tono rosa pastel suave (`#f4c2ce` / `#f0bcc8`) con biseles redondeados y sombras difusas naturales.
+   - Eliminación de tubos de neón laterales y marcos fucsia chillones, logrando una estética kawaii elegante de centro recreativo moderno.
+
+3. **Interior 3D de Vitrina con Iluminación de Estudio Fotográfico Suave:**
+   - Fondo de estudio fotográfico claro y limpio (`#f6f7f9`) con iluminación ambiental difusa blanca suave (`AmbientLight` 0.72) y focos de relleno dobles (`leftFill`, `rightFill`), erradicando luces de discoteca o saturaciones cian/magenta dentro del habitáculo.
+   - Suelo de perla clara (`0xf0f2f5`), paredes blancas limpias (`0xf5f6f8`), techo marfil (`0xfafbfc`) y postes estructurales en aluminio satinado (`0xdce2ea`).
+
+4. **Peluches Kawaii Afelpados de Textura Terciopelo Mate:**
+   - Generador 3D procedural dedicado (`createKawaiiPlushieMesh`) con materiales aterciopelados de rugosidad alta y cero metalizado (`roughness: 0.88`, `metalness: 0.0`).
+   - Paleta pastel auténtica: osito teddy caramelo, vainilla crema, conejito rosa bebé, osito panda con antifaz, cojines estrella pastel, osito menta y conejito lavanda.
+   - Detalles modelados: orejitas 3D, hocico ovalado en crema/marfil, ojos negros brillantes tipo cuenta, naricita y cojines acolchados de estrella.
+   - Activado como tema por defecto al cargar el juego.
+
+5. **Consola Flotante y Monedero de Acero Cepillado:**
+   - Estante redondeado flotante en rosa pastel con palanca de bola rosa suave (`#f8b4c4`), anillo biselado cromado y botones domo de bajo perfil.
+   - Panel monedero vertical de acero inoxidable pulido en el lateral derecho (`.photoreal-coin-panel`) con tornillería de 4 esquinas, ranura vertical mecanizada y botón de devolución `✛`.
+
+6. **100% Conservación de Físicas y Jugabilidad:**
+   - Se mantienen intactas las 5 físicas avanzadas (Squish, Pile Displacement, Arcade Grip Slip, Alignment Shadow y Peep Mode), con total compatibilidad en los tests automatizados.
+
 

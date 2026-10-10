@@ -4,17 +4,17 @@
  * garra articulada y montaña volumétrica de peluches tridimensionales.
  */
 
-// Paleta de peluches para la montaña 3D con colores vivos y ricos
+// Paleta de peluches kawaii pastel afelpados (idénticos a la foto real de referencia)
 const PLUSHIE_COLORS = [
-    { name: 'Peluchetón Rosa', color: 0xd81b60, earColor: 0xad1457, emoji: '🐰' },
-    { name: 'Osito Menta', color: 0x00bfa5, earColor: 0x00897b, emoji: '🐻' },
-    { name: 'Gatito Dorado', color: 0xf57f17, earColor: 0xe65100, emoji: '🐱' },
-    { name: 'Conejito Violeta', color: 0x8e24aa, earColor: 0x6a1b9a, emoji: '🐰' },
-    { name: 'Pollito Solar', color: 0xfbc02d, earColor: 0xf57f17, emoji: '🐥' },
-    { name: 'Pulpo Turquesa', color: 0x0288d1, earColor: 0x01579b, emoji: '🐙' },
-    { name: 'Panda Suave', color: 0x263238, earColor: 0x102027, emoji: '🐼' },
-    { name: 'Dino Esmeralda', color: 0x2e7d32, earColor: 0x1b5e20, emoji: '🦖' },
-    { name: 'Zorrito Coral', color: 0xe64a19, earColor: 0xbf360c, emoji: '🦊' }
+    { name: 'Osito Teddy Caramelo', color: 0xb07d58, earColor: 0x8a5a3a, muzzleColor: 0xf5ebd9, emoji: '🐻', hasBow: true },
+    { name: 'Osito Vainilla Crema', color: 0xf5e5cb, earColor: 0xd6bf9c, muzzleColor: 0xffffff, emoji: '🧸' },
+    { name: 'Conejito Rosa Bebé', color: 0xfbcfe8, earColor: 0xf472b6, muzzleColor: 0xfff0f5, emoji: '🐰', isBunny: true },
+    { name: 'Osito Panda Suave', color: 0xffffff, earColor: 0x374151, muzzleColor: 0xf1f5f9, emoji: '🐼' },
+    { name: 'Estrellita Pastel Suave', color: 0xfef08a, earColor: 0xfde047, muzzleColor: 0xfffbeb, emoji: '⭐', isStar: true },
+    { name: 'Estrella Nube Celeste', color: 0xbae6fd, earColor: 0x7dd3fc, muzzleColor: 0xf0f9ff, emoji: '✨', isStar: true },
+    { name: 'Osito Menta Pastel', color: 0xccfbf1, earColor: 0x99f6e4, muzzleColor: 0xf0fdfa, emoji: '🐻' },
+    { name: 'Conejito Lavanda', color: 0xe9d5ff, earColor: 0xd8b4fe, muzzleColor: 0xfaf5ff, emoji: '🐰', isBunny: true },
+    { name: 'Osito Polar Suave', color: 0xf8fafc, earColor: 0xe2e8f0, muzzleColor: 0xffffff, emoji: '🐻‍❄️' }
 ];
 
 // ========================================================
@@ -519,6 +519,143 @@ class SpiralCableCurve extends THREE.Curve {
     }
 }
 
+/**
+ * Generador procedural de peluches kawaii afelpados de alta fidelidad
+ * Idéntico a la fotografía de referencia de la máquina real (acabado terciopelo mate, orejitas, ojitos tiernos y cojines estrella).
+ */
+function createKawaiiPlushieMesh(proto, radius) {
+    const group = new THREE.Group();
+    const velvetMat = new THREE.MeshStandardMaterial({
+        color: proto.color,
+        roughness: 0.88,
+        metalness: 0.0
+    });
+    const earMat = new THREE.MeshStandardMaterial({
+        color: proto.earColor || proto.color,
+        roughness: 0.85,
+        metalness: 0.0
+    });
+    const eyeMat = new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        roughness: 0.25,
+        metalness: 0.1
+    });
+
+    if (proto.isStar) {
+        // Cojín estrella acolchado estilo kawaii
+        const coreGeo = new THREE.SphereGeometry(radius * 0.9, 16, 16);
+        const core = new THREE.Mesh(coreGeo, velvetMat);
+        core.scale.set(1.15, 0.75, 1.15);
+        core.castShadow = true;
+        core.receiveShadow = true;
+        group.add(core);
+
+        // 5 puntas acolchadas de la estrella
+        const pointGeo = new THREE.SphereGeometry(radius * 0.38, 12, 12);
+        for (let i = 0; i < 5; i++) {
+            const angle = (i * Math.PI * 2) / 5 - Math.PI / 2;
+            const pt = new THREE.Mesh(pointGeo, velvetMat);
+            pt.scale.set(0.9, 0.65, 0.9);
+            pt.position.set(Math.cos(angle) * radius * 0.82, 0, Math.sin(angle) * radius * 0.82);
+            pt.castShadow = true;
+            group.add(pt);
+        }
+
+        // Ojos tiernos en el cojín estrella
+        const eyeGeo = new THREE.SphereGeometry(radius * 0.08, 8, 8);
+        const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+        eyeL.position.set(-radius * 0.25, radius * 0.12, radius * 0.72);
+        group.add(eyeL);
+        const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+        eyeR.position.set(radius * 0.25, radius * 0.12, radius * 0.72);
+        group.add(eyeR);
+
+        return group;
+    }
+
+    // Peluche: cuerpo/cabeza afelpada
+    const bodyGeo = new THREE.SphereGeometry(radius, 20, 20);
+    const body = new THREE.Mesh(bodyGeo, velvetMat);
+    body.castShadow = true;
+    body.receiveShadow = true;
+    group.add(body);
+
+    // Orejas
+    if (proto.isBunny) {
+        const bunnyEarGeo = new THREE.CylinderGeometry(radius * 0.16, radius * 0.22, radius * 0.85, 12);
+        const earL = new THREE.Mesh(bunnyEarGeo, earMat);
+        earL.position.set(-radius * 0.45, radius * 1.05, 0);
+        earL.rotation.z = 0.2;
+        earL.castShadow = true;
+        group.add(earL);
+
+        const earR = new THREE.Mesh(bunnyEarGeo, earMat);
+        earR.position.set(radius * 0.45, radius * 1.05, 0);
+        earR.rotation.z = -0.2;
+        earR.castShadow = true;
+        group.add(earR);
+    } else {
+        const earGeo = new THREE.SphereGeometry(radius * 0.34, 14, 14);
+        const earL = new THREE.Mesh(earGeo, earMat);
+        earL.position.set(-radius * 0.68, radius * 0.68, 0);
+        earL.castShadow = true;
+        group.add(earL);
+
+        const earR = new THREE.Mesh(earGeo, earMat);
+        earR.position.set(radius * 0.68, radius * 0.68, 0);
+        earR.castShadow = true;
+        group.add(earR);
+    }
+
+    // Hocico crema / blanco
+    const muzzleMat = new THREE.MeshStandardMaterial({
+        color: proto.muzzleColor || 0xfffbeb,
+        roughness: 0.82,
+        metalness: 0.0
+    });
+    const muzzleGeo = new THREE.SphereGeometry(radius * 0.32, 12, 12);
+    const muzzle = new THREE.Mesh(muzzleGeo, muzzleMat);
+    muzzle.scale.set(1.0, 0.75, 0.45);
+    muzzle.position.set(0, -radius * 0.12, radius * 0.84);
+    group.add(muzzle);
+
+    // Naricita
+    const noseGeo = new THREE.SphereGeometry(radius * 0.09, 8, 8);
+    const noseMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.4 });
+    const nose = new THREE.Mesh(noseGeo, noseMat);
+    nose.position.set(0, -radius * 0.05, radius * 0.98);
+    group.add(nose);
+
+    // Manchas de panda
+    if (proto.emoji === '🐼') {
+        const patchGeo = new THREE.SphereGeometry(radius * 0.18, 10, 10);
+        const patchMat = new THREE.MeshStandardMaterial({ color: 0x374151, roughness: 0.85 });
+        const patchL = new THREE.Mesh(patchGeo, patchMat);
+        patchL.scale.set(0.9, 1.2, 0.4);
+        patchL.position.set(-radius * 0.32, radius * 0.14, radius * 0.85);
+        patchL.rotation.z = -0.3;
+        group.add(patchL);
+
+        const patchR = new THREE.Mesh(patchGeo, patchMat);
+        patchR.scale.set(0.9, 1.2, 0.4);
+        patchR.position.set(radius * 0.32, radius * 0.14, radius * 0.85);
+        patchR.rotation.z = 0.3;
+        group.add(patchR);
+    }
+
+    // Ojitos tiernos
+    const eyeGeo = new THREE.SphereGeometry(radius * 0.075, 8, 8);
+    const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+    eyeL.position.set(-radius * 0.34, radius * 0.14, radius * 0.91);
+    group.add(eyeL);
+
+    const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+    eyeR.position.set(radius * 0.34, radius * 0.14, radius * 0.91);
+    group.add(eyeR);
+
+    return group;
+}
+
 class Real3DClawcade {
     constructor() {
         this.container = document.querySelector('.glass-chamber');
@@ -527,7 +664,7 @@ class Real3DClawcade {
         // Estado del juego
         this.state = 'WAITING_COIN';
         this.credits = 1;
-        this.currentTheme = 'gourmet'; // Comida gourmet por defecto
+        this.currentTheme = 'plushies'; // Peluches estilo kawaii pastel por defecto (según referencia fotográfica)
 
         // Coordenadas de la Garra en el espacio 3D
         // Límites del gabinete: X [-2.2, 5.0], Z [-3.5, 3.5], Y [3.3 arriba, -2.4 abajo]
@@ -604,9 +741,9 @@ class Real3DClawcade {
         const width = this.container.clientWidth;
         const height = this.container.clientHeight;
 
-        // 1. Escena
+        // 1. Escena con fondo blanco perla suave de estudio fotográfico (idéntico a la foto real)
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x1a0515);
+        this.scene.background = new THREE.Color(0xf6f7f9);
 
         // 2. Cámara en perspectiva
         this.camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 100);
@@ -626,21 +763,21 @@ class Real3DClawcade {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 0.95; // Exposición rica y equilibrada (cero aspecto lavado)
+        this.renderer.toneMappingExposure = 1.0;
 
-        // Entorno de iluminación IBL de estudio para reflejos reales de cromo y acero en la garra y cadena
+        // Entorno de iluminación IBL de estudio para reflejos de cromo en la garra
         this.initStudioEnvironment();
 
-        // 4. Luces en tiempo real
-        // Luz ambiente suave que preserva sombras profundas y saturación rica en los premios
-        const ambient = new THREE.AmbientLight(0xffffff, 0.28);
+        // 4. Iluminación limpia de estudio fotográfico suave
+        // Luz ambiente difusa blanca uniforme
+        const ambient = new THREE.AmbientLight(0xffffff, 0.72);
         this.scene.add(ambient);
 
-        // Foco cenital principal cálido y contrastado enfocado al lecho de premios
-        this.spotLight = new THREE.SpotLight(0xffeedd, 1.15);
+        // Foco cenital principal suave con sombras difusas
+        this.spotLight = new THREE.SpotLight(0xffffff, 0.95);
         this.spotLight.position.set(0, 9, 2);
-        this.spotLight.angle = Math.PI / 3;
-        this.spotLight.penumbra = 0.45;
+        this.spotLight.angle = Math.PI / 2.8;
+        this.spotLight.penumbra = 0.55;
         this.spotLight.castShadow = true;
         this.spotLight.shadow.mapSize.width = 2048;
         this.spotLight.shadow.mapSize.height = 2048;
@@ -648,26 +785,25 @@ class Real3DClawcade {
         this.spotLight.shadow.camera.far = 15;
         this.spotLight.shadow.bias = -0.0004;
 
-        // Objetivo fijo del foco en el suelo de premios para iluminar la comida y no quemar la garra
+        // Objetivo del foco
         const spotTarget = new THREE.Object3D();
         spotTarget.position.set(0, -4.0, 0);
         this.scene.add(spotTarget);
         this.spotLight.target = spotTarget;
         this.scene.add(this.spotLight);
 
-        // Luz Neón Cian (Pilar Izquierdo)
-        const cyanLight = new THREE.PointLight(0x00e5ff, 1.0, 16);
-        cyanLight.position.set(-6, 2, 2);
-        this.scene.add(cyanLight);
+        // Luces laterales de relleno suave de estudio (sin neones de discoteca)
+        const leftFill = new THREE.DirectionalLight(0xffffff, 0.32);
+        leftFill.position.set(-6, 3, 5);
+        this.scene.add(leftFill);
 
-        // Luz Neón Magenta (Pilar Derecho)
-        const pinkLight = new THREE.PointLight(0xff1493, 1.0, 16);
-        pinkLight.position.set(6, 2, 2);
-        this.scene.add(pinkLight);
+        const rightFill = new THREE.DirectionalLight(0xffffff, 0.32);
+        rightFill.position.set(6, 3, 5);
+        this.scene.add(rightFill);
 
-        // Foco frontal sutil sin sobreexponer ni blanquear la garra ni los productos
-        const clawFrontLight = new THREE.DirectionalLight(0xffffff, 0.18);
-        clawFrontLight.position.set(0, 5, 8);
+        // Foco frontal sutil
+        const clawFrontLight = new THREE.DirectionalLight(0xffffff, 0.24);
+        clawFrontLight.position.set(0, 4, 8);
         this.scene.add(clawFrontLight);
 
         // Redimensionamiento
@@ -796,19 +932,19 @@ class Real3DClawcade {
     }
 
     buildCabinet3D() {
-        // Material de paredes interiores rosa magenta (como la foto)
+        // Material de paredes interiores blanco marfil suave de estudio (idéntico a la foto real)
         const wallMat = new THREE.MeshStandardMaterial({
-            color: 0x880e4f,
-            roughness: 0.5,
-            metalness: 0.1
+            color: 0xf5f6f8,
+            roughness: 0.75,
+            metalness: 0.02
         });
 
-        // Suelo interior
+        // Suelo interior blanco limpio de estudio fotográfico
         const floorGeo = new THREE.PlaneGeometry(13, 10);
         const floorMat = new THREE.MeshStandardMaterial({
-            color: 0x2d0720,
-            roughness: 0.3,
-            metalness: 0.2
+            color: 0xf0f2f5,
+            roughness: 0.65,
+            metalness: 0.04
         });
         const floor = new THREE.Mesh(floorGeo, floorMat);
         floor.rotation.x = -Math.PI / 2;
@@ -839,83 +975,68 @@ class Real3DClawcade {
         this.scene.add(rightWall);
 
         // ----------------------------------------------------
-        // RAMPA Y DEPÓSITO DE PREMIOS 3D DE ALTA VISIBILIDAD
+        // RAMPA Y DEPÓSITO DE PREMIOS 3D LIMPIO Y ELEGANTE
         // ----------------------------------------------------
         const chuteGroup = new THREE.Group();
         chuteGroup.position.set(-4.5, -2.6, 1.8);
 
-        // 1. Tolva principal exterior (Caja sólida visible con buen contraste)
+        // 1. Tolva principal exterior blanca suave
         const chuteBodyGeo = new THREE.BoxGeometry(2.7, 3.2, 3.4);
         const chuteBodyMat = new THREE.MeshStandardMaterial({
-            color: 0x1a2130,
-            roughness: 0.35,
-            metalness: 0.25
+            color: 0xeef1f5,
+            roughness: 0.45,
+            metalness: 0.08
         });
         const chuteBody = new THREE.Mesh(chuteBodyGeo, chuteBodyMat);
         chuteBody.position.y = -0.6;
         chuteBody.receiveShadow = true;
         chuteGroup.add(chuteBody);
 
-        // 2. Marco superior LED Neón Cian que delimita el brocal del agujero
+        // 2. Marco superior en rosa pastel suave
         const rimGeo = new THREE.BoxGeometry(2.8, 0.16, 3.5);
         const rimMat = new THREE.MeshStandardMaterial({
-            color: 0x00e5ff,
-            emissive: 0x00b0ff,
-            emissiveIntensity: 0.85,
-            roughness: 0.2,
-            metalness: 0.4
+            color: 0xf4c2ce,
+            roughness: 0.35,
+            metalness: 0.12
         });
         const rim = new THREE.Mesh(rimGeo, rimMat);
         rim.position.y = 1.05;
         chuteGroup.add(rim);
 
-        // 3. Orificio/embudo interior profundo donde caen los productos
+        // 3. Orificio/embudo interior profundo
         const holeGeo = new THREE.BoxGeometry(2.3, 0.12, 2.9);
-        const holeMat = new THREE.MeshBasicMaterial({ color: 0x050508 });
+        const holeMat = new THREE.MeshBasicMaterial({ color: 0x1a1e24 });
         const hole = new THREE.Mesh(holeGeo, holeMat);
         hole.position.y = 0.98;
         chuteGroup.add(hole);
 
-        // 4. Luz LED interior cian que ilumina el túnel de caída
-        const chuteLight = new THREE.PointLight(0x00e5ff, 1.8, 5.0);
+        // 4. Luz suave interior en la tolva
+        const chuteLight = new THREE.PointLight(0xffffff, 0.8, 4.5);
         chuteLight.position.set(0, 0.4, 0);
         chuteGroup.add(chuteLight);
 
-        // 5. Señalética / Rótulo frontal iluminado "PREMIOS"
-        const signGeo = new THREE.BoxGeometry(1.9, 0.45, 0.08);
-        const signMat = new THREE.MeshStandardMaterial({
-            color: 0x00e5ff,
-            emissive: 0x00e5ff,
-            emissiveIntensity: 0.9,
-            roughness: 0.2
-        });
-        const sign = new THREE.Mesh(signGeo, signMat);
-        sign.position.set(0, 0.65, 1.74);
-        chuteGroup.add(sign);
-
         this.scene.add(chuteGroup);
 
-        // 6. Separador Acrílico Transparente con Perfil Superior Iluminado
-        const acrylicGeo = new THREE.BoxGeometry(0.12, 3.6, 6.5);
+        // 5. Separador Acrílico Ultra-Transparente Limpio
+        const acrylicGeo = new THREE.BoxGeometry(0.10, 3.6, 6.5);
         const acrylicMat = new THREE.MeshPhysicalMaterial({
             color: 0xffffff,
             transparent: true,
-            opacity: 0.4,
-            roughness: 0.06,
-            transmission: 0.95
+            opacity: 0.22,
+            roughness: 0.04,
+            transmission: 0.98
         });
         const acrylic = new THREE.Mesh(acrylicGeo, acrylicMat);
         acrylic.position.set(-3.1, -2.8, 1.2);
         this.scene.add(acrylic);
 
-        // Barandilla superior de neón sobre el separador acrílico
-        const railGeo = new THREE.CylinderGeometry(0.06, 0.06, 6.5, 16);
+        // Barandilla superior de aluminio plateado satinado
+        const railGeo = new THREE.CylinderGeometry(0.05, 0.05, 6.5, 16);
         const railMat = new THREE.MeshStandardMaterial({
-            color: 0x00e5ff,
-            emissive: 0x00b0ff,
-            emissiveIntensity: 0.7,
-            roughness: 0.2,
-            metalness: 0.8
+            color: 0xd8e0e8,
+            roughness: 0.15,
+            metalness: 0.92,
+            envMap: this.chromeCubeMap
         });
         const acrylicRail = new THREE.Mesh(railGeo, railMat);
         acrylicRail.rotation.x = Math.PI / 2;
@@ -925,26 +1046,26 @@ class Real3DClawcade {
         // ----------------------------------------------------
         // ENTORNO DEL MUEBLE REAL: TECHO Y POSTES ESQUINEROS ESTRUCTURALES
         // ----------------------------------------------------
-        // 7. Techo interior cerrado (Caja física real con acabado industrial)
+        // 7. Techo interior blanco puro
         const ceilingGeo = new THREE.PlaneGeometry(13, 10);
         const ceilingMat = new THREE.MeshStandardMaterial({
-            color: 0x180515,
-            roughness: 0.55,
-            metalness: 0.15
+            color: 0xfafbfc,
+            roughness: 0.75,
+            metalness: 0.02
         });
         const ceiling = new THREE.Mesh(ceilingGeo, ceilingMat);
         ceiling.rotation.x = Math.PI / 2;
         ceiling.position.y = 5.0;
         this.scene.add(ceiling);
 
-        // 8. Cuatro Postes Esquineros de Acero Cromado / Aluminio de Grado Industrial
-        const postGeo = new THREE.BoxGeometry(0.32, 9.8, 0.32);
+        // 8. Cuatro Postes Esquineros de Aluminio Plata Satinado Elegante
+        const postGeo = new THREE.BoxGeometry(0.28, 9.8, 0.28);
         const cornerPostMat = new THREE.MeshStandardMaterial({
-            color: 0x8a9ba8,
-            metalness: 0.92,
-            roughness: 0.08,
-            envMap: this.chromeCubeMap || this.scene.environment,
-            envMapIntensity: 1.8
+            color: 0xdce2ea,
+            metalness: 0.88,
+            roughness: 0.12,
+            envMap: this.chromeCubeMap,
+            envMapIntensity: 1.2
         });
 
         // Poste Frontal Izquierdo
@@ -967,23 +1088,29 @@ class Real3DClawcade {
         postBR.position.set(6.32, 0.1, -4.8);
         this.scene.add(postBR);
 
-        // 9. Dintel Superior Frontal y Alféizar Inferior Metálicos
+        // 9. Dintel Superior y Alféizar en Rosa Pastel a Juego con el Mueble
+        const pastelTrimMat = new THREE.MeshStandardMaterial({
+            color: 0xf4c2ce,
+            roughness: 0.45,
+            metalness: 0.08
+        });
+
         const headerGeo = new THREE.BoxGeometry(12.9, 0.35, 0.35);
-        const headerMesh = new THREE.Mesh(headerGeo, cornerPostMat);
+        const headerMesh = new THREE.Mesh(headerGeo, pastelTrimMat);
         headerMesh.position.set(0, 4.85, 4.8);
         this.scene.add(headerMesh);
 
         const sillGeo = new THREE.BoxGeometry(12.9, 0.28, 0.35);
-        const sillMesh = new THREE.Mesh(sillGeo, cornerPostMat);
+        const sillMesh = new THREE.Mesh(sillGeo, pastelTrimMat);
         sillMesh.position.set(0, -4.7, 4.8);
         this.scene.add(sillMesh);
 
         // 10. Sombra de alineación en tiempo real en el suelo de premios (Ejes X y Z)
         const shadowGeo = new THREE.RingGeometry(0.12, 0.72, 32);
         const shadowMat = new THREE.MeshBasicMaterial({
-            color: 0x050106,
+            color: 0x64748b,
             transparent: true,
-            opacity: 0.38,
+            opacity: 0.22,
             side: THREE.DoubleSide
         });
         this.alignmentShadow = new THREE.Mesh(shadowGeo, shadowMat);
@@ -1259,27 +1386,9 @@ class Real3DClawcade {
                     const proto = PLUSHIE_COLORS[Math.floor(Math.random() * PLUSHIE_COLORS.length)];
                     prizeName = proto.name;
                     prizeEmoji = proto.emoji || '🧸';
-
-                    const plushieGeo = new THREE.SphereGeometry(radius, 20, 20);
-                    const plushieMat = new THREE.MeshStandardMaterial({
-                        color: proto.color,
-                        roughness: 0.55,
-                        metalness: 0.05
-                    });
-                    mesh = new THREE.Mesh(plushieGeo, plushieMat);
+                    mesh = createKawaiiPlushieMesh(proto, radius);
                     mesh.position.set(x, posY, z);
-                    mesh.castShadow = true;
-                    mesh.receiveShadow = true;
-
-                    // Orejitas 3D
-                    const earGeo = new THREE.SphereGeometry(radius * 0.35, 12, 12);
-                    const earMat = new THREE.MeshStandardMaterial({ color: proto.earColor, roughness: 0.6 });
-                    const ear1 = new THREE.Mesh(earGeo, earMat);
-                    ear1.position.set(-radius * 0.7, radius * 0.7, 0);
-                    mesh.add(ear1);
-                    const ear2 = new THREE.Mesh(earGeo, earMat);
-                    ear2.position.set(radius * 0.7, radius * 0.7, 0);
-                    mesh.add(ear2);
+                    mesh.rotation.y = Math.random() * Math.PI * 2;
                 }
 
                 this.scene.add(mesh);
@@ -1316,17 +1425,10 @@ class Real3DClawcade {
                         const proto = PLUSHIE_COLORS[Math.floor(Math.random() * PLUSHIE_COLORS.length)];
                         prizeName = proto.name;
                         prizeEmoji = proto.emoji || '🧸';
-
-                        const plushieGeo = new THREE.SphereGeometry(radius, 20, 20);
-                        const plushieMat = new THREE.MeshStandardMaterial({
-                            color: proto.color,
-                            roughness: 0.55,
-                            metalness: 0.05
-                        });
-                        mesh = new THREE.Mesh(plushieGeo, plushieMat);
+                        mesh = createKawaiiPlushieMesh(proto, radius);
                         mesh.position.set(x, posY, z);
-                        mesh.castShadow = true;
-                        mesh.receiveShadow = true;
+                        mesh.rotation.y = Math.random() * Math.PI * 2;
+                        mesh.rotation.z = (Math.random() - 0.5) * 0.22;
                     }
 
                     this.scene.add(mesh);

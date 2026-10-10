@@ -40,8 +40,8 @@
 
             <!-- Barra de Opciones del Arcade -->
             <div class="arcade-toolbar">
-                <button id="btnThemeGourmet" class="toolbar-btn active">🍔 Comida Gourmet (Burgers, Papas, Tacos, Empanadas, Postres)</button>
-                <button id="btnThemePlushies" class="toolbar-btn">🧸 Peluches & Juguetes</button>
+                <button id="btnThemePlushies" class="toolbar-btn active">🧸 Peluches & Juguetes</button>
+                <button id="btnThemeGourmet" class="toolbar-btn">🍔 Comida Gourmet (Burgers, Papas, Tacos, Empanadas, Postres)</button>
                 <button id="btnMachineFullscreen" class="toolbar-btn" style="background: linear-gradient(90deg, #ff007f, #7928ca); color: #fff; font-weight: 800;" title="Ver exclusivamente la máquina en pantalla completa para TV, monitores o tótems">⛶ Pantalla Completa (Solo Máquina)</button>
                 <button id="btnConnectBluetooth" class="toolbar-btn" title="Buscar mandos Bluetooth o periféricos BLE">📡 Vincular Bluetooth</button>
                 <button id="btnConnectMobile" class="toolbar-btn" style="background: linear-gradient(90deg, #00e5ff, #76ff03); color: #000; font-weight: 900;" title="Escanea el código QR con tu celular">📱 Jugar desde Celular (QR)</button>
@@ -59,95 +59,76 @@
             <div class="arcade-viewport">
                 <div class="arcade-cabinet">
                     
-                    <!-- Marquesina Superior -->
+                    <!-- Marco Superior Elegante (Idéntico a foto real de referencia) -->
                     <div class="cabinet-top-bezel">
-                        <span class="cabinet-title-badge">PREMIUM CLAW SYSTEM</span>
-                        <button id="btnCabinetFullscreen" class="bezel-fullscreen-btn" title="Pantalla Completa (Solo la Máquina)" aria-label="Pantalla Completa">
+                        <div class="bezel-vent-strip"></div>
+                        <button id="btnCabinetFullscreen" class="bezel-fullscreen-btn" title="Pantalla Completa" aria-label="Pantalla Completa">
                             ⛶ PANTALLA COMPLETA
                         </button>
-                        <span style="font-size: 0.75rem; color: #81d4fa; font-weight: 800;">60 FPS 3D PHYSICS</span>
                     </div>
 
-                    <!-- Vitrina de Cristal 3D Realista -->
+                    <!-- Vitrina de Cristal Limpio Ultra-Realista (Sin textos en el cristal) -->
                     <div class="glass-chamber">
-                        <!-- Capa de Reflejo, Refracción y Herrajes de Cristal Templado -->
+                        <!-- Capa de Reflejo Cristalino Sutil -->
                         <div class="glass-reflection-layer">
                             <div class="glass-streak-main"></div>
-                            <div class="glass-streak-secondary"></div>
                             <div class="glass-specular-corner"></div>
                             <div class="glass-edge-bevel"></div>
-                            
-                            <!-- 4 Herrajes Cromados de Fijación de Cristal (Clips de Sujeción) -->
-                            <div class="glass-bracket bracket-tl"><span class="bracket-bolt"></span></div>
-                            <div class="glass-bracket bracket-tr"><span class="bracket-bolt"></span></div>
-                            <div class="glass-bracket bracket-bl"><span class="bracket-bolt"></span></div>
-                            <div class="glass-bracket bracket-br"><span class="bracket-bolt"></span></div>
-
-                            <!-- Sello Oficial de Cristal Templado Arcade -->
-                            <div class="glass-tempered-seal">
-                                <span class="seal-icon">🛡️</span>
-                                <span class="seal-text">TEMPERED SAFETY GLASS • 6MM</span>
-                            </div>
                         </div>
 
-                        <!-- Canvas de Física, Montaña de Peluches y Garra -->
+                        <!-- Cerradura Metálica Realista en el Marco Derecho -->
+                        <div class="cabinet-glass-lock" title="Cerradura de vitrina">
+                            <div class="lock-cylinder"></div>
+                        </div>
+
+                        <!-- Canvas 3D de la Máquina -->
                         <canvas id="gameCanvas"></canvas>
 
                         <!-- Notificación flotante de Modo Asomarse -->
-                        <div class="peep-mode-toast" id="peepModeToast">👁️ MODO ASOMARSE: Mueve la palanca para inspeccionar el ángulo</div>
+                        <div class="peep-mode-toast" id="peepModeToast">👁️ MODO ASOMARSE: Mueve la palanca para inspeccionar</div>
                     </div>
 
-                    <!-- CONSOLA DE MANDOS 3D INTEGRADA EN PANTALLA (COMO EN LA FOTO) -->
-                    <div class="arcade-control-deck-3d">
-                        <div class="deck-surface">
-                            
-                            <!-- Estación de la Palanca con Bola Roja 3D -->
+                    <!-- SECCIÓN FRONTAL INFERIOR: CONSOLA SALIENTE Y PLACA METÁLICA DE MONEDERO -->
+                    <div class="cabinet-lower-deck-photoreal">
+                        
+                        <!-- Repisa / Consola Saliente Rosa Pastel -->
+                        <div class="photoreal-control-console">
+                            <!-- Palanca Joystick con bola rosa pastel -->
                             <div class="joystick-3d-station" id="joystickStation">
                                 <div class="joystick-bezel-ring">
                                     <div class="joystick-shaft-ball" id="joystickBall"></div>
                                 </div>
-                                <span class="joystick-hint">◀ Mover ▶</span>
                             </div>
 
-                            <!-- Grupo de Botones de Domo Físico -->
-                            <div class="arcade-buttons-3d-group">
+                            <!-- Botones circulares de perfil bajo en rosa suave -->
+                            <div class="photoreal-buttons-group">
                                 <div class="dome-btn-wrapper">
-                                    <button class="dome-btn dome-btn-pink" id="btnHelpDome" title="Información">ℹ️</button>
-                                    <span class="dome-btn-label">INFO</span>
-                                </div>
-
-                                <div class="dome-btn-wrapper">
-                                    <button class="dome-btn dome-btn-peep" id="btnPeepCamera" title="Asomarse para ver el ángulo de la garra">👁️</button>
+                                    <button class="dome-btn dome-btn-peep" id="btnPeepCamera" title="Asomarse para ver el ángulo">👁️</button>
                                     <span class="dome-btn-label">ASOMARSE</span>
                                 </div>
-
                                 <div class="dome-btn-wrapper">
                                     <button class="dome-btn dome-btn-catch" id="btnCatch3D" aria-label="Atrapar Premio">
-                                        ¡ATRAPAR!
+                                        ATRAPAR
                                     </button>
                                     <span class="dome-btn-label">ACCION</span>
                                 </div>
                             </div>
+                        </div>
 
+                        <!-- Placa Vertical de Acero Inoxidable para Inserción de Monedas (A la derecha como en la foto) -->
+                        <div class="photoreal-coin-panel" id="billCoinSlot" title="Insertar Moneda">
+                            <div class="plate-screw screw-tl"></div>
+                            <div class="plate-screw screw-tr"></div>
+                            <div class="plate-screw screw-bl"></div>
+                            <div class="plate-screw screw-br"></div>
+                            
+                            <div class="coin-slot-vertical-cut"></div>
+                            <div class="coin-return-button">
+                                <span class="coin-plus-symbol">✛</span>
+                            </div>
+                            <div class="credits-counter-mini" id="creditsCount">1 CRED</div>
                         </div>
-                    </div>
 
-                    <!-- PARTE INFERIOR: COMPUERTA DE PREMIOS Y MONEDERO -->
-                    <div class="cabinet-lower-deck">
-                        <div class="prize-dispenser-door" id="prizeDispenserDoor" title="Bandeja de entrega de premios">
-                            <div class="prize-door-flap">
-                                <span class="prize-door-icon">🎁</span>
-                                <span class="prize-door-text">RECOGER PREMIO</span>
-                            </div>
-                        </div>
-                        <div class="bill-coin-acceptor" id="billCoinSlot" title="Toca para insertar ficha o crédito">
-                            <div class="coin-entry-bezel">
-                                <span class="coin-slot-dollar">$</span>
-                                <span class="coin-slot-text">INSERT COIN</span>
-                            </div>
-                            <div class="coin-reject-btn" title="Botón de retorno de ficha">PUSH</div>
-                        </div>
-                        <div class="credits-counter-box" id="creditsCount">1 CRED</div>
                     </div>
 
                 </div>
